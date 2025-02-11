@@ -2,11 +2,12 @@
 export default {
   content: [
     "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}", // Ensure this includes your src folder
-    "./node_modules/flowbite-react/**/*.js", // Add this line for Flowbite
+    "./src/**/*.{js,ts,jsx,tsx}",             // ✅ Ensures all React components are included
+    "./node_modules/flowbite/**/*.js",        // ✅ Added Flowbite core files
+    "./node_modules/flowbite-react/**/*.js"   // ✅ Ensures Flowbite React components are included
   ],
   theme: {
     extend: {},
   },
-  plugins: [require('flowbite')],
+  plugins: [require('flowbite')],             // ✅ Flowbite plugin for Tailwind
 };

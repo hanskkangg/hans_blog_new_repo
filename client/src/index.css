@@ -1,16 +1,19 @@
-@import 'flowbite';
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'flowbite';        /* ✅ Import Flowbite styles */
+@tailwind base;            /* ✅ Tailwind base styles */
+@tailwind components;      /* ✅ Tailwind component classes */
+@tailwind utilities;       /* ✅ Tailwind utility classes */
 
+/* Global Styles */
 body {
   height: 100vh;
 }
 
+/* Quill Editor Styling */
 .ql-editor {
   font-size: 1.05rem;
 }
 
+/* Post Content Styling */
 .post-content p {
   margin-bottom: 0.5rem;
 }
