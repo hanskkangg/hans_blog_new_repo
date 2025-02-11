@@ -100,16 +100,37 @@ export default function Header() {
       </div>
 
       <Navbar.Collapse className='lg:flex lg:gap-4'>
-  <Navbar.Link as={Link} to='/' active={path === '/'}>
+  <Navbar.Link
+    as={Link}
+    to='/'
+    className={`text-sm font-medium ${
+      path === '/' ? 'text-indigo-500 border-b-2 border-indigo-500' : 'text-gray-600'
+    }`}
+  >
     Home
   </Navbar.Link>
-  <Navbar.Link as={Link} to='/about' active={path === '/about'}>
+
+  <Navbar.Link
+    as={Link}
+    to='/about'
+    className={`text-sm font-medium ${
+      path === '/about' ? 'text-indigo-500 border-b-2 border-indigo-500' : 'text-gray-600'
+    }`}
+  >
     About
   </Navbar.Link>
-  <Navbar.Link as={Link} to='/projects' active={path === '/projects'}>
+
+  <Navbar.Link
+    as={Link}
+    to='/projects'
+    className={`text-sm font-medium ${
+      path === '/projects' ? 'text-indigo-500 border-b-2 border-indigo-500' : 'text-gray-600'
+    }`}
+  >
     Projects
   </Navbar.Link>
 </Navbar.Collapse>
+
 
     </Navbar>
   );
