@@ -5,5 +5,5 @@ const App = () => {
     <div>App</div>
   )
 }
-
+// good
 export default App
