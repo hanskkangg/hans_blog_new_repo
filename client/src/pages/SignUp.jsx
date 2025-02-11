@@ -1,33 +1,39 @@
-import React, { useState } from 'react';
+
+
+import { Label, TextInput, Button } from 'flowbite-react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Label, TextInput, Button, Spinner, Alert } from 'flowbite-react';
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
-    password: ''
+    password: ''  
   });
-  const [loading, setLoading] = useState(false); // Added loading state
-  const [errorMessage, setErrorMessage] = useState(''); // Added errorMessage state
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
+    setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    // Simulating async sign-up process
-    setTimeout(() => {
-      setLoading(false);
-      if (!formData.username || !formData.email || !formData.password) {
-        setErrorMessage('Please fill in all fields.');
-      } else {
-        setErrorMessage('');
-        console.log('Form submitted:', formData);
+
+    try {
+      const res = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || 'Something went wrong');
       }
-    }, 2000);
+      console.log('Signup successful:', data);
+    } catch (error) {
+      setErrorMessage(error.message); // Show error message
+    }
   };
 
   return (
@@ -58,6 +64,7 @@ export default function SignUp() {
                 id='username'
                 value={formData.username}
                 onChange={handleChange}
+                required
               />
             </div>
             <div>
@@ -68,6 +75,7 @@ export default function SignUp() {
                 id='email'
                 value={formData.email}
                 onChange={handleChange}
+                required
               />
             </div>
             <div>
@@ -78,23 +86,17 @@ export default function SignUp() {
                 id='password'
                 value={formData.password}
                 onChange={handleChange}
+                required
               />
             </div>
-            <Button
-              gradientDuoTone='purpleToPink'
-              type='submit'
-              disabled={loading}
-            >
-              {loading ? (
-                <>
-                  <Spinner size='sm' />
-                  <span className='pl-3'>Loading...</span>
-                </>
-              ) : (
-                'Sign Up'
-              )}
+            <Button gradientDuoTone='purpleToPink' type='submit'>
+              Sign Up
             </Button>
           </form>
+
+          {errorMessage && (
+            <p className='text-red-500 mt-2'>{errorMessage}</p>
+          )}
 
           <div className='flex gap-2 text-sm mt-5'>
             <span>Have an account?</span>
@@ -102,12 +104,6 @@ export default function SignUp() {
               Sign In
             </Link>
           </div>
-
-          {errorMessage && (
-            <Alert className='mt-5' color='failure'>
-              {errorMessage}
-            </Alert>
-          )}
         </div>
       </div>
     </div>
