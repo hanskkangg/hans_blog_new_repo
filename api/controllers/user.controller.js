@@ -7,26 +7,11 @@ const prohibitedWords = [
     'nigger', 'fuck', 'shit', 'bitch', 'asshole', 'racist', 'niger', 'nig3r', 'nigg3r',
     'chink', 'ching', 'bastard', 'damn', 'crap', 'dick', 'pussy', 'cunt', 'twat',
     'bollocks', 'prick', 'wanker', 'douche', 'motherfucker', 'idiot', 'moron', 
-    'hoe',
-  
-    // Slurs & Hate Speech
-    'nigga', 'faggot', 'homo', 'tranny',
-  
-    // Derogatory Terms Related to Disabilities
-    'retard', 'cripple', 'spaz', 'mongoloid',
-  
-    // Sexual Content
-    'whore', 'slut', 'cum', 'jizz', 'fap', 'porn', 'dildo', 'nude', 'boobs', 
+    'hoe','nigga', 'faggot', 'homo', 'tranny','retard', 'cripple', 'spaz', 'mongoloid','whore', 'slut', 'cum', 'jizz', 'fap', 'porn', 'dildo', 'nude', 'boobs', 
     'tits', 'vagina', 'penis', 'orgy', 'rape', 'molest', 'incest', 'blowjob',
-  
-    // Violent Terms
     'kill', 'murder', 'terrorist', 'bomb', 'explode', 'genocide', 'massacre', 
     'lynch', 'assassinate', 'stab', 'behead', 'shoot', 'abuse', 'pedophile',
-  
-    // Racist & Extremist References
     'hitler', 'nazi','whitepower', 'supremacy', 'zionist', 'jihadi',
-  
-    // Self-Harm & Suicide References
     'suicide', 'selfharm', 'cutting', 'die', 'hang', 'overdose', 'depress', 'killself'];
 
 
@@ -67,12 +52,15 @@ if (req.body.username.includes(' ')) {
     );  
   }
 
-   // Check for prohibited words
-   for (const badWord of prohibitedWords) {
-    if (username.includes(badWord)) {
+if (req.body.username) {
+  const lowerCaseUsername = req.body.username.toLowerCase(); // ✅ Convert once for efficiency
+  for (const badWord of prohibitedWords) {
+    if (lowerCaseUsername.includes(badWord)) {
       return next(errorHandler(400, 'Username contains inappropriate language'));
     }
   }
+}
+
 
 
 
