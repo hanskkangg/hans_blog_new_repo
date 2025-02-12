@@ -2,6 +2,7 @@ import { Sidebar } from 'flowbite-react';
 import { HiUser, HiArrowSmRight } from 'react-icons/hi';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { signoutSuccess } from '../redux/user/userSlice';
 
 export default function DashSidebar() {
   const dispatch = useDispatch();
@@ -9,6 +10,24 @@ export default function DashSidebar() {
   const location = useLocation();
   const { currentUser } = useSelector((state) => state.user);
   const tab = new URLSearchParams(location.search).get('tab');
+
+  
+      const handleSignout = async () => {
+        try {
+          const res = await fetch('/api/user/signout', {
+            method: 'POST',
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            console.log(data.message);
+          } else {
+            dispatch(signoutSuccess());
+          }
+        } catch (error) {
+          console.log(error.message);
+        }
+      };
+    
 
   const handleSignOut = () => {
     dispatch(signoutSuccess());
