@@ -1,15 +1,49 @@
 import { Button, FileInput, Select, TextInput } from 'flowbite-react';
-import ReactQuill from 'react-quill';
+import ReactQuill, { Quill } from 'react-quill'; // ✅ Import Quill
 import 'react-quill/dist/quill.snow.css';
-import { forwardRef, useRef } from 'react';
+import { forwardRef, useRef, useState } from 'react';
+import ImageUploader from 'quill-image-uploader';
 
-// Wrap ReactQuill with forwardRef
+// ✅ Register the image uploader module
+Quill.register('modules/imageUploader', ImageUploader);
+
+// ✅ Toolbar Configuration
+const modules = {
+  toolbar: [
+    [{ header: [1, 2, 3, false] }],
+    ['bold', 'italic', 'underline', 'strike'],
+    [{ list: 'ordered' }, { list: 'bullet' }],
+    ['link', 'image', 'video'],
+    ['clean'],
+  ],
+  imageUploader: {
+    upload: async (file) => {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      try {
+        const res = await fetch('http://localhost:5000/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+        const data = await res.json();
+        return data.url; // Ensure your API returns the uploaded image URL
+      } catch (err) {
+        console.error('Upload failed:', err);
+        return 'https://via.placeholder.com/150'; // Fallback image
+      }
+    },
+  },
+};
+
+// ✅ Wrap ReactQuill with forwardRef
 const CustomQuill = forwardRef((props, ref) => (
   <ReactQuill ref={ref} {...props} />
 ));
 
 export default function CreatePost() {
   const quillRef = useRef(null);
+  const [content, setContent] = useState(''); // ✅ Add content state
 
   return (
     <div className='p-3 max-w-3xl mx-auto min-h-screen'>
@@ -36,8 +70,11 @@ export default function CreatePost() {
         <CustomQuill
           ref={quillRef}
           theme='snow'
+          modules={modules}
           placeholder='Write something...'
           className='h-72 mb-12'
+          value={content} // ✅ Controlled value
+          onChange={setContent} // ✅ Update content on change
           required
         />
 
