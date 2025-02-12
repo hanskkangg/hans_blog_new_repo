@@ -1,61 +1,108 @@
 import { Sidebar } from 'flowbite-react';
-import { HiUser, HiArrowSmRight } from 'react-icons/hi';
-import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate, useLocation } from 'react-router-dom';
+import {
+  HiUser,
+  HiArrowSmRight,
+  HiDocumentText,
+  HiOutlineUserGroup,
+  HiAnnotation,
+  HiChartPie,
+} from 'react-icons/hi';
+import { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { signoutSuccess } from '../redux/user/userSlice';
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 export default function DashSidebar() {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state.user);
-  const tab = new URLSearchParams(location.search).get('tab');
-
-  
-      const handleSignout = async () => {
-        try {
-          const res = await fetch('/api/user/signout', {
-            method: 'POST',
-          });
-          const data = await res.json();
-          if (!res.ok) {
-            console.log(data.message);
-          } else {
-            dispatch(signoutSuccess());
-          }
-        } catch (error) {
-          console.log(error.message);
-        }
-      };
-    
-
-  const handleSignOut = () => {
-    dispatch(signoutSuccess());
-    navigate('/sign-in');
+  const [tab, setTab] = useState('');
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const tabFromUrl = urlParams.get('tab');
+    if (tabFromUrl) {
+      setTab(tabFromUrl);
+    }
+  }, [location.search]);
+  const handleSignout = async () => {
+    try {
+      const res = await fetch('/api/user/signout', {
+        method: 'POST',
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        dispatch(signoutSuccess());
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
   };
-
   return (
-    <Sidebar aria-label="Dashboard Sidebar">
+    <Sidebar className='w-full md:w-56'>
       <Sidebar.Items>
-        <Sidebar.ItemGroup className="flex flex-col gap-1">
-          {/* ✅ Profile Item */}
-          <Sidebar.Item
-            active={tab === 'profile'}
-            icon={HiUser}
-            label={currentUser?.isAdmin ? 'Admin' : 'User'}
-            labelColor="dark"
-            as="div"
-            onClick={() => navigate('/dashboard?tab=profile')}
-          >
-            Profile
-          </Sidebar.Item>
-
-          {/* ✅ Sign Out Item */}
+        <Sidebar.ItemGroup className='flex flex-col gap-1'>
+          {currentUser && currentUser.isAdmin && (
+            <Link to='/dashboard?tab=dash'>
+              <Sidebar.Item
+                active={tab === 'dash' || !tab}
+                icon={HiChartPie}
+                as='div'
+              >
+                Dashboard
+              </Sidebar.Item>
+            </Link>
+          )}
+          <Link to='/dashboard?tab=profile'>
+            <Sidebar.Item
+              active={tab === 'profile'}
+              icon={HiUser}
+              label={currentUser.isAdmin ? 'Admin' : 'User'}
+              labelColor='dark'
+              as='div'
+            >
+              Profile
+            </Sidebar.Item>
+          </Link>
+          {currentUser.isAdmin && (
+            <Link to='/dashboard?tab=posts'>
+              <Sidebar.Item
+                active={tab === 'posts'}
+                icon={HiDocumentText}
+                as='div'
+              >
+                Posts
+              </Sidebar.Item>
+            </Link>
+          )}
+          {currentUser.isAdmin && (
+            <>
+              <Link to='/dashboard?tab=users'>
+                <Sidebar.Item
+                  active={tab === 'users'}
+                  icon={HiOutlineUserGroup}
+                  as='div'
+                >
+                  Users
+                </Sidebar.Item>
+              </Link>
+              <Link to='/dashboard?tab=comments'>
+                <Sidebar.Item
+                  active={tab === 'comments'}
+                  icon={HiAnnotation}
+                  as='div'
+                >
+                  Comments
+                </Sidebar.Item>
+              </Link>
+            </>
+          )}
           <Sidebar.Item
             icon={HiArrowSmRight}
-            as="div"
-            onClick={handleSignOut}
-            className="text-red-500 hover:bg-red-100 dark:hover:bg-red-800 cursor-pointer"
+            className='cursor-pointer'
+            onClick={handleSignout}
           >
             Sign Out
           </Sidebar.Item>
