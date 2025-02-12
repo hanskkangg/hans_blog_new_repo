@@ -1,12 +1,14 @@
-/** @type {import('tailwindcss').Config} */
-export default {
+module.exports = {
   content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}", // Ensure this includes your src folder
-    "./node_modules/flowbite-react/**/*.js", // Add this line for Flowbite
+    "./src/**/*.{js,jsx,ts,tsx}",
+    "./public/index.html",
+    "./node_modules/flowbite/**/*.js"
   ],
   theme: {
     extend: {},
   },
-  plugins: [require('flowbite')],
+  plugins: [
+    require('tailwind-scrollbar'), // Now compatible with Tailwind v4
+    require('flowbite/plugin')
+  ],
 };
