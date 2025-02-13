@@ -12,7 +12,7 @@ const userSlice = createSlice({
   reducers: {
     signInStart: (state) => {
       state.loading = true;
-      state.error = null;
+      state.error = null; // ✅ Reset error when starting sign-in
     },
     signInSuccess: (state, action) => {
       state.currentUser = action.payload;
@@ -25,16 +25,20 @@ const userSlice = createSlice({
     },
     updateStart: (state) => {
       state.loading = true;
-      state.error = null;
+      state.error = null; // ✅ Clear errors before starting update
     },
     updateSuccess: (state, action) => {
       state.currentUser = action.payload;
-      state.loading = false;
+      state.loading = false; // ✅ Reset loading on success
       state.error = null;
     },
     updateFailure: (state, action) => {
-      state.loading = false;
+      state.loading = false; // ✅ Ensure loading resets on failure
       state.error = action.payload;
+    },
+    resetError: (state) => {
+      state.error = null;
+      state.loading = false; // ✅ Also reset loading when clearing errors}
     },
     deleteUserStart: (state) => {
       state.loading = true;
@@ -68,6 +72,7 @@ export const {
   deleteUserSuccess,
   deleteUserFailure,
   signoutSuccess,
+  resetError, // ✅ New action to reset errors
 } = userSlice.actions;
 
 export default userSlice.reducer;

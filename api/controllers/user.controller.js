@@ -6,7 +6,7 @@ import User from '../models/user.model.js';
 const prohibitedWords = [
     'nigger', 'fuck', 'shit', 'bitch', 'asshole', 'racist', 'niger', 'nig3r', 'nigg3r',
     'chink', 'ching', 'bastard', 'damn', 'crap', 'dick', 'pussy', 'cunt', 'twat',
-    'bollocks', 'prick', 'wanker', 'douche', 'motherfucker', 'idiot', 'moron', 
+    'bollocks', 'prick', 'wanker', 'douche', 'motherfucker', 'moron', 
     'hoe','nigga', 'faggot', 'homo', 'tranny','retard', 'cripple', 'spaz', 'mongoloid','whore', 'slut', 'cum', 'jizz', 'fap', 'porn', 'dildo', 'nude', 'boobs', 
     'tits', 'vagina', 'penis', 'orgy', 'rape', 'molest', 'incest', 'blowjob',
     'kill', 'murder', 'terrorist', 'bomb', 'explode', 'genocide', 'massacre', 
@@ -18,50 +18,61 @@ const prohibitedWords = [
 export const test = (req,res) =>  {
 
     res.json({message:'working'});
+
+    
 };
+
 export const updateUser = async (req, res, next) => {
   try {
     if (req.user.id !== req.params.userId) {
-      return next(errorHandler(403, 'You are not allowed to update this user'));
+      return res.status(403).json({ message: 'You are not allowed to update this user' });
     }
 
-    // ✅ Hash password if it's being updated
+    // ✅ Ensure request body exists
+    if (!req.body) {
+      return res.status(400).json({ message: 'Invalid request: No data provided' });
+    }
+
+    // ✅ Validate and Hash Password
     if (req.body.password) {
       if (req.body.password.length < 6) {
-        return next(errorHandler(400, 'Password must be at least 6 characters'));
+        return res.status(400).json({ message: 'Password must be at least 6 characters' });
       }
       req.body.password = bcryptjs.hashSync(req.body.password, 10);
     }
 
-    // ✅ Validate username if updated
+    // ✅ Username Validation (Prevents duplicate errors)
     if (req.body.username) {
-      if (req.body.username.length < 4 || req.body.username.length > 20) {
-        return next(errorHandler(400, 'Username must be between 4 and 20 characters'));
+      const username = req.body.username.trim();
+      const lowerCaseUsername = username.toLowerCase();
+
+      if (username.length < 7 || username.length > 20) {
+        return res.status(400).json({ message: 'Username must be between 7 and 20 characters' });
       }
-      if (req.body.username.includes(' ')) {
-        return next(errorHandler(400, 'Username cannot contain spaces'));
+      if (username.includes(' ')) {
+        return res.status(400).json({ message: 'Username cannot contain spaces' });
       }
-      if (!req.body.username.match(/^[a-zA-Z0-9]+$/)) {
-        return next(errorHandler(400, 'Username can only contain letters and numbers'));
+      if (!/^[a-zA-Z0-9]+$/.test(username)) {
+        return res.status(400).json({ message: 'Username can only contain letters and numbers' });
+      }
+
+      // ✅ Check for prohibited words
+      for (const badWord of prohibitedWords) {
+        if (lowerCaseUsername.includes(badWord)) {
+          return res.status(400).json({ message: 'Username contains inappropriate language' });
+        }
       }
     }
 
-    // ✅ Updating the user in MongoDB
+    // ✅ Update User in Database
     const updatedUser = await User.findByIdAndUpdate(
       req.params.userId,
-      {
-        $set: {
-          username: req.body.username,
-          email: req.body.email,
-          profilePicture: req.body.profilePicture,
-          password: req.body.password,
-        },
-      },
+      { $set: req.body },
       { new: true }
     );
 
     if (!updatedUser) {
-      return next(errorHandler(404, "User not found!"));
+      return res.status(404).json({ message: 'User not found!' });
     }
 
     console.log("✅ User Updated Successfully:", updatedUser);
@@ -70,9 +81,10 @@ export const updateUser = async (req, res, next) => {
     res.status(200).json(rest);
   } catch (error) {
     console.error("🔥 Server Error:", error);
-    next(error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
+
 
 
 export const deleteUser = async (req, res, next) => {
@@ -100,7 +112,6 @@ export const signout = (req, res, next) => {
     next(error);
   }
 };
-
 
 export const getUsers = async (req, res, next) => {
   if (!req.user.isAdmin) {
@@ -140,6 +151,22 @@ export const getUsers = async (req, res, next) => {
       lastMonthUsers,
     });
   } catch (error) {
+    next(error);
+  }
+};
+
+export const getUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    
+    if (!user) {
+      return next(errorHandler(404, "User not found!"));
+    }
+
+    const { password, ...rest } = user._doc; // ✅ Hide password
+    res.status(200).json(rest);
+  } catch (error) {
+    console.error("🔥 Server Error:", error);
     next(error);
   }
 };

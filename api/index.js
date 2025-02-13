@@ -24,6 +24,14 @@ const app = express();
 app.use(express.json());
 
 app.use(cookieParser());
+app.get('/', (req, res) => {
+  res.send('<h1>Welcome to My API</h1>');
+});
+
+// ✅ Test Route for Debugging
+app.get('/api/test', (req, res) => {
+  res.json({ message: "API is working!" });
+});
 
 app.listen(3000, () => {
 

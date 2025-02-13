@@ -77,10 +77,15 @@ export default function Header() {
             inline
             label={
               <Avatar
-                alt="user"
-                img={currentUser.profilePicture || '/default-avatar.png'}
-                rounded
-              />
+  alt="user"
+  img={
+    currentUser?.profilePicture?.trim() || 
+    'https://cdn-icons-png.flaticon.com/512/3607/3607444.png' // ✅ Show default avatar if missing
+  }
+  rounded
+/>
+
+            
             }
           >
             <Dropdown.Header>

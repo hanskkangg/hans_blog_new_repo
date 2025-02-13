@@ -18,6 +18,7 @@ import {
   deleteUserSuccess,
   deleteUserFailure,
   signoutSuccess,
+  resetError
 
 } from '../redux/user/userSlice';
 import { useDispatch } from 'react-redux';
@@ -37,6 +38,32 @@ export default function DashProfile() {
   const [formData, setFormData] = useState({});
   const filePickerRef = useRef();
   const dispatch = useDispatch();
+  
+  useEffect(() => {
+    if (!currentUser || !currentUser._id) {
+      console.warn("🚨 No user ID found, skipping fetch.");
+      return;
+    }
+  
+    console.log("🟢 Fetching user data for:", currentUser._id);
+  
+    fetch(`/api/user/get/${currentUser._id}`)
+      .then(async (res) => {
+        if (!res.ok) {
+          const errorText = await res.text(); // ✅ Read response as text
+          throw new Error(`🚨 API Error ${res.status}: ${errorText}`);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        console.log("✅ User Data Fetched:", data);
+      })
+      .catch((error) => {
+        console.error("🔥 Fetch Error:", error.message);
+      });
+  }, [currentUser]);
+  
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -50,6 +77,10 @@ export default function DashProfile() {
     }
   }, [imageFile]);
 
+  useEffect(() => {
+    dispatch(resetError()); // ✅ Clear errors when visiting profile page
+  }, [dispatch]);
+  
   const uploadImage = async () => {
     // service firebase.storage {
     //   match /b/{bucket}/o {
@@ -97,44 +128,47 @@ export default function DashProfile() {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setUpdateUserError(null);
-    setUpdateUserSuccess(null);
+  
     if (Object.keys(formData).length === 0) {
       setUpdateUserError('No changes made');
       return;
     }
+  
     if (imageFileUploading) {
       setUpdateUserError('Please wait for image to upload');
       return;
     }
+  
     try {
       dispatch(updateStart());
+  
       const res = await fetch(`/api/user/update/${currentUser._id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          profilePicture: imageFileUrl || currentUser.profilePicture,
+        }),
       });
-      
-    const data = res.status !== 204 ? await res.json() : null; 
-    
+  
+      const data = await res.json();
+  
       if (!res.ok) {
-        dispatch(updateFailure(data.message));
-        setUpdateUserError(data.message);
-      } else {
-        dispatch(updateSuccess(data));
-        setUpdateUserSuccess("User's profile updated successfully");
+        throw new Error(data.message || 'Update failed');
       }
+  
+      dispatch(updateSuccess(data));
+      setUpdateUserSuccess("User's profile updated successfully");
+      setUpdateUserError(null); // ✅ Clear errors on success
     } catch (error) {
+      console.error("🔥 Fetch Error:", error);
       dispatch(updateFailure(error.message));
-      setUpdateUserError(error.message);
     }
   };
-
+  
+  
   
   const handleDeleteUser = async () => {
     setShowModal(false);
@@ -207,15 +241,19 @@ export default function DashProfile() {
               }}
             />
           )}
-          <img
-            src={imageFileUrl || currentUser.profilePicture}
-            alt='user'
-            className={`rounded-full w-full h-full object-cover border-8 border-[lightgray] ${
-              imageFileUploadProgress &&
-              imageFileUploadProgress < 100 &&
-              'opacity-60'
-            }`}
-          />
+   <img
+  src={
+    imageFileUrl || // ✅ Show new uploaded image
+    currentUser?.profilePicture?.trim() || // ✅ Show stored profile picture
+    'https://cdn-icons-png.flaticon.com/512/3607/3607444.png' // ✅ Default avatar
+  }
+  alt="user"
+  className={`rounded-full w-full h-full object-cover border-8 border-[lightgray] ${
+    imageFileUploadProgress && imageFileUploadProgress < 100 && 'opacity-60'
+  }`}
+/>
+
+
         </div>
         {imageFileUploadError && (
           <Alert color='failure'>{imageFileUploadError}</Alert>
