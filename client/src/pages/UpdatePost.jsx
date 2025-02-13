@@ -20,9 +20,13 @@ export default function UpdatePost() {
   const [headerImage, setHeaderImage] = useState(""); // ✅ For previewing image
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
   const [imageUploadError, setImageUploadError] = useState(null);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({ 
+    title: "",
+    category: "uncategorized",
+    content: "",
+    headerImage: "",
+  });
   const [publishError, setPublishError] = useState(null);
-  const [content, setContent] = useState(""); // ✅ Add content state
   const { postId } = useParams();
   const { currentUser } = useSelector((state) => state.user);
 
@@ -50,9 +54,13 @@ export default function UpdatePost() {
           console.log("🟢 Post Data Fetched:", postData);
 
           // ✅ Set state
-          setFormData({ ...postData, _id: postId });
-          setContent(postData.content);
-          setHeaderImage(postData.headerImage); // ✅ Set current header image
+          setFormData({ 
+            title: postData.title || "",
+            category: postData.category || "uncategorized",
+            content: postData.content || "",
+            headerImage: postData.headerImage || "",
+            _id: postId 
+          }); // ✅ Set current header image
         } else {
           console.log("🚨 No post found!");
         }
@@ -92,7 +100,7 @@ export default function UpdatePost() {
             setImageUploadProgress(null);
             setImageUploadError(null);
             setHeaderImage(downloadURL); // ✅ Update preview
-            setFormData({ ...formData, headerImage: downloadURL }); // ✅ Save in form data
+            setFormData((prevData) => ({ ...prevData, headerImage: downloadURL })); // ✅ Save in form data
           });
         }
       );
@@ -123,7 +131,7 @@ export default function UpdatePost() {
         quill.insertEmbed(range.index, 'image', url);
 
         // Store in content state
-        setContent(quill.root.innerHTML);
+        setFormData((prevData) => ({ ...prevData, content: quill.root.innerHTML }));
       } catch (error) {
         console.error("🔥 Image Upload Failed:", error);
       }
@@ -165,7 +173,7 @@ export default function UpdatePost() {
       const res = await fetch(`/api/post/updatepost/${formData._id}/${currentUser._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, content }),
+        body: JSON.stringify(formData),
       });
 
       const data = await res.json();
@@ -189,31 +197,20 @@ export default function UpdatePost() {
         ['bold', 'italic', 'underline'],
         [{ header: '1' }, { header: '2' }],
         [{ list: 'ordered' }, { list: 'bullet' }],
-        ['link', 'image'], // ✅ Enable image uploads
+        ['link', 'image'],
       ],
       handlers: {
-        image: imageHandler, // ✅ Custom image upload function
+        image: imageHandler,
       },
     },
   }), []);
 
   return (
     <div className='p-3 max-w-3xl mx-auto min-h-screen'>
-      <h1 className='text-center text-3xl my-7 font-semibold'>Update post</h1>
+      <h1 className='text-center text-3xl my-7 font-semibold'>Update Post</h1>
       <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
-        <TextInput
-          type='text'
-          placeholder='Title'
-          required
-          id='title'
-          className='flex-1'
-          onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-          value={formData.title}
-        />
-        <Select
-          onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-          value={formData.category}
-        >
+        <TextInput type='text' placeholder='Title' required value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} />
+        <Select value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })}>
           <option value='uncategorized'>Select a category</option>
           <option value='javascript'>JavaScript</option>
           <option value='reactjs'>React.js</option>
@@ -221,16 +218,12 @@ export default function UpdatePost() {
         </Select>
 
         <FileInput type='file' accept='image/*' onChange={(e) => setFile(e.target.files[0])} />
-        <Button type='button' gradientDuoTone='purpleToBlue' size='sm' outline onClick={handleUploadImage}>
-          Upload Image
-        </Button>
-
-        {imageUploadProgress && <CircularProgressbar value={imageUploadProgress} text={`${imageUploadProgress}%`} />}
+        <Button type='button' onClick={handleUploadImage} disabled={imageUploadProgress}>Upload Image</Button>
         {headerImage && <img src={headerImage} alt="Updated Header" className="w-full h-40 object-cover mt-2" />}
 
-        <ReactQuill ref={quillRef} theme='snow' value={content} placeholder='Edit your content...' modules={quillModules} onChange={setContent} />
+        <ReactQuill ref={quillRef} theme='snow' value={formData.content} onChange={(value) => setFormData({ ...formData, content: value })} modules={quillModules} />
 
-        <Button type='submit' gradientDuoTone='purpleToPink'>Update post</Button>
+        <Button type='submit'>Update Post</Button>
         {publishError && <Alert color='failure'>{publishError}</Alert>}
       </form>
     </div>

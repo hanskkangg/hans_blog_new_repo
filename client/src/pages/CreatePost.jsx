@@ -15,9 +15,10 @@ import 'react-circular-progressbar/dist/styles.css';
 import { useNavigate } from 'react-router-dom';
 
 export default function CreatePost() {
-  const [headerImage, setHeaderImage] = useState(null);
-  const [headerUploadProgress, setHeaderUploadProgress] = useState(null);
-  const [headerUploadError, setHeaderUploadError] = useState(null);
+  const [file, setFile] = useState(null);
+  const [headerImage, setHeaderImage] = useState(""); // ✅ For previewing image
+  const [imageUploadProgress, setImageUploadProgress] = useState(null);
+  const [imageUploadError, setImageUploadError] = useState(null);
   const [content, setContent] = useState(""); // 🔥 Separate state for editor content
   const [formData, setFormData] = useState({
     title: "",
@@ -45,24 +46,51 @@ export default function CreatePost() {
     },
   }), []);
 
-
-  // 🔥 Handle Header Image Upload
-  const handleHeaderImageUpload = async (file) => {
-    if (!file) return;
-    try {
-      const url = await uploadToFirebase(file, true);
-      setHeaderImage(url);
-      setFormData((prevData) => ({ ...prevData, headerImage: url }));
-    } catch (error) {
-      console.error("Error uploading header image: ", error);
+  const handleHeaderImageUpload = async () => {
+    if (!file) {
+      setImageUploadError('Please select an image');
+      return;
     }
-  };
+    
+  setImageUploadError(null);
+  const storage = getStorage(app);
+  const fileName = `${Date.now()}-${file.name}`;
+  const storageRef = ref(storage, fileName);
+  const uploadTask = uploadBytesResumable(storageRef, file);
+  
+  uploadTask.on(
+    'state_changed',
+    (snapshot) => {
+      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      setImageUploadProgress(progress.toFixed(0));
+    },
+    (error) => {
+      setImageUploadError('Image upload failed');
+      setImageUploadProgress(null);
+    },
+    async () => {
+      const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+      setImageUploadProgress(null);
+      setImageUploadError(null);
+      
+      // ✅ Ensure header image state and formData are updated
+      setHeaderImage(downloadURL);
+      setFormData((prevData) => ({
+        ...prevData,
+        headerImage: downloadURL, // ✅ Save in form data
+      }));
 
-  // 🔥 Handle Image/Video Upload in Quill Editor
+      console.log("✅ Header Image Uploaded & Updated:", downloadURL);
+    }
+  );
+};
+  
+
+  // 🔥 Handle Image Upload in Quill Editor
   const imageHandler = () => {
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
-    input.setAttribute('accept', 'image/*, video/*');
+    input.setAttribute('accept', 'image/*');
     input.click();
 
     input.onchange = async () => {
@@ -72,43 +100,30 @@ export default function CreatePost() {
       try {
         const url = await uploadToFirebase(file);
 
-        // Insert Image/Video into Editor
+        // Insert image into Quill editor
         const quill = quillRef.current.getEditor();
         const range = quill.getSelection();
-        quill.insertEmbed(range.index, file.type.startsWith('image') ? 'image' : 'video', url);
+        quill.insertEmbed(range.index, 'image', url);
 
-        // Store in formData
-        setFormData((prevData) => ({
-          ...prevData,
-          media: [...prevData.media, { url, type: file.type.startsWith('image') ? 'image' : 'video' }],
-        }));
+        // Store in content state
+        setFormData((prevData) => ({ ...prevData, content: quill.root.innerHTML }));
       } catch (error) {
-        console.error("Error uploading file: ", error);
+        console.error("🔥 Image Upload Failed:", error);
       }
     };
   };
-  const uploadToFirebase = async (file, isHeader = false) => {
+
+  const uploadToFirebase = async (file) => {
     return new Promise((resolve, reject) => {
       const storage = getStorage(app);
-      const fileName = `${Date.now()}-${file.name}`; // Unique filename
+      const fileName = `${Date.now()}-${file.name}`;
       const storageRef = ref(storage, fileName);
       const uploadTask = uploadBytesResumable(storageRef, file);
-  
+
       uploadTask.on(
         'state_changed',
-        (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          if (isHeader) {
-            setHeaderUploadProgress(progress.toFixed(0));
-          }
-        },
-        (error) => {
-          if (isHeader) {
-            setHeaderUploadError('Header image upload failed');
-            setHeaderUploadProgress(null);
-          }
-          reject(error);
-        },
+        null,
+        (error) => reject(error),
         async () => {
           const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
           resolve(downloadURL);
@@ -116,44 +131,37 @@ export default function CreatePost() {
       );
     });
   };
-  
 
-  // 🔥 Handle Form Submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const finalData = {
       ...formData,
-      headerImage, // ✅ Ensure header image is included
+      headerImage: headerImage || formData.headerImage, // ✅ Ensure updated image is used
       content,
     };
-    
+  
+    console.log("📨 Sending payload:", finalData);
+  
     try {
       const res = await fetch('/api/post/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(finalData),
       });
-      if (!res.ok) throw new Error("Failed to publish");
-      navigate(`/post/${(await res.json()).slug}`);
+  
+      const responseData = await res.json();
+      console.log("✅ Server Response:", responseData);
+  
+      if (!res.ok) throw new Error(responseData.error || "Failed to publish");
+  
+      navigate(`/post/${responseData.slug}`);
     } catch (error) {
-      setPublishError('Something went wrong');
-    }
-    
-    
-
-    try {
-      const res = await fetch('/api/post/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(finalData),
-      });
-      if (!res.ok) throw new Error("Failed to publish");
-      navigate(`/post/${(await res.json()).slug}`);
-    } catch (error) {
-      setPublishError('Something went wrong');
+      console.error("🔥 Publish Error:", error.message);
+      setPublishError(error.message);
     }
   };
+  
 
   return (
     <div className='p-3 max-w-3xl mx-auto min-h-screen'>
@@ -186,22 +194,31 @@ export default function CreatePost() {
           <FileInput
             type='file'
             accept='image/*'
-            onChange={(e) => handleHeaderImageUpload(e.target.files[0])}
+            onChange={(e) => setFile(e.target.files[0])}
           />
-          {headerUploadProgress && (
+          <Button type='button' onClick={handleHeaderImageUpload} disabled={imageUploadProgress}>Upload Image</Button>
+
+          {imageUploadProgress && (
             <div className='w-16 h-16 mt-2'>
-              <CircularProgressbar value={headerUploadProgress} text={`${headerUploadProgress}%`} />
+              <CircularProgressbar value={imageUploadProgress} text={`${imageUploadProgress}%`} />
             </div>
           )}
-          {headerImage && (
-            <img src={headerImage} alt='Header' className='w-full h-40 object-cover mt-2' />
-          )}
-          {headerUploadError && <Alert color='failure'>{headerUploadError}</Alert>}
+
+{headerImage && (
+  <img 
+    src={headerImage} 
+    alt="Header" 
+    className="w-full h-40 object-cover mt-2" 
+    onLoad={() => console.log("✅ Header Image Loaded:", headerImage)}
+  />
+)}
+
+
+          {imageUploadError && <Alert color='failure'>{imageUploadError}</Alert>}
         </div>
 
         {/* 🔥 Rich Text Editor with Image Upload */}
         <ReactQuill
-          key="quill-editor"
           ref={quillRef}
           theme='snow'
           placeholder='Write your content...'

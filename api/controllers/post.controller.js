@@ -2,44 +2,28 @@ import Post from '../models/post.model.js';
 import { errorHandler } from '../utils/error.js';
 import mongoose from "mongoose"; // ✅ Add this line
 
+
 export const create = async (req, res, next) => {
   try {
-    console.log("🔹 Incoming Request Body:", req.body);
-
+    console.log("🔥 Incoming Request:", req.body); // ✅ Check if headerImage is included
     if (!req.body.title || !req.body.content) {
-      console.error("🚨 Missing required fields!");
-      return next(errorHandler(400, "Please provide all required fields"));
+      return next(errorHandler(400, "Missing title or content"));
     }
-
-    // ✅ Ensure category is valid
-    const validCategories = ["uncategorized", "technology", "business", "health", "sports", "javascript", "reactjs", "nextjs"];
-    let category = req.body.category.trim().toLowerCase();
-    if (!validCategories.includes(category)) {
-      category = "uncategorized";
-    }
-
-    // ✅ Generate slug
-    const slug = req.body.title
-      .trim()
-      .toLowerCase()
-      .replace(/[^a-zA-Z0-9 ]/g, "")
-      .split(" ")
-      .join("-");
 
     const newPost = new Post({
-      ...req.body,
-      category,
-      slug, // ✅ Ensure slug is saved
-      userId: req.user?._id || "67ac37bb4d40a958638c0265", // ✅ Default admin ID
+      title: req.body.title,
+      content: req.body.content,
+      slug: req.body.title.toLowerCase().split(" ").join("-"),
+      category: req.body.category || "uncategorized",
+      headerImage: req.body.headerImage, // ✅ Ensure backend saves the correct image
+      userId: req.user?._id || "67ac37bb4d40a958638c0265",
     });
 
-    console.log("✅ Saving post to database...");
     const savedPost = await newPost.save();
-    console.log("🎉 Post Created Successfully:", savedPost);
-
+    console.log("✅ Post Created:", savedPost);
     res.status(201).json(savedPost);
   } catch (error) {
-    console.error("🔥 Server Error:", error);
+    console.error("❌ Error:", error);
     next(error);
   }
 };
@@ -94,6 +78,8 @@ export const deletepost = async (req, res, next) => {
     next(error);
   }
 };
+
+
 export const updatepost = async (req, res, next) => {
   try {
     if (!req.user.isAdmin && req.user.id !== req.params.userId) {
