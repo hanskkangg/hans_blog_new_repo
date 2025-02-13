@@ -10,19 +10,32 @@ export default function Comment({ comment, onLike, onEdit, onDelete }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(comment.content);
   const { currentUser } = useSelector((state) => state.user);
-  
+
   useEffect(() => {
+    if (!comment.userId) {
+      console.warn("🚨 No userId found for comment:", comment);
+      return;
+    }
+  
     const getUser = async () => {
       try {
-        const res = await fetch(`/api/user/${comment.userId}`);
-        const data = await res.json();
-        if (res.ok) {
-          setUser(data);
+        const res = await fetch(`/api/user/get/${comment.userId}`, {
+          headers: {
+            Authorization: `Bearer ${currentUser?.token}`, // ✅ Ensure token is passed
+          },
+        });
+  
+        if (!res.ok) {
+          throw new Error(`Failed to fetch user: ${res.status} ${res.statusText}`);
         }
+  
+        const data = await res.json();
+        setUser(data);
       } catch (error) {
-        console.log(error.message);
+        console.log("🔥 Fetch Error:", error.message);
       }
     };
+  
     getUser();
   }, [comment]);
 
@@ -62,7 +75,7 @@ export default function Comment({ comment, onLike, onEdit, onDelete }) {
       <div className='flex-1'>
         <div className='flex items-center mb-1'>
           <span className='font-bold mr-1 text-xs truncate'>
-            {user ? `@${user.username}` : 'anonymous user'}
+            {user ? `${user.username}` : 'anonymous user'}
           </span>
           <span className='text-gray-500 text-xs'>
             {moment(comment.createdAt).fromNow()}
