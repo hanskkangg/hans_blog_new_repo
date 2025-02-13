@@ -137,8 +137,8 @@ export default function CreatePost() {
   
     const finalData = {
       ...formData,
-      headerImage: headerImage || formData.headerImage, // ✅ Ensure updated image is used
-      content,
+      headerImage: headerImage || "https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2021/09/how-to-write-a-blog-post.png", // ✅ Ensure default image is set
+    content,
     };
   
     console.log("📨 Sending payload:", finalData);
