@@ -33,6 +33,8 @@ export const getposts = async (req, res, next) => {
     console.log("🔹 Received Request:", req.query);
 
     const startIndex = parseInt(req.query.startIndex) || 0;
+    
+    const limit = parseInt(req.query.limit) || 9;
 
     let query = {};
 
@@ -54,6 +56,7 @@ export const getposts = async (req, res, next) => {
       .select("_id title slug content category headerImage updatedAt")
       .sort({ updatedAt: -1 })
       .skip(startIndex)
+      .limit(limit);
 
     console.log("✅ Found Posts:", posts.length, posts);
     res.status(200).json({ posts });
