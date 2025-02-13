@@ -19,48 +19,34 @@ export const test = (req,res) =>  {
 
     res.json({message:'working'});
 };
-
-
 export const updateUser = async (req, res, next) => {
-
-
-    if (req.user.id !== req.params.userId) {
-        return next(errorHandler(403, 'You are not allowed to update this user'));
-      }
-
-      
-  if (req.body.password) {
-    if (req.body.password.length < 6) {
-      return next(errorHandler(400, 'Password must be at least 6 characters'));
-    }
-    req.body.password = bcryptjs.hashSync(req.body.password, 10);
-  }
-
-  if (req.body.username) {
-    if (req.body.username.length < 4 || req.body.username.length > 20) {
-      return next(
-        errorHandler(400, 'Username must be between 4 and 20 characters')
-      );
-    }
-}
-if (req.body.username.includes(' ')) {
-    return next(errorHandler(400, 'Username cannot contain spaces'));
-  }
-  if (!req.body.username.match(/^[a-zA-Z0-9]+$/)) {
-    return next(
-      errorHandler(400, 'Username can only contain letters and numbers')
-    );  
-  }
-
-if (req.body.username) {
-  const lowerCaseUsername = req.body.username.toLowerCase(); // ✅ Convert once for efficiency
-  for (const badWord of prohibitedWords) {
-    if (lowerCaseUsername.includes(badWord)) {
-      return next(errorHandler(400, 'Username contains inappropriate language'));
-    }
-  }
-}
   try {
+    if (req.user.id !== req.params.userId) {
+      return next(errorHandler(403, 'You are not allowed to update this user'));
+    }
+
+    // ✅ Hash password if it's being updated
+    if (req.body.password) {
+      if (req.body.password.length < 6) {
+        return next(errorHandler(400, 'Password must be at least 6 characters'));
+      }
+      req.body.password = bcryptjs.hashSync(req.body.password, 10);
+    }
+
+    // ✅ Validate username if updated
+    if (req.body.username) {
+      if (req.body.username.length < 4 || req.body.username.length > 20) {
+        return next(errorHandler(400, 'Username must be between 4 and 20 characters'));
+      }
+      if (req.body.username.includes(' ')) {
+        return next(errorHandler(400, 'Username cannot contain spaces'));
+      }
+      if (!req.body.username.match(/^[a-zA-Z0-9]+$/)) {
+        return next(errorHandler(400, 'Username can only contain letters and numbers'));
+      }
+    }
+
+    // ✅ Updating the user in MongoDB
     const updatedUser = await User.findByIdAndUpdate(
       req.params.userId,
       {
@@ -73,9 +59,17 @@ if (req.body.username) {
       },
       { new: true }
     );
+
+    if (!updatedUser) {
+      return next(errorHandler(404, "User not found!"));
+    }
+
+    console.log("✅ User Updated Successfully:", updatedUser);
+
     const { password, ...rest } = updatedUser._doc;
     res.status(200).json(rest);
   } catch (error) {
+    console.error("🔥 Server Error:", error);
     next(error);
   }
 };
