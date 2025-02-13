@@ -1,6 +1,7 @@
 import { Alert, Button, FileInput, Select, TextInput } from 'flowbite-react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import 'quill-image-uploader';
 import {
   getDownloadURL,
   getStorage,
@@ -8,157 +9,199 @@ import {
   uploadBytesResumable,
 } from 'firebase/storage';
 import { app } from '../firebase';
-import { useState } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { useNavigate } from 'react-router-dom';
 
 export default function CreatePost() {
-  const [file, setFile] = useState(null);
-  const [imageUploadProgress, setImageUploadProgress] = useState(null);
-  const [imageUploadError, setImageUploadError] = useState(null);
-  const [formData, setFormData] = useState({});
+  const [headerImage, setHeaderImage] = useState(null);
+  const [headerUploadProgress, setHeaderUploadProgress] = useState(null);
+  const [headerUploadError, setHeaderUploadError] = useState(null);
+  const [content, setContent] = useState(""); // 🔥 Separate state for editor content
+  const [formData, setFormData] = useState({
+    title: "",
+    category: "",
+    media: [],
+    headerImage: "",
+  });
   const [publishError, setPublishError] = useState(null);
-
+  const quillRef = useRef(null);
   const navigate = useNavigate();
 
-  const handleUpdloadImage = async () => {
+  // 🔥 Prevent unnecessary re-renders
+  const quillModules = useMemo(() => ({
+    toolbar: {
+      container: [
+        ['bold', 'italic', 'underline'],
+        [{ 'header': '1' }, { 'header': '2' }],
+        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+        ['link', 'image', 'video'], // Include Image & Video Buttons
+      ],
+      handlers: {
+        image: () => imageHandler(),
+        video: () => imageHandler(),
+      },
+    },
+  }), []);
+
+
+  // 🔥 Handle Header Image Upload
+  const handleHeaderImageUpload = async (file) => {
+    if (!file) return;
     try {
-      if (!file) {
-        setImageUploadError('Please select an image');
-        return;
+      const url = await uploadToFirebase(file, true);
+      setHeaderImage(url);
+      setFormData((prevData) => ({ ...prevData, headerImage: url }));
+    } catch (error) {
+      console.error("Error uploading header image: ", error);
+    }
+  };
+
+  // 🔥 Handle Image/Video Upload in Quill Editor
+  const imageHandler = () => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*, video/*');
+    input.click();
+
+    input.onchange = async () => {
+      const file = input.files[0];
+      if (!file) return;
+
+      try {
+        const url = await uploadToFirebase(file);
+
+        // Insert Image/Video into Editor
+        const quill = quillRef.current.getEditor();
+        const range = quill.getSelection();
+        quill.insertEmbed(range.index, file.type.startsWith('image') ? 'image' : 'video', url);
+
+        // Store in formData
+        setFormData((prevData) => ({
+          ...prevData,
+          media: [...prevData.media, { url, type: file.type.startsWith('image') ? 'image' : 'video' }],
+        }));
+      } catch (error) {
+        console.error("Error uploading file: ", error);
       }
-      setImageUploadError(null);
+    };
+  };
+  const uploadToFirebase = async (file, isHeader = false) => {
+    return new Promise((resolve, reject) => {
       const storage = getStorage(app);
-      const fileName = new Date().getTime() + '-' + file.name;
+      const fileName = `${Date.now()}-${file.name}`; // Unique filename
       const storageRef = ref(storage, fileName);
       const uploadTask = uploadBytesResumable(storageRef, file);
+  
       uploadTask.on(
         'state_changed',
         (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setImageUploadProgress(progress.toFixed(0));
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          if (isHeader) {
+            setHeaderUploadProgress(progress.toFixed(0));
+          }
         },
         (error) => {
-          setImageUploadError('Image upload failed');
-          setImageUploadProgress(null);
+          if (isHeader) {
+            setHeaderUploadError('Header image upload failed');
+            setHeaderUploadProgress(null);
+          }
+          reject(error);
         },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            setImageUploadProgress(null);
-            setImageUploadError(null);
-            setFormData({ ...formData, image: downloadURL });
-          });
+        async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          resolve(downloadURL);
         }
       );
-    } catch (error) {
-      setImageUploadError('Image upload failed');
-      setImageUploadProgress(null);
-      console.log(error);
-    }
+    });
   };
+  
+
+  // 🔥 Handle Form Submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const finalData = {
+      ...formData,
+      content, // 🔥 Ensure content is included from state
+    };
+
     try {
       const res = await fetch('/api/post/create', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(finalData),
       });
-      const data = await res.json();
-      if (!res.ok) {
-        setPublishError(data.message);
-        return;
-      }
-
-      if (res.ok) {
-        setPublishError(null);
-        navigate(`/post/${data.slug}`);
-      }
+      if (!res.ok) throw new Error("Failed to publish");
+      navigate(`/post/${(await res.json()).slug}`);
     } catch (error) {
       setPublishError('Something went wrong');
     }
   };
+
   return (
     <div className='p-3 max-w-3xl mx-auto min-h-screen'>
       <h1 className='text-center text-3xl my-7 font-semibold'>Create a post</h1>
       <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
-        <div className='flex flex-col gap-4 sm:flex-row justify-between'>
-          <TextInput
-            type='text'
-            placeholder='Title'
-            required
-            id='title'
-            className='flex-1'
-            onChange={(e) =>
-              setFormData({ ...formData, title: e.target.value })
-            }
-          />
-          <Select
-            onChange={(e) =>
-              setFormData({ ...formData, category: e.target.value })
-            }
-          >
-            <option value='uncategorized'>Select a category</option>
-            <option value='javascript'>JavaScript</option>
-            <option value='reactjs'>React.js</option>
-            <option value='nextjs'>Next.js</option>
-          </Select>
-        </div>
-        <div className='flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3'>
+        {/* 🔥 Title Input */}
+        <TextInput
+          type='text'
+          placeholder='Title'
+          required
+          id='title'
+          className='flex-1'
+          value={formData.title}
+          onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+        />
+
+        {/* 🔥 Category Selection */}
+        <Select
+          value={formData.category}
+          onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+        >
+          <option value=''>Select a category</option>
+          <option value='javascript'>JavaScript</option>
+          <option value='reactjs'>React.js</option>
+          <option value='nextjs'>Next.js</option>
+        </Select>
+
+        {/* 🔥 Header Image Upload */}
+        <div className='border-4 border-teal-500 border-dotted p-3'>
           <FileInput
             type='file'
             accept='image/*'
-            onChange={(e) => setFile(e.target.files[0])}
+            onChange={(e) => handleHeaderImageUpload(e.target.files[0])}
           />
-          <Button
-            type='button'
-            gradientDuoTone='purpleToBlue'
-            size='sm'
-            outline
-            onClick={handleUpdloadImage}
-            disabled={imageUploadProgress}
-          >
-            {imageUploadProgress ? (
-              <div className='w-16 h-16'>
-                <CircularProgressbar
-                  value={imageUploadProgress}
-                  text={`${imageUploadProgress || 0}%`}
-                />
-              </div>
-            ) : (
-              'Upload Image'
-            )}
-          </Button>
+          {headerUploadProgress && (
+            <div className='w-16 h-16 mt-2'>
+              <CircularProgressbar value={headerUploadProgress} text={`${headerUploadProgress}%`} />
+            </div>
+          )}
+          {headerImage && (
+            <img src={headerImage} alt='Header' className='w-full h-40 object-cover mt-2' />
+          )}
+          {headerUploadError && <Alert color='failure'>{headerUploadError}</Alert>}
         </div>
-        {imageUploadError && <Alert color='failure'>{imageUploadError}</Alert>}
-        {formData.image && (
-          <img
-            src={formData.image}
-            alt='upload'
-            className='w-full h-72 object-cover'
-          />
-        )}
+
+        {/* 🔥 Rich Text Editor with Image Upload */}
         <ReactQuill
+          key="quill-editor"
+          ref={quillRef}
           theme='snow'
-          placeholder='Write something...'
+          placeholder='Write your content...'
           className='h-72 mb-12'
-          required
-          onChange={(value) => {
-            setFormData({ ...formData, content: value });
-          }}
+          value={content}
+          onChange={setContent} // 🔥 Avoid re-rendering
+          modules={quillModules}
         />
+
+        {/* 🔥 Submit Button */}
         <Button type='submit' gradientDuoTone='purpleToPink'>
           Publish
         </Button>
-        {publishError && (
-          <Alert className='mt-5' color='failure'>
-            {publishError}
-          </Alert>
-        )}
+
+        {publishError && <Alert className='mt-5' color='failure'>{publishError}</Alert>}
       </form>
     </div>
   );
