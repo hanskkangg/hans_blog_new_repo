@@ -10,5 +10,6 @@ module.exports = {
   plugins: [
     require('tailwind-scrollbar'), // Now compatible with Tailwind v4
     require('flowbite/plugin')
+    
   ],
 };
