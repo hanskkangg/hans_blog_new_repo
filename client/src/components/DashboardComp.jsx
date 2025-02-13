@@ -34,22 +34,26 @@ export default function DashboardComp() {
         console.log(error.message);
       }
       
-    };const fetchPosts = async () => {
-        try {
-          const res = await fetch('/api/post/getposts?limit=5');
-          const data = await res.json();
-          console.log("🟢 Posts API Response:", data); // ✅ Debug API response
-      
-          if (res.ok) {
-            setPosts(data.posts);
-            setTotalPosts(data.totalPosts || data.posts.length); // ✅ Fallback if totalPosts is missing
-            setLastMonthPosts(data.lastMonthPosts || 0);
-          }
-        } catch (error) {
-          console.log("🔥 Fetch Error:", error.message);
+    };
+    
+    const fetchPosts = async () => {
+      try {
+        const res = await fetch('/api/post/getposts?limit=5');
+        const data = await res.json();
+        console.log("🟢 Posts API Response:", data); // ✅ Debug API response
+    
+        if (res.ok) {
+          setPosts(data.posts);
+          setTotalPosts(data.totalPosts || data.posts.length); // ✅ Fallback if totalPosts is missing
+          setLastMonthPosts(data.lastMonthPosts || 0);
+        } else {
+          console.error("🚨 API Error:", data.message);
         }
-      };
-      
+      } catch (error) {
+        console.log("🔥 Fetch Error:", error.message);
+      }
+    };
+    
     const fetchComments = async () => {
       try {
         const res = await fetch('/api/comment/getcomments?limit=5');

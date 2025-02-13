@@ -33,12 +33,10 @@ export const getposts = async (req, res, next) => {
     console.log("🔹 Received Request:", req.query);
 
     const startIndex = parseInt(req.query.startIndex) || 0;
-    
     const limit = parseInt(req.query.limit) || 9;
 
     let query = {};
 
-    // ✅ Fetch by `slug` if provided
     if (req.query.slug) {
       query.slug = req.query.slug;
     }
@@ -46,25 +44,42 @@ export const getposts = async (req, res, next) => {
     if (req.query.userId && !req.query.isAdmin) {
       query.userId = new mongoose.Types.ObjectId(req.query.userId);
     }
+
     if (req.query.postId) {
       query._id = new mongoose.Types.ObjectId(req.query.postId);
     }
 
     console.log("🔹 Fetching Posts with Query:", query);
 
+    // ✅ Get the **total number** of posts before pagination
+    const totalPosts = await Post.countDocuments(query);
+
+    // ✅ Get **posts from last month**
+    const lastMonth = new Date();
+    lastMonth.setMonth(lastMonth.getMonth() - 1); // Go back 1 month
+
+    const lastMonthPosts = await Post.countDocuments({
+      ...query,
+      createdAt: { $gte: lastMonth },
+    });
+
+    // ✅ Fetch paginated posts
     const posts = await Post.find(query)
-      .select("_id title slug content category headerImage updatedAt")
+      .select("_id title slug content category headerImage updatedAt createdAt")
       .sort({ updatedAt: -1 })
       .skip(startIndex)
       .limit(limit);
 
-    console.log("✅ Found Posts:", posts.length, posts);
-    res.status(200).json({ posts });
+    console.log("✅ Found Posts:", posts.length, "Total:", totalPosts, "Last Month:", lastMonthPosts);
+
+    // ✅ Send `totalPosts` and `lastMonthPosts`
+    res.status(200).json({ posts, totalPosts, lastMonthPosts });
   } catch (error) {
     console.error("🔥 Server Error:", error);
     next(error);
   }
 };
+
 
 
 
