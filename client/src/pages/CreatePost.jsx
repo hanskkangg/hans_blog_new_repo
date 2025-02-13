@@ -124,8 +124,23 @@ export default function CreatePost() {
 
     const finalData = {
       ...formData,
-      content, // 🔥 Ensure content is included from state
+      headerImage, // ✅ Ensure header image is included
+      content,
     };
+    
+    try {
+      const res = await fetch('/api/post/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(finalData),
+      });
+      if (!res.ok) throw new Error("Failed to publish");
+      navigate(`/post/${(await res.json()).slug}`);
+    } catch (error) {
+      setPublishError('Something went wrong');
+    }
+    
+    
 
     try {
       const res = await fetch('/api/post/create', {

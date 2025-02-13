@@ -1,5 +1,6 @@
 import Post from '../models/post.model.js';
 import { errorHandler } from '../utils/error.js';
+import mongoose from "mongoose"; // ✅ Add this line
 
 export const create = async (req, res, next) => {
   try {
@@ -10,26 +11,26 @@ export const create = async (req, res, next) => {
       return next(errorHandler(400, "Please provide all required fields"));
     }
 
-    // ✅ Fix: Convert category to lowercase and check valid values
+    // ✅ Ensure category is valid
     const validCategories = ["uncategorized", "technology", "business", "health", "sports", "javascript", "reactjs", "nextjs"];
     let category = req.body.category.trim().toLowerCase();
-
     if (!validCategories.includes(category)) {
-      console.warn(`🚨 Invalid category "${category}", setting to default.`);
       category = "uncategorized";
     }
 
+    // ✅ Generate slug
     const slug = req.body.title
-      .split(" ")
-      .join("-")
+      .trim()
       .toLowerCase()
-      .replace(/[^a-zA-Z0-9-]/g, "");
+      .replace(/[^a-zA-Z0-9 ]/g, "")
+      .split(" ")
+      .join("-");
 
     const newPost = new Post({
       ...req.body,
-      category, // ✅ Ensures a valid category is saved
-      slug,
-      userId: req.body.userId || "660000000000000000000000", // ✅ Fallback Admin ID
+      category,
+      slug, // ✅ Ensure slug is saved
+      userId: req.user?._id || "67ac37bb4d40a958638c0265", // ✅ Default admin ID
     });
 
     console.log("✅ Saving post to database...");
@@ -42,23 +43,32 @@ export const create = async (req, res, next) => {
     next(error);
   }
 };
+
+
 export const getposts = async (req, res, next) => {
   try {
-    console.log("🔹 Received Request from User ID:", req.query.userId); // ✅ Debugging Line
+    console.log("🔹 Received Request from User ID:", req.query.userId);
 
-    const query = {};
+    const startIndex = parseInt(req.query.startIndex) || 0;
+    const limit = 9;
 
-    if (req.query.userId) {
-      query.userId = req.query.userId;
+    let query = {};
+    if (req.query.userId && !req.query.isAdmin) {
+      query.userId = new mongoose.Types.ObjectId(req.query.userId);
+    }
+    if (req.query.postId) {
+      query._id = new mongoose.Types.ObjectId(req.query.postId);
     }
 
-    console.log("🔹 Fetching Posts with Query:", query); // ✅ Debugging Line
+    console.log("🔹 Fetching Posts with Query:", query);
 
     const posts = await Post.find(query)
+      .select("_id title slug content category headerImage updatedAt") // ✅ Make sure `slug` is included
       .sort({ updatedAt: -1 })
-      .limit(9);
+      .skip(startIndex)
+      .limit(limit);
 
-    console.log("✅ Found Posts:", posts.length, posts); // ✅ Debugging Line
+    console.log("✅ Found Posts:", posts.length, posts);
 
     res.status(200).json({ posts });
   } catch (error) {
@@ -79,12 +89,27 @@ export const deletepost = async (req, res, next) => {
     next(error);
   }
 };
-
-// 🔹 UPDATE POST (Supports Title, Content, Category, and Media Updates)
 export const updatepost = async (req, res, next) => {
   try {
     if (!req.user.isAdmin && req.user.id !== req.params.userId) {
-      return next(errorHandler(403, "You are not allowed to update this post"));
+      return next(errorHandler(403, "🚨 You are not allowed to update this post"));
+    }
+
+    console.log("🟢 Updating Post ID:", req.params.postId);
+
+    if (!mongoose.Types.ObjectId.isValid(req.params.postId)) {
+      return next(errorHandler(400, "🚨 Invalid post ID!"));
+    }
+
+    // ✅ Ensure slug is updated if the title changes
+    let slug = req.body.slug;
+    if (req.body.title) {
+      slug = req.body.title
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-zA-Z0-9 ]/g, "")
+        .split(" ")
+        .join("-");
     }
 
     const updatedPost = await Post.findByIdAndUpdate(
@@ -95,14 +120,22 @@ export const updatepost = async (req, res, next) => {
           content: req.body.content,
           category: req.body.category,
           headerImage: req.body.headerImage,
-          media: req.body.media, // Handles multiple media updates
+          media: req.body.media,
+          slug, // ✅ Ensure slug is updated
         },
       },
       { new: true }
     );
 
+    if (!updatedPost) {
+      return next(errorHandler(404, "🚨 Post not found!"));
+    }
+
+    console.log("✅ Post Updated Successfully:", updatedPost);
     res.status(200).json(updatedPost);
   } catch (error) {
+    console.error("🔥 Server Error:", error);
     next(error);
   }
 };
+

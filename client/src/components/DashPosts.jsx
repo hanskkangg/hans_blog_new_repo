@@ -14,32 +14,43 @@ export default function DashPosts() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await fetch(`/api/post/getposts?userId=${currentUser._id}`);
+        const res = await fetch(
+          `/api/post/getposts${currentUser.isAdmin ? '' : `?userId=${currentUser._id}`}`
+        );
         const data = await res.json();
+        console.log("✅ Admin Posts Fetched:", data);
+  
         if (res.ok) {
           setUserPosts(data.posts);
           if (data.posts.length < 9) {
             setShowMore(false);
           }
+        } else {
+          console.error("🚨 API Error:", data.message);
         }
       } catch (error) {
-        console.log(error.message);
+        console.error("🔥 Fetch Error:", error.message);
       }
     };
-    if (currentUser.isAdmin) {
-      fetchPosts();
-    }
-  }, [currentUser._id]);
-
+  
+    fetchPosts();
+  }, [currentUser]);
+  
   const handleShowMore = async () => {
     const startIndex = userPosts.length;
     try {
-      const res = await fetch(
-        `/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`
-      );
+      // ✅ If admin, fetch all posts without filtering by userId
+      const url = currentUser.isAdmin
+        ? `/api/post/getposts?startIndex=${startIndex}`
+        : `/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`;
+  
+      const res = await fetch(url);
       const data = await res.json();
+  
       if (res.ok) {
         setUserPosts((prev) => [...prev, ...data.posts]);
+  
+        // ✅ Hide "Show More" button if fewer than 9 new posts are received
         if (data.posts.length < 9) {
           setShowMore(false);
         }
@@ -48,6 +59,7 @@ export default function DashPosts() {
       console.log(error.message);
     }
   };
+  
 
   const handleDeletePost = async () => {
     setShowModal(false);
@@ -93,14 +105,16 @@ export default function DashPosts() {
                     {new Date(post.updatedAt).toLocaleDateString()}
                   </Table.Cell>
                   <Table.Cell>
-                    <Link to={`/post/${post.slug}`}>
-                      <img
-                        src={post.image}
-                        alt={post.title}
-                        className='w-20 h-10 object-cover bg-gray-500'
-                      />
-                    </Link>
-                  </Table.Cell>
+                  <Link to={post.slug ? `/post/${post.slug}` : '#'}>
+  <img
+    src={post.headerImage || "/default-placeholder.jpg"}
+    onError={(e) => e.target.src = "/default-placeholder.jpg"}
+    alt={post.title}
+    className='w-20 h-10 object-cover bg-gray-500'
+  />
+</Link>
+
+</Table.Cell>
                   <Table.Cell>
                     <Link
                       className='font-medium text-gray-900 dark:text-white'
