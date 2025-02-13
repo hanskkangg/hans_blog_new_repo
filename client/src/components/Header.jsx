@@ -59,7 +59,7 @@ export default function Header() {
 
       <div className="flex gap-4 items-center md:order-2">
       <Button
-  className="w-12 h-12 hidden sm:inline flex items-center justify-center" // ✅ Adjust button size
+  className="w-12 h-12 hidden sm:inline items-center justify-center" // ✅ Adjust button size
   color="gray"
   pill
   onClick={() => dispatch(toggleTheme())}
