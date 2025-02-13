@@ -46,7 +46,7 @@ export const updateUser = async (req, res, next) => {
       const username = req.body.username.trim();
       const lowerCaseUsername = username.toLowerCase();
 
-      if (username.length < 7 || username.length > 20) {
+      if (username.length < 4 || username.length > 20) {
         return res.status(400).json({ message: 'Username must be between 7 and 20 characters' });
       }
       if (username.includes(' ')) {
