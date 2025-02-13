@@ -82,7 +82,33 @@ export default function DashPosts() {
       console.log(error.message);
     }
   };
-
+  const handleUpdatePost = async (postId) => {
+    try {
+      const res = await fetch(`/api/post/updatepost/${postId}/${currentUser._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData), // ✅ Send only necessary data
+      });
+  
+      const updatedPost = await res.json();
+      if (!res.ok) {
+        console.log("🚨 Update failed:", updatedPost);
+        return;
+      }
+  
+      // ✅ Fix: Only update **one post** in state instead of replacing all posts
+      setUserPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post._id === postId ? { ...post, ...updatedPost } : post
+        )
+      );
+  
+      console.log("✅ Post updated successfully:", updatedPost);
+    } catch (error) {
+      console.error("🔥 Update Error:", error);
+    }
+  };
+  
   return (
     <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
       {currentUser.isAdmin && userPosts.length > 0 ? (

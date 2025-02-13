@@ -44,15 +44,20 @@ export const create = async (req, res, next) => {
   }
 };
 
-
 export const getposts = async (req, res, next) => {
   try {
-    console.log("🔹 Received Request from User ID:", req.query.userId);
+    console.log("🔹 Received Request:", req.query);
 
     const startIndex = parseInt(req.query.startIndex) || 0;
     const limit = 9;
 
     let query = {};
+
+    // ✅ Fetch by `slug` if provided
+    if (req.query.slug) {
+      query.slug = req.query.slug;
+    }
+
     if (req.query.userId && !req.query.isAdmin) {
       query.userId = new mongoose.Types.ObjectId(req.query.userId);
     }
@@ -63,19 +68,19 @@ export const getposts = async (req, res, next) => {
     console.log("🔹 Fetching Posts with Query:", query);
 
     const posts = await Post.find(query)
-      .select("_id title slug content category headerImage updatedAt") // ✅ Make sure `slug` is included
+      .select("_id title slug content category headerImage updatedAt")
       .sort({ updatedAt: -1 })
       .skip(startIndex)
       .limit(limit);
 
     console.log("✅ Found Posts:", posts.length, posts);
-
     res.status(200).json({ posts });
   } catch (error) {
     console.error("🔥 Server Error:", error);
     next(error);
   }
 };
+
 
 
 export const deletepost = async (req, res, next) => {
@@ -112,6 +117,7 @@ export const updatepost = async (req, res, next) => {
         .join("-");
     }
 
+    // ✅ Only update **one specific post** (fixes all posts being overwritten)
     const updatedPost = await Post.findByIdAndUpdate(
       req.params.postId,
       {
@@ -124,7 +130,7 @@ export const updatepost = async (req, res, next) => {
           slug, // ✅ Ensure slug is updated
         },
       },
-      { new: true }
+      { new: true } // ✅ Returns the updated post
     );
 
     if (!updatedPost) {
@@ -132,10 +138,9 @@ export const updatepost = async (req, res, next) => {
     }
 
     console.log("✅ Post Updated Successfully:", updatedPost);
-    res.status(200).json(updatedPost);
+    res.status(200).json(updatedPost); // ✅ Send the correct post back
   } catch (error) {
     console.error("🔥 Server Error:", error);
     next(error);
   }
 };
-
