@@ -122,6 +122,7 @@ export default function DashPosts() {
               <Table.HeadCell>Post title</Table.HeadCell>
               <Table.HeadCell>Category</Table.HeadCell>
               <Table.HeadCell>Views</Table.HeadCell>
+              <Table.HeadCell>Likes</Table.HeadCell>
               <Table.HeadCell>Delete</Table.HeadCell>
               <Table.HeadCell>
                 <span>Edit</span>
@@ -149,6 +150,7 @@ export default function DashPosts() {
       </Table.Cell>
       <Table.Cell>{post.category}</Table.Cell>
       <Table.Cell className='text-center'>👁️ {post.views || 0}</Table.Cell>
+<Table.Cell>❤️ {post.likes || 0}</Table.Cell>
       <Table.Cell>
         <span
           onClick={() => {

@@ -1,6 +1,7 @@
 import bcryptjs from 'bcryptjs';
 import { errorHandler } from '../utils/error.js';
 import User from '../models/user.model.js';
+import jwt from 'jsonwebtoken';
 
 // List of prohibited words
 const prohibitedWords = [
@@ -21,50 +22,25 @@ export const test = (req,res) =>  {
 
     
 };
-
 export const updateUser = async (req, res, next) => {
   try {
+    console.log("🛠 Incoming Update Request:", req.body); // ✅ Log request body
+
     if (req.user.id !== req.params.userId) {
-      return res.status(403).json({ message: 'You are not allowed to update this user' });
+      return res.status(403).json({ message: "❌ You are not allowed to update this user" });
     }
 
-    // ✅ Ensure request body exists
     if (!req.body) {
-      return res.status(400).json({ message: 'Invalid request: No data provided' });
+      return res.status(400).json({ message: "❌ Invalid request: No data provided" });
     }
 
-    // ✅ Validate and Hash Password
     if (req.body.password) {
       if (req.body.password.length < 6) {
-        return res.status(400).json({ message: 'Password must be at least 6 characters' });
+        return res.status(400).json({ message: "❌ Password must be at least 6 characters" });
       }
       req.body.password = bcryptjs.hashSync(req.body.password, 10);
     }
 
-    // ✅ Username Validation (Prevents duplicate errors)
-    if (req.body.username) {
-      const username = req.body.username.trim();
-      const lowerCaseUsername = username.toLowerCase();
-
-      if (username.length < 4 || username.length > 20) {
-        return res.status(400).json({ message: 'Username must be between 7 and 20 characters' });
-      }
-      if (username.includes(' ')) {
-        return res.status(400).json({ message: 'Username cannot contain spaces' });
-      }
-      if (!/^[a-zA-Z0-9]+$/.test(username)) {
-        return res.status(400).json({ message: 'Username can only contain letters and numbers' });
-      }
-
-      // ✅ Check for prohibited words
-      for (const badWord of prohibitedWords) {
-        if (lowerCaseUsername.includes(badWord)) {
-          return res.status(400).json({ message: 'Username contains inappropriate language' });
-        }
-      }
-    }
-
-    // ✅ Update User in Database
     const updatedUser = await User.findByIdAndUpdate(
       req.params.userId,
       { $set: req.body },
@@ -72,16 +48,27 @@ export const updateUser = async (req, res, next) => {
     );
 
     if (!updatedUser) {
-      return res.status(404).json({ message: 'User not found!' });
+      console.log("❌ User not found!");
+      return res.status(404).json({ message: "User not found!" });
     }
 
     console.log("✅ User Updated Successfully:", updatedUser);
 
+    const token = jwt.sign(
+      { id: updatedUser._id, isAdmin: updatedUser.isAdmin },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
     const { password, ...rest } = updatedUser._doc;
-    res.status(200).json(rest);
+    
+    res.status(200)
+      .cookie("access_token", token, { httpOnly: true })
+      .json({ ...rest, token });
+
   } catch (error) {
-    console.error("🔥 Server Error:", error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error("🔥 Server Error in updateUser:", error); // ✅ Log full error
+    res.status(500).json({ message: "❌ Internal server error", error: error.message });
   }
 };
 

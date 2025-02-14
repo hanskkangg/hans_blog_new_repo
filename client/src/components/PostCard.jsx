@@ -25,11 +25,13 @@ export default function PostCard({ post }) {
         </p>
       </div>
 
-      {/* Stats - Views, Date, Comments */}
+      {/* Stats - Views, Date, Comments, Likes */}
       <div className='flex items-center gap-4 text-gray-500 text-xs'>
         <span>👁️ {post.views || 0}</span>
         <span>📅 {new Date(post.createdAt).toLocaleDateString()}</span>
         <span>💬 {post.commentsCount || 0}</span>
+        <p>❤️ {post.likes?.length || 0} likes</p>
+
       </div>
     </div>
   );

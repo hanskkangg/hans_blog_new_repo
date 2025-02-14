@@ -4,13 +4,21 @@ import { Link, useParams } from 'react-router-dom';
 import CallToAction from '../components/CallToAction';
 import CommentSection from '../components/CommentSection';
 import PostCard from '../components/PostCard';
+import { useSelector } from "react-redux"; // ✅ Import Redux Hook
 
 export default function PostPage() {
   const { postSlug } = useParams();
+  const { currentUser } = useSelector((state) => state.user); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [post, setPost] = useState(null);
   const [recentPosts, setRecentPosts] = useState([]);
+  const hasUserLiked = post?.likes?.includes(currentUser?._id) || false;
+
+  console.log("🔹 Current User:", currentUser);
+  console.log("🔹 Current User Token:", currentUser?.token);
+  
+
   useEffect(() => {
     const fetchPost = async () => {
       setLoading(true);
@@ -27,14 +35,14 @@ export default function PostPage() {
         }
   
         const postData = data.posts[0];
-        setPost(postData);
+        setPost(postData); // ✅ Now fetches correct `likes`
   
         // ✅ Fetch recent posts (excluding the current post)
         const recentRes = await fetch(`/api/post/getposts?limit=4`);
         const recentData = await recentRes.json();
   
         if (recentRes.ok) {
-          setRecentPosts(recentData.posts.filter(p => p._id !== postData._id)); // ✅ Exclude current post
+          setRecentPosts(recentData.posts.filter(p => p._id !== postData._id));
         }
   
         // ✅ Increment view count only if post exists
@@ -59,8 +67,45 @@ export default function PostPage() {
   
     fetchPost();
   }, [postSlug]);
+
+
+  const handleLike = async () => {
+    if (!post || !currentUser) {
+      alert("You must be logged in to like posts!");
+      return;
+    }
   
+    if (!currentUser.token) {
+      alert("Authentication error: Missing token. Please log in again.");
+      return;
+    }
   
+    try {
+      const res = await fetch(`/api/post/like/${post._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${currentUser.token}`, // ✅ Send Token
+        },
+        credentials: "include", // ✅ Ensure cookies are sent
+      });
+  
+      const data = await res.json();
+      if (res.ok) {
+        // ✅ Toggle like/unlike state
+        setPost((prev) => ({
+          ...prev,
+          likes: data.likedByUser
+            ? [...(prev.likes || []), currentUser._id] // ✅ Add like
+            : prev.likes.filter(id => id !== currentUser._id), // ✅ Remove like
+        }));
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error("🔥 Like Error:", error);
+    }
+  };
   
   if (loading) return <p>Loading...</p>;
   if (error || !post) return <p>Error loading post or post not found.</p>; // ✅ Handle missing post
@@ -85,18 +130,21 @@ export default function PostPage() {
   alt={post?.title}
   className='mt-10 p-3 max-h-[600px] w-full object-cover'
 />
-      {/* ✅ Show correct view count */}
-    
-    <div>
-      <h1>{post.title}</h1>
-      <p>👁️ {post.views || 0} views</p> {/* ✅ Display the updated views */}
-    </div>
+      <div className="flex justify-between items-center p-3">
+        <p>👁️ {post.views || 0} views</p>
+        <p>📅 {new Date(post.createdAt).toLocaleDateString()}</p>
+        <p>💬 {post.commentsCount || 0} comments</p>
+        <p>❤️ {post.likes?.length || 0} likes</p>
+        <Button 
+  color={hasUserLiked ? "red" : "pink"} 
+  pill 
+  size="xs" 
+  onClick={handleLike}
+>
+  {hasUserLiked ? "💔 Unlike" : "❤️ Like"} ({post.likes?.length || 0})
+</Button>
 
-      <div className='flex justify-between p-3 border-b border-slate-500 mx-auto w-full max-w-2xl text-xs'>
-        <span>{post && new Date(post.createdAt).toLocaleDateString()}</span>
-        <span className='italic'>
-          {post && (post.content.length / 1000).toFixed(0)} mins read
-        </span>
+
       </div>
       
       <div

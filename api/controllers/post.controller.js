@@ -27,6 +27,7 @@ export const create = async (req, res, next) => {
     next(error);
   }
 };
+
 export const getposts = async (req, res, next) => {
   try {
     console.log("🔹 Received Request:", req.query);
@@ -53,10 +54,10 @@ export const getposts = async (req, res, next) => {
     // 🔥 Fetch total number of posts
     const totalPosts = await Post.countDocuments(query);
 
-    // ✅ Get posts sorted by latest `createdAt`
+    // ✅ Get posts sorted by latest `createdAt` and include `likes`
     const posts = await Post.find(query)
-      .select("_id title slug content category headerImage updatedAt createdAt views")
-      .sort({ createdAt: -1 }) // 🔥 Sort by newest posts
+      .select("_id title slug content category headerImage updatedAt createdAt views likes") // ✅ Now includes `likes`
+      .sort({ createdAt: -1 })
       .skip(startIndex)
       .limit(limit);
 
@@ -69,6 +70,54 @@ export const getposts = async (req, res, next) => {
   }
 };
 
+
+export const likePost = async (req, res, next) => {
+  try {
+    const { postId } = req.params;
+    const userId = req.user.id; // ✅ Get user ID from token
+
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+      return next(errorHandler(400, "🚨 Invalid post ID!"));
+    }
+
+    if (!userId) {
+      return next(errorHandler(401, "🚨 Unauthorized! Please log in."));
+    }
+
+    console.log(`❤️ User ${userId} is trying to like Post ID: ${postId}`);
+
+    const post = await Post.findById(postId);
+    if (!post) {
+      return next(errorHandler(404, "🚨 Post not found!"));
+    }
+
+    if (!post.likes) {
+      post.likes = [];
+    }
+
+    const hasLiked = post.likes.includes(userId);
+
+    if (hasLiked) {
+      // ✅ Unlike the post if the user has already liked it
+      post.likes = post.likes.filter((id) => id.toString() !== userId);
+    } else {
+      // ✅ Add user ID to likes array if they haven't liked the post yet
+      post.likes.push(userId);
+    }
+
+    await post.save();
+
+    console.log(`✅ Updated Likes: ${post.likes.length}`);
+    res.status(200).json({
+      success: true,
+      likes: post.likes.length,
+      likedByUser: !hasLiked, // ✅ Return if user liked or unliked the post
+    });
+  } catch (error) {
+    console.error("🔥 Like Error:", error);
+    next(error);
+  }
+};
 
 export const incrementViews = async (req, res, next) => {
   try {

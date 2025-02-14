@@ -15,10 +15,14 @@ const userSlice = createSlice({
       state.error = null; // ✅ Reset error when starting sign-in
     },
     signInSuccess: (state, action) => {
-      state.currentUser = action.payload;
+      state.currentUser = {
+        ...action.payload,
+        token: action.payload.token, // ✅ Store token in Redux
+      };
       state.loading = false;
       state.error = null;
-    },
+    }
+,    
     signInFailure: (state, action) => {
       state.loading = false;
       state.error = action.payload;
@@ -28,10 +32,15 @@ const userSlice = createSlice({
       state.error = null; // ✅ Clear errors before starting update
     },
     updateSuccess: (state, action) => {
-      state.currentUser = action.payload;
-      state.loading = false; // ✅ Reset loading on success
+      state.currentUser = {
+        ...state.currentUser,
+        ...action.payload, // ✅ Merge updated user data
+        token: action.payload.token, // ✅ Store new token
+      };
+      state.loading = false;
       state.error = null;
     },
+    
     updateFailure: (state, action) => {
       state.loading = false; // ✅ Ensure loading resets on failure
       state.error = action.payload;

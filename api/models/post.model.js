@@ -24,13 +24,12 @@ const postSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      enum: ["uncategorized", "technology", "business", "health", "sports", "javascript", "reactjs", "nextjs"], // ✅ FIX: Added "javascript", "reactjs", "nextjs"
+      enum: ["uncategorized", "technology", "business", "health", "sports", "javascript", "reactjs", "nextjs"],
       default: "uncategorized",
     },
     headerImage: {
       type: String,
-      default:
-        "https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2021/09/how-to-write-a-blog-post.png",
+      default: "https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2021/09/how-to-write-a-blog-post.png",
     },
     media: [
       {
@@ -38,10 +37,8 @@ const postSchema = new mongoose.Schema(
         type: { type: String, enum: ["image", "video"], required: true },
       },
     ],
-    views: {
-      type: Number,
-      default: 0, // ✅ Track the number of views (default 0)
-    },
+    views: { type: Number, default: 0 },
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], // ✅ Store user IDs in an array
   },
   { timestamps: true }
 );

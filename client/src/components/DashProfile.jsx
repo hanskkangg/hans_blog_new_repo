@@ -132,23 +132,33 @@ export default function DashProfile() {
     e.preventDefault();
   
     if (Object.keys(formData).length === 0) {
-      setUpdateUserError('No changes made');
+      setUpdateUserError("❌ No changes made");
       return;
     }
   
     if (imageFileUploading) {
-      setUpdateUserError('Please wait for image to upload');
+      setUpdateUserError("❌ Please wait for image to upload");
       return;
     }
   
     try {
       dispatch(updateStart());
   
+      const updatedData = { ...formData };
+      
+      if (!updatedData.password) {
+        delete updatedData.password; // ✅ Remove empty password
+      }
+  
       const res = await fetch(`/api/user/update/${currentUser._id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PUT",
+        headers: { 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${currentUser.token}` 
+        },
+        credentials: "include",
         body: JSON.stringify({
-          ...formData,
+          ...updatedData,
           profilePicture: imageFileUrl || currentUser.profilePicture,
         }),
       });
@@ -156,17 +166,18 @@ export default function DashProfile() {
       const data = await res.json();
   
       if (!res.ok) {
-        throw new Error(data.message || 'Update failed');
+        throw new Error(data.message || "❌ Update failed");
       }
   
       dispatch(updateSuccess(data));
-      setUpdateUserSuccess("User's profile updated successfully");
-      setUpdateUserError(null); // ✅ Clear errors on success
+      setUpdateUserSuccess("✅ User's profile updated successfully");
+      setUpdateUserError(null);
     } catch (error) {
       console.error("🔥 Fetch Error:", error);
       dispatch(updateFailure(error.message));
     }
   };
+  
   
   
   
