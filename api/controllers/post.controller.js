@@ -65,7 +65,6 @@ export const getposts = async (req, res, next) => {
     next(error);
   }
 };
-
 export const incrementViews = async (req, res, next) => {
   try {
     const { postId } = req.params;
@@ -76,11 +75,11 @@ export const incrementViews = async (req, res, next) => {
 
     console.log(`👁️ Incrementing view count for Post ID: ${postId}`);
 
-    // ✅ Find the post and increment views
+    // ✅ Find the post and increment views **without updating `updatedAt`**
     const post = await Post.findByIdAndUpdate(
       postId,
-      { $inc: { views: 1 } }, // 🔥 Increment the view count
-      { new: true } // ✅ Ensure it returns the updated post
+      { $inc: { views: 1 } }, // 🔥 Increment view count only
+      { new: true, timestamps: false } // ✅ Prevent `updatedAt` from updating
     );
 
     if (!post) {
@@ -109,8 +108,6 @@ export const deletepost = async (req, res, next) => {
     next(error);
   }
 };
-
-
 export const updatepost = async (req, res, next) => {
   try {
     if (!req.user.isAdmin && req.user.id !== req.params.userId) {
@@ -123,39 +120,46 @@ export const updatepost = async (req, res, next) => {
       return next(errorHandler(400, "🚨 Invalid post ID!"));
     }
 
-    // ✅ Ensure slug is updated if the title changes
-    let slug = req.body.slug;
-    if (req.body.title) {
+    const existingPost = await Post.findById(req.params.postId);
+    if (!existingPost) {
+      return next(errorHandler(404, "🚨 Post not found!"));
+    }
+
+    let slug = existingPost.slug; // ✅ Keep the existing slug
+
+    // ✅ If the title changes, generate a new slug
+    if (req.body.title && req.body.title !== existingPost.title) {
       slug = req.body.title
         .trim()
         .toLowerCase()
         .replace(/[^a-zA-Z0-9 ]/g, "")
-        .split(" ")
-        .join("-");
+        .replace(/\s+/g, "-");
+
+      // ✅ Check if the new slug already exists
+      const slugExists = await Post.findOne({ slug });
+      if (slugExists && slugExists._id.toString() !== existingPost._id.toString()) {
+        return next(errorHandler(400, "🚨 Slug already exists! Choose a different title."));
+      }
     }
 
-    // ✅ Only update **one specific post** (fixes all posts being overwritten)
+    // ✅ Update post without changing `updatedAt` when only views are modified
     const updatedPost = await Post.findByIdAndUpdate(
       req.params.postId,
       {
         $set: {
-          title: req.body.title,
-          content: req.body.content,
-          category: req.body.category,
-          headerImage: req.body.headerImage,
-          media: req.body.media,
-          slug, // ✅ Ensure slug is updated
+          title: req.body.title || existingPost.title,
+          content: req.body.content || existingPost.content,
+          category: req.body.category || existingPost.category,
+          headerImage: req.body.headerImage || existingPost.headerImage,
+          media: req.body.media || existingPost.media,
+          slug, // ✅ Keep or update the slug
         },
       },
-      { new: true } // ✅ Returns the updated post
+      { new: true }
     );
 
-    if (!updatedPost) {
-      return next(errorHandler(404, "🚨 Post not found!"));
-    }
-
     console.log("✅ Post Updated Successfully:", updatedPost);
-    res.status(200).json(updatedPost); // ✅ Send the correct post back
+    res.status(200).json(updatedPost);
   } catch (error) {
     console.error("🔥 Server Error:", error);
     next(error);

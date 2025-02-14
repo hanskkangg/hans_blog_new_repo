@@ -10,21 +10,18 @@ export default function DashPosts() {
   const [userPosts, setUserPosts] = useState([]);
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [postIdToDelete, setPostIdToDelete] = useState('');useEffect(() => {
+  const [postIdToDelete, setPostIdToDelete] = useState('');
+  useEffect(() => {
     const fetchPosts = async () => {
       try {
-        console.log("🔄 Fetching latest posts...");
-    
+        console.log("🔄 Fetching posts...");
         const res = await fetch(
           `/api/post/getposts${currentUser.isAdmin ? '' : `?userId=${currentUser._id}`}`,
-          { cache: "no-store" } // ✅ Force fresh data
+          { cache: "no-store" }
         );
-    
         const data = await res.json();
-        console.log("✅ Posts Fetched:", data.posts); // 🔥 Check if views are returned
-    
+  
         if (res.ok) {
-          // ✅ Ensure views are included and updated
           setUserPosts(data.posts.map(post => ({
             ...post,
             views: post.views || 0
@@ -36,9 +33,9 @@ export default function DashPosts() {
         console.error("🔥 Fetch Error:", error.message);
       }
     };
-    
-    fetchPosts();
-  }, [currentUser]);
+  
+    fetchPosts(); // ✅ Fetch only on mount
+  }, []); // ✅ Empty dependency array to prevent re-fetching
   
   const handleShowMore = async () => {
     const startIndex = userPosts.length;
@@ -58,6 +55,14 @@ export default function DashPosts() {
     }
   };
 
+  const updatePostViews = (postId, newViews) => {
+    setUserPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post._id === postId ? { ...post, views: newViews } : post
+      )
+    );
+  };
+  
   const handleDeletePost = async () => {
     setShowModal(false);
     try {

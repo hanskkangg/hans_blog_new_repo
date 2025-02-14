@@ -11,53 +11,52 @@ export default function PostPage() {
   const [error, setError] = useState(false);
   const [post, setPost] = useState(null);
   const [recentPosts, setRecentPosts] = useState([]);
-
-
+  
   useEffect(() => {
     const fetchPost = async () => {
       setLoading(true);
       setError(false);
-
+  
       try {
-        // ✅ Fetch the post by slug
         const res = await fetch(`/api/post/getposts?slug=${postSlug}`);
         const data = await res.json();
-        if (!res.ok || !data.posts.length) {
+        
+        if (!res.ok || !data.posts || data.posts.length === 0) {
           setError(true);
           setLoading(false);
           return;
         }
-
+  
         const postData = data.posts[0];
         setPost(postData);
-
-        // ✅ Increment view count
-        const updateRes = await fetch(`/api/post/increment-views/${postData._id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-        });
-
-        const updateData = await updateRes.json();
-        if (updateRes.ok) {
-          // ✅ Ensure UI updates by setting the new `views` count
-          setPost((prev) => ({ ...prev, views: updateData.views }));
+  
+        // ✅ Increment view count only if post exists
+        if (postData._id) {
+          const updateRes = await fetch(`/api/post/increment-views/${postData._id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+          });
+  
+          const updateData = await updateRes.json();
+          if (updateRes.ok) {
+            setPost((prev) => ({ ...prev, views: updateData.views }));
+          }
         }
-
+  
         setLoading(false);
       } catch (error) {
         setError(true);
         setLoading(false);
       }
     };
-
-    fetchPost();
-  }, [postSlug]);
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error loading post.</p>;
-
   
-    
+    fetchPost();
+  }, [postSlug]); 
+  
+  
+  if (loading) return <p>Loading...</p>;
+  if (error || !post) return <p>Error loading post or post not found.</p>; // ✅ Handle missing post
+  
   return (
     <main className='p-3 flex flex-col max-w-6xl mx-auto min-h-screen'>
       <h1 className='text-3xl mt-10 p-3 text-center font-serif max-w-2xl mx-auto lg:text-4xl'>
