@@ -16,10 +16,10 @@ import { useNavigate } from 'react-router-dom';
 
 export default function CreatePost() {
   const [file, setFile] = useState(null);
-  const [headerImage, setHeaderImage] = useState(""); // ✅ For previewing image
+  const [headerImage, setHeaderImage] = useState("");
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
   const [imageUploadError, setImageUploadError] = useState(null);
-  const [content, setContent] = useState(""); // 🔥 Separate state for editor content
+  const [content, setContent] = useState("");
   const [formData, setFormData] = useState({
     title: "",
     category: "",
@@ -30,21 +30,46 @@ export default function CreatePost() {
   const quillRef = useRef(null);
   const navigate = useNavigate();
 
-  // 🔥 Prevent unnecessary re-renders
+  // ✅ Define Quill Modules with Custom YouTube Video Handler
   const quillModules = useMemo(() => ({
     toolbar: {
       container: [
         ['bold', 'italic', 'underline'],
         [{ 'header': '1' }, { 'header': '2' }],
         [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-        ['link', 'image', 'video'], // Include Image & Video Buttons
+        ['link', 'image', 'video'], // ✅ Include Video Button
       ],
       handlers: {
         image: () => imageHandler(),
-        video: () => imageHandler(),
+        video: () => videoHandler(), // ✅ Custom YouTube video handler
       },
     },
   }), []);
+
+  // ✅ Custom Video Handler for YouTube
+  const videoHandler = () => {
+    const quill = quillRef.current.getEditor();
+    const url = prompt("Enter a YouTube video URL:");
+
+    if (url) {
+      const videoId = extractYouTubeVideoId(url);
+      if (videoId) {
+        const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+        const range = quill.getSelection();
+        quill.insertEmbed(range.index, 'video', embedUrl);
+      } else {
+        alert("Invalid YouTube URL. Please enter a valid link.");
+      }
+    }
+  };
+
+  // ✅ Function to Extract YouTube Video ID
+  const extractYouTubeVideoId = (url) => {
+    const match = url.match(
+      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
+    );
+    return match ? match[1] : null;
+  };
 
   const handleHeaderImageUpload = async () => {
     if (!file) {
@@ -52,39 +77,38 @@ export default function CreatePost() {
       return;
     }
     
-  setImageUploadError(null);
-  const storage = getStorage(app);
-  const fileName = `${Date.now()}-${file.name}`;
-  const storageRef = ref(storage, fileName);
-  const uploadTask = uploadBytesResumable(storageRef, file);
-  
-  uploadTask.on(
-    'state_changed',
-    (snapshot) => {
-      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      setImageUploadProgress(progress.toFixed(0));
-    },
-    (error) => {
-      setImageUploadError('Image upload failed');
-      setImageUploadProgress(null);
-    },
-    async () => {
-      const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-      setImageUploadProgress(null);
-      setImageUploadError(null);
-      
-      // ✅ Ensure header image state and formData are updated
-      setHeaderImage(downloadURL);
-      setFormData((prevData) => ({
-        ...prevData,
-        headerImage: downloadURL, // ✅ Save in form data
-      }));
+    setImageUploadError(null);
+    const storage = getStorage(app);
+    const fileName = `${Date.now()}-${file.name}`;
+    const storageRef = ref(storage, fileName);
+    const uploadTask = uploadBytesResumable(storageRef, file);
 
-      console.log("✅ Header Image Uploaded & Updated:", downloadURL);
-    }
-  );
-};
-  
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setImageUploadProgress(progress.toFixed(0));
+      },
+      (error) => {
+        setImageUploadError('Image upload failed');
+        setImageUploadProgress(null);
+      },
+      async () => {
+        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+        setImageUploadProgress(null);
+        setImageUploadError(null);
+        
+        // ✅ Ensure header image state and formData are updated
+        setHeaderImage(downloadURL);
+        setFormData((prevData) => ({
+          ...prevData,
+          headerImage: downloadURL, // ✅ Save in form data
+        }));
+
+        console.log("✅ Header Image Uploaded & Updated:", downloadURL);
+      }
+    );
+  };
 
   // 🔥 Handle Image Upload in Quill Editor
   const imageHandler = () => {
@@ -137,8 +161,8 @@ export default function CreatePost() {
   
     const finalData = {
       ...formData,
-      headerImage: headerImage || "https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2021/09/how-to-write-a-blog-post.png", // ✅ Ensure default image is set
-    content,
+      headerImage: headerImage || "https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2021/09/how-to-write-a-blog-post.png",
+      content,
     };
   
     console.log("📨 Sending payload:", finalData);
@@ -161,6 +185,7 @@ export default function CreatePost() {
       setPublishError(error.message);
     }
   };
+
   
 
   return (
@@ -217,14 +242,14 @@ export default function CreatePost() {
           {imageUploadError && <Alert color='failure'>{imageUploadError}</Alert>}
         </div>
 
-        {/* 🔥 Rich Text Editor with Image Upload */}
+        {/* 🔥 Rich Text Editor with YouTube Video Support */}
         <ReactQuill
           ref={quillRef}
           theme='snow'
           placeholder='Write your content...'
           className='h-72 mb-12'
           value={content}
-          onChange={setContent} // 🔥 Avoid re-rendering
+          onChange={setContent}
           modules={quillModules}
         />
 

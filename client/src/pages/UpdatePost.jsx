@@ -138,6 +138,7 @@ export default function UpdatePost() {
     };
   };
 
+  
   const uploadToFirebase = async (file) => {
     return new Promise((resolve, reject) => {
       const storage = getStorage(app);
@@ -157,53 +158,95 @@ export default function UpdatePost() {
     });
   };
 
-  // ✅ Handle Form Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     console.log("🟢 Submitting Form Data:", formData);
-
+  
     if (!formData._id) {
       setPublishError("🚨 Post ID is missing!");
-      console.log("🚨 formData._id is missing!", formData);
       return;
     }
-
+  
+    // ✅ Ensure the slug is generated properly
+    let slug = formData.slug || formData.title.trim().toLowerCase()
+      .replace(/[^a-zA-Z0-9 ]/g, "") // Remove special characters
+      .replace(/\s+/g, "-"); // Replace spaces with dashes
+  
+    // ✅ If the generated slug is empty, create a unique fallback
+    if (!slug) {
+      slug = `post-${Date.now()}`;
+    }
+  
+    // ✅ Ensure the slug is included in the update
+    const updatedData = {
+      ...formData,
+      slug, // Include the updated slug
+    };
+  
     try {
       const res = await fetch(`/api/post/updatepost/${formData._id}/${currentUser._id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedData),
       });
-
+  
       const data = await res.json();
       if (!res.ok) {
         console.log("🚨 API Response Error:", data);
         setPublishError(data.message);
         return;
       }
-
+  
       console.log("✅ Post Updated:", data);
       navigate(`/post/${data.slug}`);
     } catch (error) {
       console.log("🔥 Submit Error:", error);
-      setPublishError('Something went wrong');
+      setPublishError("Something went wrong");
     }
+  };
+  
+  
+
+  // ✅ Custom Video Handler for YouTube
+  const videoHandler = () => {
+    const quill = quillRef.current.getEditor();
+    const url = prompt("Enter a YouTube video URL:");
+
+    if (url) {
+      const videoId = extractYouTubeVideoId(url);
+      if (videoId) {
+        const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+        const range = quill.getSelection();
+        quill.insertEmbed(range.index, "video", embedUrl);
+      } else {
+        alert("Invalid YouTube URL. Please enter a valid link.");
+      }
+    }
+  };
+
+  // ✅ Function to Extract YouTube Video ID
+  const extractYouTubeVideoId = (url) => {
+    const match = url.match(
+      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
+    );
+    return match ? match[1] : null;
   };
 
   const quillModules = useMemo(() => ({
     toolbar: {
       container: [
-        ['bold', 'italic', 'underline'],
-        [{ header: '1' }, { header: '2' }],
-        [{ list: 'ordered' }, { list: 'bullet' }],
-        ['link', 'image'],
+        ["bold", "italic", "underline"],
+        [{ header: "1" }, { header: "2" }],
+        [{ list: "ordered" }, { list: "bullet" }],
+        ["link", "image", "video"], // ✅ Now includes the Video Button
       ],
       handlers: {
         image: imageHandler,
+        video: videoHandler, // ✅ Added video handler
       },
     },
   }), []);
+
 
   return (
     <div className='p-3 max-w-3xl mx-auto min-h-screen'>
@@ -221,7 +264,8 @@ export default function UpdatePost() {
         <Button type='button' onClick={handleUploadImage} disabled={imageUploadProgress}>Upload Image</Button>
         {headerImage && <img src={headerImage} alt="Updated Header" className="w-full h-40 object-cover mt-2" />}
 
-        <ReactQuill ref={quillRef} theme='snow' value={formData.content} onChange={(value) => setFormData({ ...formData, content: value })} modules={quillModules} />
+        {/* ✅ Quill Editor with YouTube Video Support */}
+        <ReactQuill ref={quillRef} theme="snow" value={formData.content} onChange={(value) => setFormData({ ...formData, content: value })} modules={quillModules} />
 
         <Button type='submit'>Update Post</Button>
         {publishError && <Alert color='failure'>{publishError}</Alert>}
