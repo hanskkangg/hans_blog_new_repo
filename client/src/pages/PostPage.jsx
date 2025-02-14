@@ -17,8 +17,6 @@ export default function PostPage() {
 
   console.log("🔹 Current User:", currentUser);
   console.log("🔹 Current User Token:", currentUser?.token);
-  
-
   useEffect(() => {
     const fetchPost = async () => {
       setLoading(true);
@@ -35,14 +33,16 @@ export default function PostPage() {
         }
   
         const postData = data.posts[0];
-        setPost(postData); // ✅ Now fetches correct `likes`
+        setPost(postData); // ✅ Correctly fetch the post
   
-        // ✅ Fetch recent posts (excluding the current post)
-        const recentRes = await fetch(`/api/post/getposts?limit=4`);
+        // ✅ Fetch recent posts excluding the current one
+        const recentRes = await fetch(`/api/post/getposts?limit=4&sort=desc`);
         const recentData = await recentRes.json();
   
         if (recentRes.ok) {
-          setRecentPosts(recentData.posts.filter(p => p._id !== postData._id));
+          // ✅ Exclude the current post and keep the **next 3 recent articles**
+          const filteredRecentPosts = recentData.posts.filter(p => p._id !== postData._id).slice(0, 3);
+          setRecentPosts(filteredRecentPosts);
         }
   
         // ✅ Increment view count only if post exists
@@ -67,6 +67,7 @@ export default function PostPage() {
   
     fetchPost();
   }, [postSlug]);
+  
 
 
   const handleLike = async () => {
@@ -155,8 +156,7 @@ export default function PostPage() {
         <CallToAction />
       </div>
       <CommentSection postId={post?._id} />
-
-  {/* ✅ Recent Articles Section */}
+{/* ✅ Recent Articles Section */}
 <div className='flex flex-col justify-center items-center mb-5'>
   <h1 className='text-xl mt-5'>Recent articles</h1>
 
@@ -170,6 +170,7 @@ export default function PostPage() {
     )}
   </div>
 </div>
+
     </main>
   );
 }
