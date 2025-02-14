@@ -162,30 +162,40 @@ export default function CommentSection({ postId }) {
           )}
         </form>
       )}
-      {comments.length === 0 ? (
-        <p className='text-sm my-5'></p>
-      ) : (
-        <>
-          <div className='text-sm my-5 flex items-center gap-1'>
-            <p>Comments</p>
-            <div className='border border-gray-400 py-1 px-2 rounded-sm'>
-              <p>{comments.length}</p>
-            </div>
-          </div>
-          {comments.map((comment) => (
-            <Comment
-              key={comment._id}
-              comment={comment}
-              onLike={handleLike}
-              onEdit={handleEdit}
-              onDelete={(commentId) => {
-                setShowModal(true);
-                setCommentToDelete(commentId);
-              }}
-            />
-          ))}
-        </>
-      )}
+
+
+     {comments.length === 0 ? (
+  <p className='text-sm my-5'></p>
+) : (
+  <>
+    <div className='text-sm my-5 flex items-center gap-1'>
+      <p>Comments</p>
+      <div className='border border-gray-400 py-1 px-2 rounded-sm'>
+        <p>{comments.length}</p>
+      </div>
+    </div>
+
+    <div className="flex flex-col gap-3"> {/* ✅ Ensure all comments are nicely spaced */}
+      {comments.map((comment) => (
+        <div 
+          key={comment._id}
+          className="border border-gray-300 dark:border-gray-700 rounded-lg p-3 shadow-md bg-white dark:bg-gray-900"
+        >
+          <Comment
+            comment={comment}
+            onLike={handleLike}
+            onEdit={handleEdit}
+            onDelete={(commentId) => {
+              setShowModal(true);
+              setCommentToDelete(commentId);
+            }}
+          />
+        </div>
+      ))}
+    </div>
+  </>
+)}
+
       <Modal
         show={showModal}
         onClose={() => setShowModal(false)}
