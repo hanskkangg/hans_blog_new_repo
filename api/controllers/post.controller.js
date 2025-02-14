@@ -1,7 +1,7 @@
 import Post from '../models/post.model.js';
 import { errorHandler } from '../utils/error.js';
 import mongoose from "mongoose"; // ✅ Add this line
-
+import Comment from '../models/comment.model.js'; // ✅ Import Comment model
 
 export const create = async (req, res, next) => {
   try {
@@ -54,16 +54,27 @@ export const getposts = async (req, res, next) => {
     // 🔥 Fetch total number of posts
     const totalPosts = await Post.countDocuments(query);
 
-    // ✅ Get posts sorted by latest `createdAt` and include `likes`
+    // ✅ Get posts sorted by latest `createdAt` and include `likes` and `views`
     const posts = await Post.find(query)
-      .select("_id title slug content category headerImage updatedAt createdAt views likes") // ✅ Now includes `likes`
+      .select("_id title slug content category headerImage updatedAt createdAt views likes")
       .sort({ createdAt: -1 })
       .skip(startIndex)
       .limit(limit);
 
-    console.log("✅ Found Posts:", posts.length, "Total Posts:", totalPosts);
+    // ✅ Fetch comment count for each post
+    const postsWithCommentCounts = await Promise.all(
+      posts.map(async (post) => {
+        const commentCount = await Comment.countDocuments({ postId: post._id });
+        return {
+          ...post._doc, // ✅ Keep existing post data
+          commentsCount: commentCount, // ✅ Add comment count
+        };
+      })
+    );
 
-    res.status(200).json({ posts, totalPosts });
+    console.log("✅ Found Posts:", postsWithCommentCounts.length, "Total Posts:", totalPosts);
+
+    res.status(200).json({ posts: postsWithCommentCounts, totalPosts });
   } catch (error) {
     console.error("🔥 Server Error:", error);
     next(error);

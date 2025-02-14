@@ -24,7 +24,8 @@ export default function DashPosts() {
         if (res.ok) {
           setUserPosts(data.posts.map(post => ({
             ...post,
-            views: post.views || 0
+            views: post.views || 0,
+            commentsCount: post.commentsCount || 0, // ✅ Include comments count
           })));
         } else {
           console.error("🚨 API Error:", data.message);
@@ -123,6 +124,7 @@ export default function DashPosts() {
               <Table.HeadCell>Category</Table.HeadCell>
               <Table.HeadCell>Views</Table.HeadCell>
               <Table.HeadCell>Likes</Table.HeadCell>
+              <Table.HeadCell>Comments</Table.HeadCell> {/* ✅ Added Comments Column */}
               <Table.HeadCell>Delete</Table.HeadCell>
               <Table.HeadCell>
                 <span>Edit</span>
@@ -152,7 +154,8 @@ export default function DashPosts() {
       <Table.Cell className='text-center'>👁️ {post.views || 0}</Table.Cell>
 
 <Table.Cell>❤️ {post.likes?.length || 0}</Table.Cell>
-
+<Table.Cell>💬 {post.commentsCount || 0}</Table.Cell> {/* ✅ Display Comments Count */}
+                  
       <Table.Cell>
         <span
           onClick={() => {
