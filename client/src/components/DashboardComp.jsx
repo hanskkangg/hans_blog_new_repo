@@ -35,16 +35,15 @@ export default function DashboardComp() {
       }
       
     };
-    
     const fetchPosts = async () => {
       try {
-        const res = await fetch('/api/post/getposts?limit=5');
+        const res = await fetch('/api/post/getposts?limit=5'); // ✅ Keep limit for recent posts
         const data = await res.json();
         console.log("🟢 Posts API Response:", data); // ✅ Debug API response
     
         if (res.ok) {
           setPosts(data.posts);
-          setTotalPosts(data.totalPosts || data.posts.length); // ✅ Fallback if totalPosts is missing
+          setTotalPosts(data.totalPosts); // ✅ Use total count from API response
           setLastMonthPosts(data.lastMonthPosts || 0);
         } else {
           console.error("🚨 API Error:", data.message);

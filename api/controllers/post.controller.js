@@ -27,6 +27,7 @@ export const create = async (req, res, next) => {
     next(error);
   }
 };
+
 export const getposts = async (req, res, next) => {
   try {
     console.log("🔹 Received Request:", req.query);
@@ -50,21 +51,25 @@ export const getposts = async (req, res, next) => {
 
     console.log("🔹 Fetching Posts with Query:", query);
 
-    // ✅ Get posts with views included
+    // 🔥 Fetch total number of posts (without pagination)
+    const totalPosts = await Post.countDocuments(query);
+
+    // ✅ Get paginated posts with views included
     const posts = await Post.find(query)
-      .select("_id title slug content category headerImage updatedAt createdAt views") // ✅ Include views
+      .select("_id title slug content category headerImage updatedAt createdAt views")
       .sort({ updatedAt: -1 })
       .skip(startIndex)
       .limit(limit);
 
-    console.log("✅ Found Posts:", posts.length, posts.map(p => `ID:${p._id} Views:${p.views}`));
+    console.log("✅ Found Posts:", posts.length, "Total Posts:", totalPosts);
 
-    res.status(200).json({ posts });
+    res.status(200).json({ posts, totalPosts }); // ✅ Return total count separately
   } catch (error) {
     console.error("🔥 Server Error:", error);
     next(error);
   }
 };
+
 export const incrementViews = async (req, res, next) => {
   try {
     const { postId } = req.params;
