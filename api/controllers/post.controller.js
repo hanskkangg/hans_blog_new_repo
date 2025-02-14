@@ -56,25 +56,26 @@ export const getposts = async (req, res, next) => {
 
     // ✅ Get posts sorted by latest `createdAt` and include `likes` and `views`
     const posts = await Post.find(query)
-      .select("_id title slug content category headerImage updatedAt createdAt views likes")
-      .sort({ createdAt: -1 })
-      .skip(startIndex)
-      .limit(limit);
+    .select("_id title slug content category headerImage updatedAt createdAt views likes")
+    .sort({ createdAt: -1 })
+    .skip(startIndex)
+    .limit(limit)
+    .lean(); // ✅ Convert to plain JS object for modification
 
-    // ✅ Fetch comment count for each post
-    const postsWithCommentCounts = await Promise.all(
-      posts.map(async (post) => {
-        const commentCount = await Comment.countDocuments({ postId: post._id });
-        return {
-          ...post._doc, // ✅ Keep existing post data
-          commentsCount: commentCount, // ✅ Add comment count
-        };
-      })
-    );
+   
+// 🔥 Fetch comment count for each post
+const postsWithCommentCounts = await Promise.all(
+  posts.map(async (post) => {
+    const commentCount = await Comment.countDocuments({ postId: post._id });
+    return {
+      ...post,
+      commentsCount: commentCount, // ✅ Add comment count
+    };
+  })
+);
 
-    console.log("✅ Found Posts:", postsWithCommentCounts.length, "Total Posts:", totalPosts);
-
-    res.status(200).json({ posts: postsWithCommentCounts, totalPosts });
+console.log("✅ Found Posts:", postsWithCommentCounts.length, "Total Posts:", totalPosts);
+res.status(200).json({ posts: postsWithCommentCounts, totalPosts });
   } catch (error) {
     console.error("🔥 Server Error:", error);
     next(error);

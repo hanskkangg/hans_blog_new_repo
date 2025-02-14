@@ -154,7 +154,8 @@ export default function DashPosts() {
       <Table.Cell className='text-center'>👁️ {post.views || 0}</Table.Cell>
 
 <Table.Cell>❤️ {post.likes?.length || 0}</Table.Cell>
-<Table.Cell>💬 {post.commentsCount || 0}</Table.Cell> {/* ✅ Display Comments Count */}
+<Table.Cell>💬 {post.commentsCount !== undefined ? post.commentsCount : 0}</Table.Cell>
+
                   
       <Table.Cell>
         <span

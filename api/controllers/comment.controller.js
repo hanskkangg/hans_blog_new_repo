@@ -1,4 +1,7 @@
 import Comment from '../models/comment.model.js';
+import Post from '../models/post.model.js';
+import User from '../models/user.model.js';
+
 
 export const createComment = async (req, res, next) => {
   try {
@@ -101,26 +104,24 @@ export const deleteComment = async (req, res, next) => {
 export const getcomments = async (req, res, next) => {
   if (!req.user.isAdmin)
     return next(errorHandler(403, 'You are not allowed to get all comments'));
+
   try {
     const startIndex = parseInt(req.query.startIndex) || 0;
     const limit = parseInt(req.query.limit) || 9;
-    const sortDirection = req.query.sort === 'desc' ? -1 : 1;
+
+    // ✅ Ensure comments are sorted by `createdAt` in descending order (newest first)
     const comments = await Comment.find()
-      .sort({ createdAt: sortDirection })
+      .sort({ createdAt: -1 }) // 🔥 Newest comments at the top
       .skip(startIndex)
-      .limit(limit);
+      .limit(limit)
+      .populate("userId", "username email") // ✅ Populate user info
+      .populate("postId", "title"); // ✅ Populate post info
+
     const totalComments = await Comment.countDocuments();
-    const now = new Date();
-    const oneMonthAgo = new Date(
-      now.getFullYear(),
-      now.getMonth() - 1,
-      now.getDate()
-    );
-    const lastMonthComments = await Comment.countDocuments({
-      createdAt: { $gte: oneMonthAgo },
-    });
-    res.status(200).json({ comments, totalComments, lastMonthComments });
+
+    res.status(200).json({ comments, totalComments });
   } catch (error) {
+    console.error("🔥 Error fetching comments:", error);
     next(error);
   }
 };
