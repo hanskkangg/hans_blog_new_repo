@@ -27,7 +27,6 @@ export const create = async (req, res, next) => {
     next(error);
   }
 };
-
 export const getposts = async (req, res, next) => {
   try {
     console.log("🔹 Received Request:", req.query);
@@ -51,29 +50,16 @@ export const getposts = async (req, res, next) => {
 
     console.log("🔹 Fetching Posts with Query:", query);
 
-    // ✅ Get the **total number** of posts before pagination
-    const totalPosts = await Post.countDocuments(query);
-
-    // ✅ Get **posts from last month**
-    const lastMonth = new Date();
-    lastMonth.setMonth(lastMonth.getMonth() - 1); // Go back 1 month
-
-    const lastMonthPosts = await Post.countDocuments({
-      ...query,
-      createdAt: { $gte: lastMonth },
-    });
-
-    // ✅ Fetch paginated posts
+    // ✅ Get posts with views included
     const posts = await Post.find(query)
-      .select("_id title slug content category headerImage updatedAt createdAt")
+      .select("_id title slug content category headerImage updatedAt createdAt views") // ✅ Include views
       .sort({ updatedAt: -1 })
       .skip(startIndex)
       .limit(limit);
 
-    console.log("✅ Found Posts:", posts.length, "Total:", totalPosts, "Last Month:", lastMonthPosts);
+    console.log("✅ Found Posts:", posts.length, posts.map(p => `ID:${p._id} Views:${p.views}`));
 
-    // ✅ Send `totalPosts` and `lastMonthPosts`
-    res.status(200).json({ posts, totalPosts, lastMonthPosts });
+    res.status(200).json({ posts });
   } catch (error) {
     console.error("🔥 Server Error:", error);
     next(error);

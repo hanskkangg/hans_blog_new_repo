@@ -11,17 +11,24 @@ export default function DashPosts() {
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [postIdToDelete, setPostIdToDelete] = useState('');useEffect(() => {
-    
     const fetchPosts = async () => {
       try {
+        console.log("🔄 Fetching latest posts...");
+    
         const res = await fetch(
-          `/api/post/getposts${currentUser.isAdmin ? '' : `?userId=${currentUser._id}`}`
+          `/api/post/getposts${currentUser.isAdmin ? '' : `?userId=${currentUser._id}`}`,
+          { cache: "no-store" } // ✅ Force fresh data
         );
+    
         const data = await res.json();
-        console.log("✅ Admin Posts Fetched:", data);
-  
+        console.log("✅ Posts Fetched:", data.posts); // 🔥 Check if views are returned
+    
         if (res.ok) {
-          setUserPosts(data.posts); // ✅ Load all posts immediately
+          // ✅ Ensure views are included and updated
+          setUserPosts(data.posts.map(post => ({
+            ...post,
+            views: post.views || 0
+          })));
         } else {
           console.error("🚨 API Error:", data.message);
         }
@@ -29,7 +36,7 @@ export default function DashPosts() {
         console.error("🔥 Fetch Error:", error.message);
       }
     };
-  
+    
     fetchPosts();
   }, [currentUser]);
   
@@ -110,6 +117,8 @@ export default function DashPosts() {
               <Table.HeadCell>Post image</Table.HeadCell>
               <Table.HeadCell>Post title</Table.HeadCell>
               <Table.HeadCell>Category</Table.HeadCell>
+
+              <Table.HeadCell>Views</Table.HeadCell>
               <Table.HeadCell>Delete</Table.HeadCell>
               <Table.HeadCell>
                 <span>Edit</span>
@@ -136,6 +145,8 @@ export default function DashPosts() {
           </Link>
         </Table.Cell>
         <Table.Cell>{post.category}</Table.Cell>
+        <Table.Cell className='text-center'>👁️ {post.views || 0}</Table.Cell> {/* ✅ Views Update */}
+                  
         <Table.Cell>
           <span
             onClick={() => {
