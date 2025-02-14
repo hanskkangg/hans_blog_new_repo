@@ -27,13 +27,12 @@ export const create = async (req, res, next) => {
     next(error);
   }
 };
-
 export const getposts = async (req, res, next) => {
   try {
     console.log("🔹 Received Request:", req.query);
 
     const startIndex = parseInt(req.query.startIndex) || 0;
-    const limit = parseInt(req.query.limit) || 9;
+    const limit = parseInt(req.query.limit) || 9; // ✅ Default to 9 posts
 
     let query = {};
 
@@ -51,24 +50,25 @@ export const getposts = async (req, res, next) => {
 
     console.log("🔹 Fetching Posts with Query:", query);
 
-    // 🔥 Fetch total number of posts (without pagination)
+    // 🔥 Fetch total number of posts
     const totalPosts = await Post.countDocuments(query);
 
-    // ✅ Get paginated posts with views included
+    // ✅ Get posts sorted by latest `createdAt`
     const posts = await Post.find(query)
       .select("_id title slug content category headerImage updatedAt createdAt views")
-      .sort({ updatedAt: -1 })
+      .sort({ createdAt: -1 }) // 🔥 Sort by newest posts
       .skip(startIndex)
       .limit(limit);
 
     console.log("✅ Found Posts:", posts.length, "Total Posts:", totalPosts);
 
-    res.status(200).json({ posts, totalPosts }); // ✅ Return total count separately
+    res.status(200).json({ posts, totalPosts });
   } catch (error) {
     console.error("🔥 Server Error:", error);
     next(error);
   }
 };
+
 
 export const incrementViews = async (req, res, next) => {
   try {

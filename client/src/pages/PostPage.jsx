@@ -11,7 +11,6 @@ export default function PostPage() {
   const [error, setError] = useState(false);
   const [post, setPost] = useState(null);
   const [recentPosts, setRecentPosts] = useState([]);
-  
   useEffect(() => {
     const fetchPost = async () => {
       setLoading(true);
@@ -20,7 +19,7 @@ export default function PostPage() {
       try {
         const res = await fetch(`/api/post/getposts?slug=${postSlug}`);
         const data = await res.json();
-        
+  
         if (!res.ok || !data.posts || data.posts.length === 0) {
           setError(true);
           setLoading(false);
@@ -29,6 +28,14 @@ export default function PostPage() {
   
         const postData = data.posts[0];
         setPost(postData);
+  
+        // ✅ Fetch recent posts (excluding the current post)
+        const recentRes = await fetch(`/api/post/getposts?limit=4`);
+        const recentData = await recentRes.json();
+  
+        if (recentRes.ok) {
+          setRecentPosts(recentData.posts.filter(p => p._id !== postData._id)); // ✅ Exclude current post
+        }
   
         // ✅ Increment view count only if post exists
         if (postData._id) {
@@ -51,7 +58,8 @@ export default function PostPage() {
     };
   
     fetchPost();
-  }, [postSlug]); 
+  }, [postSlug]);
+  
   
   
   if (loading) return <p>Loading...</p>;
@@ -100,20 +108,20 @@ export default function PostPage() {
       </div>
       <CommentSection postId={post?._id} />
 
-      {/* Recent Articles Section */}
-      <div className='flex flex-col justify-center items-center mb-5'>
-        <h1 className='text-xl mt-5'>Recent articles</h1>
+  {/* ✅ Recent Articles Section */}
+<div className='flex flex-col justify-center items-center mb-5'>
+  <h1 className='text-xl mt-5'>Recent articles</h1>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 mt-5 w-full max-w-6xl mx-auto">
-          {recentPosts.length > 0 ? (
-            recentPosts.map((recentPost) => (
-              <PostCard key={recentPost._id} post={recentPost} />
-            ))
-          ) : (
-            <p className='text-gray-500'>No recent articles available.</p>
-          )}
-        </div>
-      </div>
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 mt-5 w-full max-w-6xl mx-auto">
+    {recentPosts.length > 0 ? (
+      recentPosts.map((recentPost) => (
+        <PostCard key={recentPost._id} post={recentPost} />
+      ))
+    ) : (
+      <p className='text-gray-500'>No recent articles available.</p>
+    )}
+  </div>
+</div>
     </main>
   );
 }
