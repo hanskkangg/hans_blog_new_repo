@@ -13,16 +13,20 @@ export default function CommentSection({ postId }) {
   const [showModal, setShowModal] = useState(false);
   const [commentToDelete, setCommentToDelete] = useState(null);
   const navigate = useNavigate();
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (comment.length > 200) {
       return;
     }
+  
     try {
       const res = await fetch('/api/comment/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${currentUser?.token}` // ✅ Add Token Here
         },
         body: JSON.stringify({
           content: comment,
@@ -30,16 +34,20 @@ export default function CommentSection({ postId }) {
           userId: currentUser._id,
         }),
       });
+  
       const data = await res.json();
       if (res.ok) {
         setComment('');
         setCommentError(null);
         setComments([data, ...comments]);
+      } else {
+        setCommentError(data.message || 'Failed to post comment');
       }
     } catch (error) {
       setCommentError(error.message);
     }
   };
+  
 
   useEffect(() => {
     const getComments = async () => {
