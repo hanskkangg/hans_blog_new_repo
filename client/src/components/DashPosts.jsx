@@ -150,7 +150,9 @@ export default function DashPosts() {
       </Table.Cell>
       <Table.Cell>{post.category}</Table.Cell>
       <Table.Cell className='text-center'>👁️ {post.views || 0}</Table.Cell>
-<Table.Cell>❤️ {post.likes || 0}</Table.Cell>
+
+<Table.Cell>❤️ {post.likes?.length || 0}</Table.Cell>
+
       <Table.Cell>
         <span
           onClick={() => {
