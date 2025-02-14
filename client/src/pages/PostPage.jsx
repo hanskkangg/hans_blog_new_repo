@@ -1,7 +1,6 @@
 import { Button, Spinner } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-
 import CallToAction from '../components/CallToAction';
 import CommentSection from '../components/CommentSection';
 import PostCard from '../components/PostCard';
@@ -13,13 +12,14 @@ export default function PostPage() {
   const [post, setPost] = useState(null);
   const [recentPosts, setRecentPosts] = useState([]);
 
+
   useEffect(() => {
     const fetchPost = async () => {
       setLoading(true);
-      setPost(null);
       setError(false);
 
       try {
+        // ✅ Fetch the post by slug
         const res = await fetch(`/api/post/getposts?slug=${postSlug}`);
         const data = await res.json();
         if (!res.ok || !data.posts.length) {
@@ -28,7 +28,21 @@ export default function PostPage() {
           return;
         }
 
-        setPost(data.posts[0]); 
+        const postData = data.posts[0];
+        setPost(postData);
+
+        // ✅ Increment view count
+        const updateRes = await fetch(`/api/post/increment-views/${postData._id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+        });
+
+        const updateData = await updateRes.json();
+        if (updateRes.ok) {
+          // ✅ Ensure UI updates by setting the new `views` count
+          setPost((prev) => ({ ...prev, views: updateData.views }));
+        }
+
         setLoading(false);
       } catch (error) {
         setError(true);
@@ -39,35 +53,10 @@ export default function PostPage() {
     fetchPost();
   }, [postSlug]);
 
-  // Fetch 4 articles to filter out the currently viewed post and limit to 3
-  useEffect(() => {
-    const fetchRecentPosts = async () => {
-      try {
-        const res = await fetch(`/api/post/getposts?limit=4`);
-        const data = await res.json();
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error loading post.</p>;
 
-        if (res.ok && post) {
-          // Exclude the currently viewed post from the recent articles
-          const filteredPosts = data.posts.filter((p) => p._id !== post._id);
-          setRecentPosts(filteredPosts.slice(0, 3)); // Ensure exactly 3 articles
-        }
-      } catch (error) {
-        console.log(error.message);
-      }
-    };
-
-    if (post) {
-      fetchRecentPosts();
-    }
-  }, [post]);
-
-  if (loading)
-    return (
-      <div className='flex justify-center items-center min-h-screen'>
-        <Spinner size='xl' />
-      </div>
-    );
-
+  
     
   return (
     <main className='p-3 flex flex-col max-w-6xl mx-auto min-h-screen'>
@@ -89,6 +78,12 @@ export default function PostPage() {
   alt={post?.title}
   className='mt-10 p-3 max-h-[600px] w-full object-cover'
 />
+      {/* ✅ Show correct view count */}
+    
+    <div>
+      <h1>{post.title}</h1>
+      <p>👁️ {post.views || 0} views</p> {/* ✅ Display the updated views */}
+    </div>
 
       <div className='flex justify-between p-3 border-b border-slate-500 mx-auto w-full max-w-2xl text-xs'>
         <span>{post && new Date(post.createdAt).toLocaleDateString()}</span>

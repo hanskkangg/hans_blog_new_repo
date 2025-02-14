@@ -80,6 +80,35 @@ export const getposts = async (req, res, next) => {
   }
 };
 
+export const incrementViews = async (req, res, next) => {
+  try {
+    const { postId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+      return next(errorHandler(400, "🚨 Invalid post ID!"));
+    }
+
+    console.log(`👁️ Incrementing view count for Post ID: ${postId}`);
+
+    // ✅ Find the post and increment views
+    const post = await Post.findByIdAndUpdate(
+      postId,
+      { $inc: { views: 1 } }, // 🔥 Increment the view count
+      { new: true } // ✅ Ensure it returns the updated post
+    );
+
+    if (!post) {
+      return next(errorHandler(404, "🚨 Post not found!"));
+    }
+
+    console.log(`✅ Updated views: ${post.views}`);
+    res.status(200).json({ success: true, views: post.views });
+  } catch (error) {
+    console.error("🔥 View Count Error:", error);
+    next(error);
+  }
+};
+
 
 
 

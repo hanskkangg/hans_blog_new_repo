@@ -38,6 +38,10 @@ const postSchema = new mongoose.Schema(
         type: { type: String, enum: ["image", "video"], required: true },
       },
     ],
+    views: {
+      type: Number,
+      default: 0, // ✅ Track the number of views (default 0)
+    },
   },
   { timestamps: true }
 );
