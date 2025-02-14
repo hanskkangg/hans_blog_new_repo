@@ -170,14 +170,19 @@ export default function DashboardComp() {
             </Table.Head>
             {comments &&
               comments.map((comment) => (
+
                 <Table.Body key={comment._id} className='divide-y'>
-                  <Table.Row className='bg-white dark:border-gray-700 dark:bg-gray-800'>
-                    <Table.Cell className='w-96'>
-                        <p className='line-clamp-2'>{comment.content}</p>
-                    </Table.Cell>
-                    <Table.Cell>{comment.numberOfLikes}</Table.Cell>
-                  </Table.Row>
-                </Table.Body>
+                <Table.Row className='bg-white dark:border-gray-700 dark:bg-gray-800'>
+                  <Table.Cell className="max-w-xs truncate">
+                    <p className="whitespace-normal break-words overflow-hidden text-ellipsis p-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm">
+                      {comment.content}
+                    </p>
+                  </Table.Cell>
+                  <Table.Cell className="text-center">{comment.numberOfLikes}</Table.Cell>
+                </Table.Row>
+              </Table.Body>
+              
+
               ))}
           </Table>
         </div>

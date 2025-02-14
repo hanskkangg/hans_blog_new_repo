@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
-import { set } from 'mongoose';
 
 export default function DashPosts() {
   const { currentUser } = useSelector((state) => state.user);
@@ -11,6 +10,7 @@ export default function DashPosts() {
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [postIdToDelete, setPostIdToDelete] = useState('');
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -20,7 +20,7 @@ export default function DashPosts() {
           { cache: "no-store" }
         );
         const data = await res.json();
-  
+
         if (res.ok) {
           setUserPosts(data.posts.map(post => ({
             ...post,
@@ -34,10 +34,10 @@ export default function DashPosts() {
         console.error("🔥 Fetch Error:", error.message);
       }
     };
-  
-    fetchPosts(); // ✅ Fetch only on mount
-  }, []); // ✅ Empty dependency array to prevent re-fetching
-  
+
+    fetchPosts();
+  }, []);
+
   const handleShowMore = async () => {
     const startIndex = userPosts.length;
     try {
@@ -56,22 +56,12 @@ export default function DashPosts() {
     }
   };
 
-  const updatePostViews = (postId, newViews) => {
-    setUserPosts((prevPosts) =>
-      prevPosts.map((post) =>
-        post._id === postId ? { ...post, views: newViews } : post
-      )
-    );
-  };
-  
   const handleDeletePost = async () => {
     setShowModal(false);
     try {
       const res = await fetch(
         `/api/post/deletepost/${postIdToDelete}/${currentUser._id}`,
-        {
-          method: 'DELETE',
-        }
+        { method: 'DELETE' }
       );
       const data = await res.json();
       if (!res.ok) {
@@ -85,35 +75,9 @@ export default function DashPosts() {
       console.log(error.message);
     }
   };
-  const handleUpdatePost = async (postId) => {
-    try {
-      const res = await fetch(`/api/post/updatepost/${postId}/${currentUser._id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData), // ✅ Send only necessary data
-      });
-  
-      const updatedPost = await res.json();
-      if (!res.ok) {
-        console.log("🚨 Update failed:", updatedPost);
-        return;
-      }
-  
-      // ✅ Fix: Only update **one post** in state instead of replacing all posts
-      setUserPosts((prevPosts) =>
-        prevPosts.map((post) =>
-          post._id === postId ? { ...post, ...updatedPost } : post
-        )
-      );
-  
-      console.log("✅ Post updated successfully:", updatedPost);
-    } catch (error) {
-      console.error("🔥 Update Error:", error);
-    }
-  };
-  
+
   return (
-    <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
+    <div className='table-auto overflow-x-auto md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
       {currentUser.isAdmin && userPosts.length > 0 ? (
         <>
           <Table hoverable className='shadow-md'>
@@ -124,61 +88,62 @@ export default function DashPosts() {
               <Table.HeadCell>Category</Table.HeadCell>
               <Table.HeadCell>Views</Table.HeadCell>
               <Table.HeadCell>Likes</Table.HeadCell>
-              <Table.HeadCell>Comments</Table.HeadCell> {/* ✅ Added Comments Column */}
+              <Table.HeadCell>Comments</Table.HeadCell> 
               <Table.HeadCell>Delete</Table.HeadCell>
-              <Table.HeadCell>
-                <span>Edit</span>
-              </Table.HeadCell>
+              <Table.HeadCell>Edit</Table.HeadCell>
             </Table.Head>
 
             <Table.Body className='divide-y'>
-  {userPosts.map((post) => (
-    <Table.Row key={post._id} className='bg-white dark:border-gray-700 dark:bg-gray-800'>
-      <Table.Cell>{new Date(post.updatedAt).toLocaleDateString()}</Table.Cell>
-      <Table.Cell>
-        <Link to={post.slug ? `/post/${post.slug}` : '#'}>
-          <img
-            src={post.headerImage || "/default-placeholder.jpg"}
-            onError={(e) => (e.target.src = "/default-placeholder.jpg")}
-            alt={post.title}
-            className='w-20 h-10 object-cover bg-gray-500'
-          />
-        </Link>
-      </Table.Cell>
-      <Table.Cell>
-        <Link className='font-medium text-gray-900 dark:text-white' to={`/post/${post.slug}`}>
-          {post.title}
-        </Link>
-      </Table.Cell>
-      <Table.Cell>{post.category}</Table.Cell>
-      <Table.Cell className='text-center'>👁️ {post.views || 0}</Table.Cell>
+              {userPosts.length > 0 &&
+                userPosts.map((post) => (
+                  <Table.Row key={post._id} className='bg-white dark:border-gray-700 dark:bg-gray-800'>
+                    <Table.Cell>{new Date(post.updatedAt).toLocaleDateString()}</Table.Cell>
 
-<Table.Cell>❤️ {post.likes?.length || 0}</Table.Cell>
-<Table.Cell>💬 {post.commentsCount !== undefined ? post.commentsCount : 0}</Table.Cell>
+                    <Table.Cell>
+                      <Link to={post.slug ? `/post/${post.slug}` : '#'}>
+                        <img
+                          src={post.headerImage || "/default-placeholder.jpg"}
+                          onError={(e) => (e.target.src = "/default-placeholder.jpg")}
+                          alt={post.title}
+                          className='w-20 h-10 object-cover bg-gray-500 rounded-md'
+                        />
+                      </Link>
+                    </Table.Cell>
 
-                  
-      <Table.Cell>
-        <span
-          onClick={() => {
-            setShowModal(true);
-            setPostIdToDelete(post._id);
-          }}
-          className='font-medium text-red-500 hover:underline cursor-pointer'
-        >
-          Delete
-        </span>
-      </Table.Cell>
-      <Table.Cell>
-        <Link className='text-teal-500 hover:underline' to={`/update-post/${post._id}`}>
-          <span>Edit</span>
-        </Link>
-      </Table.Cell>
-    </Table.Row>
-  ))}
-</Table.Body>
-</Table>
+                    <Table.Cell>
+                      <Link className='font-medium text-gray-900 dark:text-white' to={`/post/${post.slug}`}>
+                        {post.title}
+                      </Link>
+                    </Table.Cell>
 
-{showMore && (
+                    <Table.Cell>{post.category}</Table.Cell>
+                    <Table.Cell className='text-center'>👁️ {post.views || 0}</Table.Cell>
+                    <Table.Cell>❤️ {post.likes?.length || 0}</Table.Cell>
+                    <Table.Cell>💬 {post.commentsCount !== undefined ? post.commentsCount : 0}</Table.Cell>
+
+                    <Table.Cell>
+                      <span
+                        onClick={() => {
+                          setShowModal(true);
+                          setPostIdToDelete(post._id);
+                        }}
+                        className='font-medium text-red-500 hover:underline cursor-pointer'
+                      >
+                        Delete
+                      </span>
+                    </Table.Cell>
+
+                    <Table.Cell>
+                      <Link className='text-teal-500 hover:underline' to={`/update-post/${post._id}`}>
+                        Edit
+                      </Link>
+                    </Table.Cell>
+                  </Table.Row>
+                ))}
+            </Table.Body>
+          </Table>
+
+          {showMore && (
             <button
               onClick={handleShowMore}
               className='w-full text-teal-500 self-center text-sm py-7'
@@ -186,11 +151,11 @@ export default function DashPosts() {
               Show more
             </button>
           )}
-
         </>
       ) : (
         <p>You have no posts yet!</p>
       )}
+
       <Modal
         show={showModal}
         onClose={() => setShowModal(false)}
