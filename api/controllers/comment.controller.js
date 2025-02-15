@@ -2,6 +2,41 @@ import Comment from '../models/comment.model.js';
 import Post from '../models/post.model.js';
 import User from '../models/user.model.js';
 
+export const getcomments = async (req, res, next) => {
+  if (!req.user.isAdmin)
+    return next(errorHandler(403, 'You are not allowed to get all comments'));
+
+  try {
+    const startIndex = parseInt(req.query.startIndex) || 0;
+    const limit = parseInt(req.query.limit) || 9;
+
+    // ✅ Calculate last month's date range
+    const currentDate = new Date();
+    const lastMonth = new Date();
+    lastMonth.setMonth(lastMonth.getMonth() - 1);
+
+    // ✅ Count total comments
+    const totalComments = await Comment.countDocuments();
+
+    // ✅ Count comments created in the last month
+    const lastMonthComments = await Comment.countDocuments({
+      createdAt: { $gte: lastMonth, $lt: currentDate },
+    });
+
+    // ✅ Fetch latest comments
+    const comments = await Comment.find()
+      .sort({ createdAt: -1 }) // 🔥 Newest comments first
+      .skip(startIndex)
+      .limit(limit)
+      .populate("userId", "username email") // ✅ Populate user info
+      .populate("postId", "title slug");
+
+    res.status(200).json({ comments, totalComments, lastMonthComments });
+  } catch (error) {
+    console.error("🔥 Error fetching comments:", error);
+    next(error);
+  }
+};
 
 export const createComment = async (req, res, next) => {
   try {
@@ -107,31 +142,6 @@ export const deleteComment = async (req, res, next) => {
   }
 };
 
-export const getcomments = async (req, res, next) => {
-  if (!req.user.isAdmin)
-    return next(errorHandler(403, 'You are not allowed to get all comments'));
-
-  try {
-    const startIndex = parseInt(req.query.startIndex) || 0;
-    const limit = parseInt(req.query.limit) || 9;
-
-    // ✅ Ensure comments are sorted by `createdAt` in descending order (newest first)
-    const comments = await Comment.find()
-      .sort({ createdAt: -1 }) // 🔥 Newest comments at the top
-      .skip(startIndex)
-      .limit(limit)
-      .populate("userId", "username email") // ✅ Populate user info
-      .populate("postId", "title slug")
-
-
-    const totalComments = await Comment.countDocuments();
-
-    res.status(200).json({ comments, totalComments });
-  } catch (error) {
-    console.error("🔥 Error fetching comments:", error);
-    next(error);
-  }
-};
 export const getUserComments = async (req, res, next) => {
   try {
     const userId = req.params.userId;
