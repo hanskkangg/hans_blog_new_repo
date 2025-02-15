@@ -4,12 +4,9 @@ import DashSidebar from '../components/DashSidebar';
 import DashProfile from '../components/DashProfile';
 import DashPosts from '../components/DashPosts';
 import DashUsers from '../components/DashUsers';
-
 import DashComments from '../components/DashComments';
-
+import MyComments from '../components/MyComments'; // ✅ Import new component
 import DashboardComp from '../components/DashboardComp';
-
-
 
 export default function Dashboard() {
   const location = useLocation();
@@ -21,8 +18,7 @@ export default function Dashboard() {
     if (tabFromUrl) {
       setTab(tabFromUrl);
     }
-  },  [location.search]);
-
+  }, [location.search]);
 
   return (
     <div className='min-h-screen flex flex-col md:flex-row'>
@@ -30,18 +26,17 @@ export default function Dashboard() {
         {/* Sidebar */}
         <DashSidebar />
       </div>
+
       {/* profile... */}
-      
       {tab === 'profile' && <DashProfile />}
       {/* posts... */}
       {tab === 'posts' && <DashPosts />}
-      
       {/* users */}
       {tab === 'users' && <DashUsers />}
-      
-      {/* comments  */}
+      {/* Admin comments */}
       {tab === 'comments' && <DashComments />}
-      
+      {/* User's own comments */}
+      {tab === 'mycomments' && <MyComments />}
       {/* dashboard comp */}
       {tab === 'dash' && <DashboardComp />}
     </div>

@@ -121,13 +121,26 @@ export const getcomments = async (req, res, next) => {
       .skip(startIndex)
       .limit(limit)
       .populate("userId", "username email") // ✅ Populate user info
-      .populate("postId", "title"); // ✅ Populate post info
+      .populate("postId", "title slug")
+
 
     const totalComments = await Comment.countDocuments();
 
     res.status(200).json({ comments, totalComments });
   } catch (error) {
     console.error("🔥 Error fetching comments:", error);
+    next(error);
+  }
+};
+export const getUserComments = async (req, res, next) => {
+  try {
+    const userId = req.params.userId;
+    if (!userId) return next(errorHandler(400, 'User ID is required'));
+
+    const comments = await Comment.find({ userId }).sort({ createdAt: -1 }).populate("postId", "title");
+    
+    res.status(200).json({ comments });
+  } catch (error) {
     next(error);
   }
 };

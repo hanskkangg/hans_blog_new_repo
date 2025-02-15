@@ -23,8 +23,15 @@ export default function PostPage() {
       setError(false);
   
       try {
-        const res = await fetch(`/api/post/getposts?slug=${postSlug}`);
-        const data = await res.json();
+        let res = await fetch(`/api/post/getposts?slug=${postSlug}`);
+        let data = await res.json();
+  
+        // ❌ If slug doesn't work, try fetching by ID
+        if (!res.ok || !data.posts || data.posts.length === 0) {
+          console.warn("❌ Slug failed, trying ID...");
+          res = await fetch(`/api/post/getposts?id=${postSlug}`);
+          data = await res.json();
+        }
   
         if (!res.ok || !data.posts || data.posts.length === 0) {
           setError(true);
@@ -33,19 +40,18 @@ export default function PostPage() {
         }
   
         const postData = data.posts[0];
-        setPost(postData); // ✅ Correctly fetch the post
+        setPost(postData); // ✅ Set post
   
         // ✅ Fetch recent posts excluding the current one
         const recentRes = await fetch(`/api/post/getposts?limit=4&sort=desc`);
         const recentData = await recentRes.json();
   
         if (recentRes.ok) {
-          // ✅ Exclude the current post and keep the **next 3 recent articles**
           const filteredRecentPosts = recentData.posts.filter(p => p._id !== postData._id).slice(0, 3);
           setRecentPosts(filteredRecentPosts);
         }
   
-        // ✅ Increment view count only if post exists
+        // ✅ Increment view count
         if (postData._id) {
           const updateRes = await fetch(`/api/post/increment-views/${postData._id}`, {
             method: "PUT",
@@ -54,7 +60,7 @@ export default function PostPage() {
   
           const updateData = await updateRes.json();
           if (updateRes.ok) {
-            setPost((prev) => ({ ...prev, views: updateData.views }));
+            setPost(prev => ({ ...prev, views: updateData.views }));
           }
         }
   
@@ -68,7 +74,6 @@ export default function PostPage() {
     fetchPost();
   }, [postSlug]);
   
-
 
   const handleLike = async () => {
     if (!post || !currentUser) {

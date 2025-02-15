@@ -1,11 +1,10 @@
 import { Modal, Table, Button } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom'; // ✅ Import Link for navigation
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
-import { Link } from 'react-router-dom';
 
-
-export default function DashComments() {
+export default function MyComments() {
   const { currentUser } = useSelector((state) => state.user);
   const [comments, setComments] = useState([]);
   const [showMore, setShowMore] = useState(true);
@@ -15,11 +14,7 @@ export default function DashComments() {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const endpoint = currentUser.isAdmin
-          ? `/api/comment/getcomments` // Admin: Fetch all comments
-          : `/api/comment/getUserComments/${currentUser._id}`; // User: Fetch only their comments
-
-        const res = await fetch(endpoint, {
+        const res = await fetch(`/api/comment/getUserComments/${currentUser._id}`, {
           headers: { Authorization: `Bearer ${currentUser?.token}` },
         });
         const data = await res.json();
@@ -42,11 +37,7 @@ export default function DashComments() {
   const handleShowMore = async () => {
     const startIndex = comments.length;
     try {
-      const endpoint = currentUser.isAdmin
-        ? `/api/comment/getcomments?startIndex=${startIndex}`
-        : `/api/comment/getUserComments/${currentUser._id}?startIndex=${startIndex}`;
-
-      const res = await fetch(endpoint, {
+      const res = await fetch(`/api/comment/getUserComments/${currentUser._id}?startIndex=${startIndex}`, {
         headers: { Authorization: `Bearer ${currentUser?.token}` },
       });
       const data = await res.json();
@@ -81,12 +72,10 @@ export default function DashComments() {
   };
 
   return (
-    <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
+    <div className="table-auto overflow-x-scroll md:mx-auto p-3">
       {comments.length > 0 ? (
         <>
-          <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
-            {currentUser.isAdmin ? "All User Comments" : "Your Comments"}
-          </h2>
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Your Comments</h2>
 
           <Table hoverable className="shadow-md mt-4">
             <Table.Head>
@@ -94,7 +83,6 @@ export default function DashComments() {
               <Table.HeadCell>Comment content</Table.HeadCell>
               <Table.HeadCell>Number of likes</Table.HeadCell>
               <Table.HeadCell>Post Title</Table.HeadCell>
-              {currentUser.isAdmin && <Table.HeadCell>User (Email + Username)</Table.HeadCell>}
               <Table.HeadCell>Delete</Table.HeadCell>
             </Table.Head>
 
@@ -110,6 +98,7 @@ export default function DashComments() {
                   </Table.Cell>
 
                   <Table.Cell>{comment.numberOfLikes}</Table.Cell>
+
                   <Table.Cell>
   {comment.postId ? (
     <Link
@@ -123,11 +112,6 @@ export default function DashComments() {
   )}
 </Table.Cell>
 
-                  {currentUser.isAdmin && (
-                    <Table.Cell>
-                      {comment.userId?.email ? `${comment.userId.email} (${comment.userId.username})` : "Unknown User"}
-                    </Table.Cell>
-                  )}
 
                   <Table.Cell>
                     <span
@@ -146,16 +130,13 @@ export default function DashComments() {
           </Table>
 
           {showMore && (
-            <button
-              onClick={handleShowMore}
-              className="w-full text-teal-500 self-center text-sm py-7"
-            >
+            <button onClick={handleShowMore} className="w-full text-teal-500 self-center text-sm py-7">
               Show more
             </button>
           )}
         </>
       ) : (
-        <p>{currentUser.isAdmin ? "No comments found!" : "You haven't made any comments yet!"}</p>
+        <p>You haven't made any comments yet!</p>
       )}
 
       <Modal show={showModal} onClose={() => setShowModal(false)} popup size="md">
@@ -163,9 +144,7 @@ export default function DashComments() {
         <Modal.Body>
           <div className="text-center">
             <HiOutlineExclamationCircle className="h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto" />
-            <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">
-              Are you sure you want to delete this comment?
-            </h3>
+            <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">Are you sure you want to delete this comment?</h3>
             <div className="flex justify-center gap-4">
               <Button color="failure" onClick={handleDeleteComment}>
                 Yes, I'm sure
