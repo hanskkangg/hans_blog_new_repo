@@ -118,7 +118,8 @@ export default function DashPosts() {
 
                     <Table.Cell>{post.category}</Table.Cell>
                     <Table.Cell className='text-center'>👁️ {post.views || 0}</Table.Cell>
-                    <Table.Cell>❤️ {post.likes?.length || 0}</Table.Cell>
+                    <Table.Cell>❤️ {post.likesCount || 0}</Table.Cell>
+
                     <Table.Cell>💬 {post.commentsCount !== undefined ? post.commentsCount : 0}</Table.Cell>
 
                     <Table.Cell>

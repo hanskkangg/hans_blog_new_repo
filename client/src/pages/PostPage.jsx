@@ -74,7 +74,6 @@ export default function PostPage() {
     fetchPost();
   }, [postSlug]);
   
-
   const handleLike = async () => {
     if (!post || !currentUser) {
       alert("You must be logged in to like posts!");
@@ -98,12 +97,12 @@ export default function PostPage() {
   
       const data = await res.json();
       if (res.ok) {
-        // ✅ Toggle like/unlike state
         setPost((prev) => ({
           ...prev,
           likes: data.likedByUser
             ? [...(prev.likes || []), currentUser._id] // ✅ Add like
-            : prev.likes.filter(id => id !== currentUser._id), // ✅ Remove like
+            : (prev.likes || []).filter(id => id !== currentUser._id), // ✅ Remove like
+          likesCount: data.likes, // ✅ Update likes count immediately
         }));
       } else {
         alert(data.message);
@@ -140,14 +139,16 @@ export default function PostPage() {
         <p>👁️ {post.views || 0} views</p>
         <p>📅 {new Date(post.createdAt).toLocaleDateString()}</p>
         <p>💬 {post.commentsCount || 0} comments</p>
-        <p>❤️ {post.likes?.length || 0} likes</p>
+        
+        <p>❤️ {post.likesCount || 0} likes</p>
+
         <Button 
   color={hasUserLiked ? "red" : "pink"} 
   pill 
   size="xs" 
   onClick={handleLike}
 >
-  {hasUserLiked ? "💔 Unlike" : "❤️ Like"} ({post.likes?.length || 0})
+  {hasUserLiked ? "💔 Unlike" : "❤️ Like"} ({post.likesCount || 0})
 </Button>
 
 

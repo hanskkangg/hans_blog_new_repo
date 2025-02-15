@@ -2,6 +2,10 @@ import Post from '../models/post.model.js';
 import { errorHandler } from '../utils/error.js';
 import mongoose from "mongoose"; // ✅ Add this line
 import Comment from '../models/comment.model.js'; // ✅ Import Comment model
+
+let sortOption = { createdAt: -1 }; // Default: Latest posts first
+
+
 export const create = async (req, res, next) => {
   try {
     console.log("🔥 Incoming Request:", req.body);
@@ -37,17 +41,29 @@ export const create = async (req, res, next) => {
   }
 };
 
+
 export const getposts = async (req, res, next) => {
   try {
     console.log("🔹 Received Request:", req.query);
 
     const startIndex = parseInt(req.query.startIndex) || 0;
-    const limit = parseInt(req.query.limit) || 9; // ✅ Default to 9 posts
+    const limit = parseInt(req.query.limit) || 9;
 
     let query = {};
 
+    if (req.query.searchTerm) {
+      query.$or = [
+        { title: { $regex: req.query.searchTerm, $options: "i" } },
+        { content: { $regex: req.query.searchTerm, $options: "i" } }
+      ];
+    }
+
     if (req.query.slug) {
       query.slug = req.query.slug;
+    }
+
+    if (req.query.category && req.query.category !== "all") {
+      query.category = req.query.category;
     }
 
     if (req.query.userId && !req.query.isAdmin) {
@@ -60,38 +76,69 @@ export const getposts = async (req, res, next) => {
 
     console.log("🔹 Fetching Posts with Query:", query);
 
-    // 🔥 Fetch total number of posts
+    // ✅ Apply correct sorting based on query parameter
+    let sortOption = { createdAt: -1 }; // Default: Latest posts first
+
+    if (req.query.sort === "asc") {
+      sortOption = { createdAt: 1 }; // ✅ Oldest first
+    } else if (req.query.sort === "most-liked") {
+      sortOption = { likesCount: -1 }; // ✅ Most liked
+    } else if (req.query.sort === "most-viewed") {
+      sortOption = { views: -1 }; // ✅ Most viewed
+    }
+
+    let aggregationPipeline = [
+      { $match: query }, 
+      {
+        $lookup: {
+          from: "comments",
+          localField: "_id",
+          foreignField: "postId",
+          as: "commentsData",
+        }
+      },
+      {
+        $addFields: {
+          likesCount: { 
+            $cond: { 
+              if: { $isArray: "$likes" }, 
+              then: { $size: "$likes" }, 
+              else: 0 
+            }
+          },
+          commentsCount: { $size: "$commentsData" },
+        }
+      },
+      { $sort: sortOption }, // ✅ Apply corrected sorting
+      { $skip: startIndex },
+      { $limit: limit },
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          slug: 1,
+          content: 1,
+          category: 1,
+          headerImage: 1,
+          updatedAt: 1,
+          createdAt: 1,
+          views: 1,
+          likesCount: 1,  
+          commentsCount: 1 
+        },
+      }
+    ];
+
     const totalPosts = await Post.countDocuments(query);
+    const posts = await Post.aggregate(aggregationPipeline);
 
-    // ✅ Get posts sorted by latest `createdAt` and include `likes` and `views`
-    const posts = await Post.find(query)
-    .select("_id title slug content category headerImage updatedAt createdAt views likes")
-    .sort({ createdAt: -1 })
-    .skip(startIndex)
-    .limit(limit)
-    .lean(); // ✅ Convert to plain JS object for modification
-
-   
-// 🔥 Fetch comment count for each post
-const postsWithCommentCounts = await Promise.all(
-  posts.map(async (post) => {
-    const commentCount = await Comment.countDocuments({ postId: post._id });
-    return {
-      ...post,
-      commentsCount: commentCount, // ✅ Add comment count
-    };
-  })
-);
-
-console.log("✅ Found Posts:", postsWithCommentCounts.length, "Total Posts:", totalPosts);
-res.status(200).json({ posts: postsWithCommentCounts, totalPosts });
+    console.log("✅ Found Posts:", posts.length, "Total Posts:", totalPosts);
+    res.status(200).json({ posts, totalPosts });
   } catch (error) {
-    console.error("🔥 Server Error:", error);
-    next(error);
+    console.error("🔥 Server Error:", error.message);
+    res.status(500).json({ error: "Internal Server Error", details: error.message });
   }
 };
-
-
 export const likePost = async (req, res, next) => {
   try {
     const { postId } = req.params;
