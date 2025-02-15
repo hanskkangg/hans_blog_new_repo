@@ -6,12 +6,12 @@ import {
   HiOutlineUserGroup,
   HiAnnotation,
   HiChartPie,
+  HiPencilAlt, // ✏️ Import Pencil Icon for Create Post
 } from 'react-icons/hi';
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { signoutSuccess } from '../redux/user/userSlice';
-import { useDispatch } from 'react-redux';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export default function DashSidebar() {
   const location = useLocation();
@@ -85,22 +85,31 @@ export default function DashSidebar() {
                 </Sidebar.Item>
               </Link>
 
-              
-    <Link to='/dashboard?tab=comments'>
-      <Sidebar.Item active={tab === 'comments'} icon={HiAnnotation} as='div'>
-        All Comments
-      </Sidebar.Item>
-    </Link>
-  </>
-) : (
-  <Link to='/dashboard?tab=mycomments'>
-    <Sidebar.Item active={tab === 'mycomments'} icon={HiAnnotation} as='div'>
-      My Comments
-    </Sidebar.Item>
-  </Link>
-)}
+              <Link to='/dashboard?tab=comments'>
+                <Sidebar.Item active={tab === 'comments'} icon={HiAnnotation} as='div'>
+                  All Comments
+                </Sidebar.Item>
+              </Link>
 
-          <Sidebar.Item icon={HiArrowSmRight} className='cursor-pointer' onClick={handleSignout}>
+              {/* ✅ CREATE POST BUTTON FOR ADMIN ONLY */}
+              <Link to='/create-post'>
+                <Sidebar.Item
+                  icon={HiPencilAlt} // ✏️ Pencil Icon
+                  className='text-green-600 font-semibold hover:bg-green-200 dark:text-green-300 dark:hover:bg-green-700'
+                >
+                  Create Post
+                </Sidebar.Item>
+              </Link>
+            </>
+          ) : (
+            <Link to='/dashboard?tab=mycomments'>
+              <Sidebar.Item active={tab === 'mycomments'} icon={HiAnnotation} as='div'>
+                My Comments
+              </Sidebar.Item>
+            </Link>
+          )}
+
+          <Sidebar.Item icon={HiArrowSmRight} className='text-red-700 hover:bg-red-300 dark:text-red-700 dark:hover:bg-red-300 cursor-pointer' onClick={handleSignout}>
             Sign Out
           </Sidebar.Item>
         </Sidebar.ItemGroup>
