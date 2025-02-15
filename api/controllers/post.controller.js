@@ -48,7 +48,6 @@ export const create = async (req, res, next) => {
     next(error);
   }
 };
-
 export const getposts = async (req, res, next) => {
   try {
     console.log("🔹 Received Request:", req.query);
@@ -94,6 +93,15 @@ export const getposts = async (req, res, next) => {
       sortOption = { views: -1 }; // ✅ Most viewed
     }
 
+    // ✅ Set last month's date correctly
+    const lastMonth = new Date();
+    lastMonth.setMonth(lastMonth.getMonth() - 1);
+
+    // ✅ Count posts created last month
+    const lastMonthPosts = await Post.countDocuments({
+      createdAt: { $gte: lastMonth },
+    });
+
     let aggregationPipeline = [
       { $match: query }, 
       {
@@ -106,7 +114,6 @@ export const getposts = async (req, res, next) => {
       },
       {
         $lookup: {
-          
           from: "comments",
           localField: "_id",
           foreignField: "postId",
@@ -122,10 +129,8 @@ export const getposts = async (req, res, next) => {
               else: 0 
             }
           },
-          commentsCount: { $size: "$commentsData" }
-          ,
+          commentsCount: { $size: "$commentsData" },
           author: { $arrayElemAt: ["$authorData.username", 0] } // ✅ Extract the author's name
-       
         }
       },
       { $sort: sortOption }, // ✅ Apply corrected sorting
@@ -152,13 +157,14 @@ export const getposts = async (req, res, next) => {
     const totalPosts = await Post.countDocuments(query);
     const posts = await Post.aggregate(aggregationPipeline);
 
-    console.log("✅ Found Posts:", posts.length, "Total Posts:", totalPosts);
-    res.status(200).json({ posts, totalPosts });
+    console.log("✅ Found Posts:", posts.length, "Total Posts:", totalPosts, "Last Month Posts:", lastMonthPosts);
+    res.status(200).json({ posts, totalPosts, lastMonthPosts }); // ✅ Include lastMonthPosts in response
   } catch (error) {
     console.error("🔥 Server Error:", error.message);
     res.status(500).json({ error: "Internal Server Error", details: error.message });
   }
 };
+
 export const likePost = async (req, res, next) => {
   try {
     const { postId } = req.params;

@@ -3,6 +3,9 @@ import CallToAction from '../components/CallToAction';
 import { useEffect, useState } from 'react';
 import PostCard from '../components/PostCard';
 
+import { Button } from 'flowbite-react'; // ✅ Import Button component
+
+
 export default function Home() {
   const [recentPosts, setRecentPosts] = useState([]);
   const [trendingPosts, setTrendingPosts] = useState([]);
@@ -70,6 +73,13 @@ export default function Home() {
             ))}
           </div>
         </div>
+      </div>
+
+      {/* 🔥 Show More Button */}
+      <div className='flex justify-center mt-10'>
+        <Button gradientDuoTone="purpleToPink" as={Link} to="/search">
+          Show More Posts
+        </Button>
       </div>
     </div>
   );
