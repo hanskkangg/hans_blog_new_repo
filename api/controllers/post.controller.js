@@ -2,25 +2,34 @@ import Post from '../models/post.model.js';
 import { errorHandler } from '../utils/error.js';
 import mongoose from "mongoose"; // ✅ Add this line
 import Comment from '../models/comment.model.js'; // ✅ Import Comment model
-
 export const create = async (req, res, next) => {
   try {
-    console.log("🔥 Incoming Request:", req.body); // ✅ Check if headerImage is included
+    console.log("🔥 Incoming Request:", req.body);
+
     if (!req.body.title || !req.body.content) {
       return next(errorHandler(400, "Missing title or content"));
     }
 
+    const slug = req.body.title
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-zA-Z0-9 ]/g, "") // Remove special characters
+      .replace(/\s+/g, "-"); // Replace spaces with `-`
+
+    console.log("🔹 Generated Slug:", slug); // ✅ Debugging the slug
+
     const newPost = new Post({
       title: req.body.title,
       content: req.body.content,
-      slug: req.body.title.toLowerCase().split(" ").join("-"),
+      slug: slug,
       category: req.body.category || "uncategorized",
-      headerImage: req.body.headerImage, // ✅ Ensure backend saves the correct image
+      headerImage: req.body.headerImage,
       userId: req.user?._id || "67ac37bb4d40a958638c0265",
     });
 
     const savedPost = await newPost.save();
     console.log("✅ Post Created:", savedPost);
+
     res.status(201).json(savedPost);
   } catch (error) {
     console.error("❌ Error:", error);
