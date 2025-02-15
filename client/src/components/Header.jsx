@@ -15,7 +15,7 @@ export default function Header() {
   const { currentUser } = useSelector((state) => state.user);
   const { theme } = useSelector((state) => state.theme);
   const [searchTerm, setSearchTerm] = useState('');
-  
+
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const searchTermFromUrl = urlParams.get('searchTerm');
@@ -24,23 +24,22 @@ export default function Header() {
     }
   }, [location.search]);
 
-
-    const handleSignout = async () => {
-      try {
-        const res = await fetch('/api/user/signout', {
-          method: 'POST',
-        });
-        const data = await res.json();
-        if (!res.ok) {
-          console.log(data.message);
-        } else {
-          dispatch(signoutSuccess());
-        }
-      } catch (error) {
-        console.log(error.message);
+  const handleSignout = async () => {
+    try {
+      const res = await fetch('/api/user/signout', {
+        method: 'POST',
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        dispatch(signoutSuccess());
       }
-    };
-  
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const urlParams = new URLSearchParams(location.search);
@@ -49,64 +48,24 @@ export default function Header() {
     navigate(`/search?${searchQuery}`);
   };
 
-
   return (
-    <Navbar className="border-b-2 shadow-md bg-white dark:bg-gray-900 px-4">
-      <Link
-        to="/"
-        className="self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white"
-      >
-        <span className="px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white">
-          Hans
-        </span>
-        Blog
-      </Link>
-
-      {/* ✅ Search Bar */}
-      <form onSubmit={handleSubmit}>
-        <TextInput
-          type='text'
-          placeholder='Search...'
-          rightIcon={AiOutlineSearch}
-          className='hidden lg:inline'
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </form>
-
-      <Button className="w-12 h-10 lg:hidden" color="gray" pill>
-        <AiOutlineSearch />
-      </Button>
-
-      <div className="flex gap-4 items-center md:order-2">
-      <Button
-  className="w-12 h-12 hidden sm:inline items-center justify-center" // ✅ Adjust button size
-  color="gray"
-  pill
-  onClick={() => dispatch(toggleTheme())}
->
-  {theme === 'light' ? (
-    <FaSun className="text-3xl text-yellow-400" />  // ✅ Increased size & color
-  ) : (
-    <FaMoon className="text-3xl text-indigo-400" /> // ✅ Increased size & color
-  )}
-</Button>
-
-        {currentUser ? (
+    <Navbar className="border-b-2 shadow-md bg-white dark:bg-gray-900 px-4 relative">
+      {/* ✅ Menu Icon & Profile Image (Positioned at Top Right) */}
+      <div className="absolute top-4 right-4 sm:hidden flex items-center gap-3">
+        {currentUser && (
           <Dropdown
             arrowIcon={false}
             inline
             label={
               <Avatar
-  alt="user"
-  img={
-    currentUser?.profilePicture?.trim() || 
-    'https://cdn-icons-png.flaticon.com/512/3607/3607444.png' // ✅ Show default avatar if missing
-  }
-  rounded
-/>
-
-            
+                alt="user"
+                img={
+                  currentUser?.profilePicture?.trim() || 
+                  'https://cdn-icons-png.flaticon.com/512/3607/3607444.png'
+                }
+                rounded
+                className="w-10 h-10"
+              />
             }
           >
             <Dropdown.Header>
@@ -121,15 +80,83 @@ export default function Header() {
             <Dropdown.Divider />
             <Dropdown.Item onClick={handleSignout}>Sign out</Dropdown.Item>
           </Dropdown>
-        ) : (
-          <Link to="/sign-in">
-            <Button gradientDuoTone="purpleToBlue" outline>
-              Sign In
-            </Button>
-          </Link>
         )}
 
+        {/* ✅ Menu Icon */}
         <Navbar.Toggle />
+      </div>
+
+      {/* ✅ Blog Title */}
+      <Link
+        to="/"
+        className="self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white"
+      >
+        <span className="px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white">
+          Hans
+        </span>
+        Blog
+      </Link>
+
+      {/* ✅ Centered Search Bar (Lowered on Small Screens) */}
+      <div className="w-full flex justify-center mt-16 sm:mt-0">
+        <form onSubmit={handleSubmit} className="w-full md:w-auto">
+          <TextInput
+            type="text"
+            placeholder="Search..."
+            rightIcon={AiOutlineSearch}
+            className="w-full max-w-md px-4 py-2 rounded-lg border-gray-300 dark:border-gray-600
+                      focus:ring-2 focus:ring-indigo-400 focus:border-indigo-500
+                      sm:w-64 md:w-96 lg:w-[500px]"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </form>
+      </div>
+
+      {/* ✅ Icons & User Dropdown for Larger Screens */}
+      <div className="hidden sm:flex gap-4 items-center">
+        <Button
+          className="w-12 h-12 hidden sm:inline items-center justify-center"
+          color="gray"
+          pill
+          onClick={() => dispatch(toggleTheme())}
+        >
+          {theme === 'light' ? (
+            <FaSun className="text-3xl text-yellow-400" />
+          ) : (
+            <FaMoon className="text-3xl text-indigo-400" />
+          )}
+        </Button>
+
+        {currentUser && (
+          <Dropdown
+            arrowIcon={false}
+            inline
+            label={
+              <Avatar
+                alt="user"
+                img={
+                  currentUser?.profilePicture?.trim() || 
+                  'https://cdn-icons-png.flaticon.com/512/3607/3607444.png'
+                }
+                rounded
+                className="w-10 h-10"
+              />
+            }
+          >
+            <Dropdown.Header>
+              <span className="block text-sm font-semibold">{currentUser.username}</span>
+              <span className="block text-sm text-gray-500 truncate">
+                {currentUser.email}
+              </span>
+            </Dropdown.Header>
+            <Link to="/dashboard?tab=profile">
+              <Dropdown.Item>Profile</Dropdown.Item>
+            </Link>
+            <Dropdown.Divider />
+            <Dropdown.Item onClick={handleSignout}>Sign out</Dropdown.Item>
+          </Dropdown>
+        )}
       </div>
 
       {/* ✅ Visible on Large Screens */}
@@ -141,6 +168,14 @@ export default function Header() {
           } hover:bg-indigo-500 hover:text-white transition duration-300`}
         >
           Home
+        </Link>
+        <Link
+          to="/search"
+          className={`px-4 py-2 rounded-lg ${
+            path === '/' ? 'text-indigo-600 font-semibold' : 'text-gray-700 dark:text-gray-300'
+          } hover:bg-indigo-500 hover:text-white transition duration-300`}
+        >
+          Posts
         </Link>
         <Link
           to="/about"
@@ -164,6 +199,9 @@ export default function Header() {
       <Navbar.Collapse className="lg:hidden">
         <Navbar.Link active={path === '/'} as="div">
           <Link to="/">Home</Link>
+        </Navbar.Link>
+        <Navbar.Link active={path === "/search"} as="div">
+          <Link to="/search">Posts</Link>
         </Navbar.Link>
         <Navbar.Link active={path === '/about'} as="div">
           <Link to="/about">About</Link>

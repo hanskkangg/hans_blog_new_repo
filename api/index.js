@@ -10,37 +10,31 @@ import path from 'path';
 
 dotenv.config();
 
-mongoose
-  .connect(process.env.MONGO)
-  .then(() => {
-    console.log('MongoDb is connected');
-  })
-  .catch((err) => {
-    console.log(err);
-  });
-
-const __dirname = path.resolve();
-
 const app = express();
-
 app.use(express.json());
 app.use(cookieParser());
 
-app.listen(3000, () => {
-  console.log('Server is running on port 3000!');
-});
+mongoose
+  .connect(process.env.MONGO, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('✅ MongoDB Connected'))
+  .catch((err) => console.error('❌ MongoDB Connection Error:', err));
 
+// ✅ Serve Static Frontend (for full-stack apps)
+const __dirname = path.resolve();
+app.use(express.static(path.join(__dirname, 'client', 'dist')));
+
+// ✅ API Routes
 app.use('/api/user', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/post', postRoutes);
 app.use('/api/comment', commentRoutes);
 
-app.use(express.static(path.join(__dirname, '/client/dist')));
-
+// ✅ Catch-All Route (for React Routing)
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
 });
 
+// ✅ Error Handling Middleware
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || 'Internal Server Error';
@@ -50,3 +44,6 @@ app.use((err, req, res, next) => {
     message,
   });
 });
+
+// ✅ Vercel Export (No app.listen())
+export default app;
