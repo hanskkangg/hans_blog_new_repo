@@ -10,7 +10,7 @@ export const getcomments = async (req, res, next) => {
     const startIndex = parseInt(req.query.startIndex) || 0;
     const limit = parseInt(req.query.limit) || 9;
 
-    // ✅ Calculate last month's date range
+    // ✅ Calculate last month's date rangess
     const currentDate = new Date();
     const lastMonth = new Date();
     lastMonth.setMonth(lastMonth.getMonth() - 1);
