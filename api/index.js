@@ -35,5 +35,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-// ✅ Vercel Export (No app.listen())
+// ❌ REMOVE: `app.listen(...)` – Vercel handles this automatically
+
+// ✅ Export for Vercel (Correct!)
 export default app;
