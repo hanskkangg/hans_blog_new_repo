@@ -57,31 +57,38 @@ export const likeComment = async (req, res, next) => {
     next(error);
   }
 };
-
 export const editComment = async (req, res, next) => {
   try {
+    console.log("🔍 Editing comment: ", req.params.commentId);
+    console.log("📌 Received User ID: ", req.user.id);
+    
     const comment = await Comment.findById(req.params.commentId);
     if (!comment) {
+      console.log("❌ Comment not found");
       return next(errorHandler(404, 'Comment not found'));
     }
-    if (comment.userId !== req.user.id && !req.user.isAdmin) {
-      return next(
-        errorHandler(403, 'You are not allowed to edit this comment')
-      );
+
+    console.log("✅ Comment User ID: ", comment.userId.toString());
+
+    if (comment.userId.toString() !== req.user.id.toString() && !req.user.isAdmin) {
+      console.log("🚫 Unauthorized");
+      return next(errorHandler(403, 'You are not allowed to edit this comment'));
     }
 
     const editedComment = await Comment.findByIdAndUpdate(
       req.params.commentId,
-      {
-        content: req.body.content,
-      },
+      { content: req.body.content },
       { new: true }
     );
+
+    console.log("✅ Successfully updated comment: ", editedComment);
     res.status(200).json(editedComment);
   } catch (error) {
+    console.log("🔥 Error editing comment:", error);
     next(error);
   }
 };
+
 
 export const deleteComment = async (req, res, next) => {
   try {
@@ -89,11 +96,10 @@ export const deleteComment = async (req, res, next) => {
     if (!comment) {
       return next(errorHandler(404, 'Comment not found'));
     }
-    if (comment.userId !== req.user.id && !req.user.isAdmin) {
-      return next(
-        errorHandler(403, 'You are not allowed to delete this comment')
-      );
+    if (comment.userId.toString() !== req.user.id.toString() && !req.user.isAdmin) {
+      return next(errorHandler(403, 'You are not allowed to edit this comment'));
     }
+    
     await Comment.findByIdAndDelete(req.params.commentId);
     res.status(200).json('Comment has been deleted');
   } catch (error) {

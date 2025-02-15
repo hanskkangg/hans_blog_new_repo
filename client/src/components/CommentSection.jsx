@@ -91,14 +91,14 @@ export default function CommentSection({ postId }) {
       console.log(error.message);
     }
   };
-
-  const handleEdit = async (comment, editedContent) => {
+  const handleEdit = (commentId, editedContent) => {
     setComments(
       comments.map((c) =>
-        c._id === comment._id ? { ...c, content: editedContent } : c
+        c._id === commentId ? { ...c, content: editedContent } : c
       )
     );
   };
+  
 
   const handleDelete = async (commentId) => {
     setShowModal(false);
