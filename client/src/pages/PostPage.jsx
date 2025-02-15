@@ -1,10 +1,14 @@
 import { Button, Spinner } from 'flowbite-react';
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams,useNavigate } from 'react-router-dom';
 import CallToAction from '../components/CallToAction';
 import CommentSection from '../components/CommentSection';
 import PostCard from '../components/PostCard';
 import { useSelector } from "react-redux"; // ✅ Import Redux Hook
+import { Modal } from 'flowbite-react';
+
+
+import { HiOutlineExclamationCircle } from 'react-icons/hi'; //
 
 export default function PostPage() {
   const { postSlug } = useParams();
@@ -14,6 +18,11 @@ export default function PostPage() {
   const [post, setPost] = useState(null);
   const [recentPosts, setRecentPosts] = useState([]);
   const hasUserLiked = post?.likes?.includes(currentUser?._id) || false;
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const navigate = useNavigate();
+  const isAuthor = post?.userId === currentUser?._id;
+  const isAdmin = currentUser?.isAdmin;
 
   console.log("🔹 Current User:", currentUser);
   console.log("🔹 Current User Token:", currentUser?.token);
@@ -112,11 +121,38 @@ export default function PostPage() {
     }
   };
   
+  const handleDeletePost = async () => {
+    try {
+      const res = await fetch(`/api/post/deletepost/${post._id}/${currentUser._id}`, {
+        method: 'DELETE',
+      });
+
+      if (!res.ok) {
+        console.error("Error deleting post");
+        return;
+      }
+
+      navigate('/'); // ✅ Redirect to homepage after deletion
+    } catch (error) {
+      console.error("🔥 Delete Error:", error);
+    }
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error || !post) return <p>Error loading post or post not found.</p>; // ✅ Handle missing post
   
+
+
   return (
     <main className='p-3 flex flex-col max-w-6xl mx-auto min-h-screen'>
+            {/* ✅ Edit & Delete Buttons (Only for Author/Admin) */}
+            {(isAuthor || isAdmin) && (
+        <div className="flex justify-end gap-3 p-3">
+          <Button color="blue" onClick={() => navigate(`/update-post/${post._id}`)}>✏️ Edit</Button>
+          <Button color="red" onClick={() => setShowDeleteModal(true)}>🗑 Delete</Button>
+        </div>
+      )}
+
       <h1 className='text-3xl mt-10 p-3 text-center font-serif max-w-2xl mx-auto lg:text-4xl'>
         {post && post.title}
       </h1>
@@ -180,6 +216,20 @@ export default function PostPage() {
   </div>
 </div>
 
+      {/* ✅ Delete Confirmation Modal */}
+      <Modal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} popup size="md">
+        <Modal.Header />
+        <Modal.Body>
+          <div className='text-center'>
+            <HiOutlineExclamationCircle className='h-14 w-14 text-gray-400 mb-4 mx-auto' />
+            <h3 className='mb-5 text-lg text-gray-500'>Are you sure you want to delete this post?</h3>
+            <div className='flex justify-center gap-4'>
+              <Button color='failure' onClick={handleDeletePost}>Yes, delete</Button>
+              <Button color='gray' onClick={() => setShowDeleteModal(false)}>Cancel</Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
     </main>
   );
 }
