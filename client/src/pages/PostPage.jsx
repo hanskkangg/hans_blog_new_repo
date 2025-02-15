@@ -136,6 +136,9 @@ export default function PostPage() {
   className='mt-10 p-3 max-h-[600px] w-full object-cover'
 />
       <div className="flex justify-between items-center p-3">
+      <p className="text-gray-500 text-sm">
+    By <span className="font-medium">{post.author || "Unknown"}</span> • {new Date(post.createdAt).toLocaleDateString()}
+  </p>
         <p>👁️ {post.views || 0} views</p>
         <p>📅 {new Date(post.createdAt).toLocaleDateString()}</p>
         <p>💬 {post.commentsCount || 0} comments</p>

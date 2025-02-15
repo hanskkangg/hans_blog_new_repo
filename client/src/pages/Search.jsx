@@ -71,62 +71,82 @@ export default function Search() {
   };
 
   return (
-    <div className='flex flex-col md:flex-row'>
-      <div className='p-7 border-b md:border-r md:min-h-screen border-gray-500'>
-        <form className='flex flex-col gap-8' onSubmit={handleSubmit}>
-          <div className='flex items-center gap-2'>
-            <label className='font-semibold'>Search:</label>
-            <TextInput
-              placeholder='Search...'
-              id='searchTerm'
-              type='text'
-              value={sidebarData.searchTerm}
-              onChange={handleChange}
-            />
-          </div>
-          <div className='flex items-center gap-2'>
-            <label className='font-semibold'>Sort By:</label>
-            <Select onChange={handleChange} value={sidebarData.sort} id='sort'>
-              <option value='desc'>Latest</option>
-              <option value='asc'>Oldest</option>
-              <option value='most-viewed'>Most Viewed</option> {/* ✅ Added */}
-              <option value='most-liked'>Most Liked</option> {/* ✅ Added */}
-            </Select>
-          </div>
-          <div className='flex items-center gap-2'>
-            <label className='font-semibold'>Category:</label>
-            <Select onChange={handleChange} value={sidebarData.category} id='category'>
-              <option value='all'>All Categories</option> {/* ✅ Show all by default */}
-              <option value='javascript'>JavaScript</option>
-              <option value='reactjs'>React.js</option>
-              <option value='nextjs'>Next.js</option>
-            </Select>
-          </div>
-          <Button type='submit' outline gradientDuoTone='purpleToPink'>
-            Apply Filters
-          </Button>
-        </form>
-      </div>
-      <div className='w-full'>
-        <h1 className='text-3xl font-semibold sm:border-b border-gray-500 p-3 mt-5 '>
-          Posts results:
-        </h1>
-        <div className='p-7 flex flex-col gap-4'>
-  {!loading && posts.length === 0 && <p className='text-xl text-gray-500'>No posts found.</p>}
-  {loading && <p className='text-xl text-gray-500'>Loading...</p>}
-  {!loading && posts.map((post) => (
-    <PostCard key={post._id} post={{ 
-      ...post, 
-      likesCount: post.likesCount || 0  // ✅ Ensure `likesCount` is passed to PostCard
-    }} />
-  ))}
-  {showMore && (
-    <button onClick={handleShowMore} className='text-teal-500 text-lg hover:underline p-7 w-full'>
-      Show More
-    </button>
-  )}
-</div>
+    <div className='flex flex-col w-full max-w-4xl mx-auto p-6'>
 
+      {/* ✅ Search Filters (One Line) */}
+      <form 
+        onSubmit={handleSubmit} 
+        className='flex flex-col sm:flex-row items-center gap-4 bg-gray-100 dark:bg-gray-900 p-4 rounded-lg shadow-md'
+      >
+        {/* Search Bar */}
+        <TextInput
+          placeholder='Search posts...'
+          id='searchTerm'
+          type='text'
+          value={sidebarData.searchTerm}
+          onChange={handleChange}
+          className='flex-1 w-full sm:w-auto'
+        />
+
+        {/* Sort By */}
+        <Select 
+          id='sort' 
+          value={sidebarData.sort} 
+          onChange={handleChange} 
+          className='w-full sm:w-auto'
+        >
+          <option value='desc'>Latest</option>
+          <option value='asc'>Oldest</option>
+          <option value='most-viewed'>Most Viewed</option>
+          <option value='most-liked'>Most Liked</option>
+        </Select>
+
+        {/* Category */}
+        <Select 
+          id='category' 
+          value={sidebarData.category} 
+          onChange={handleChange} 
+          className='w-full sm:w-auto'
+        >
+          <option value='all'>All Categories</option>
+          <option value='javascript'>JavaScript</option>
+          <option value='reactjs'>React.js</option>
+          <option value='nextjs'>Next.js</option>
+        </Select>
+
+        <Button type='submit' gradientDuoTone='purpleToPink' className='w-full sm:w-auto'>
+          Search
+        </Button>
+      </form>
+
+      {/* ✅ Posts Section */}
+      <div className='w-full mt-6'>
+        <h1 className='text-2xl font-semibold text-gray-800 dark:text-white mb-4'>
+          Search Results
+        </h1>
+
+        {/* ✅ Display One Post Per Line */}
+        <div className='space-y-6'>
+          {loading && <p className='text-lg text-gray-500'>Loading...</p>}
+          {!loading && posts.length === 0 && <p className='text-lg text-gray-500'>No posts found.</p>}
+          {!loading &&
+            posts.map((post) => (
+              <div key={post._id} className="w-full">
+                <PostCard post={{ ...post, likesCount: post.likesCount || 0 }} />
+              </div>
+            ))
+          }
+        </div>
+
+        {/* ✅ Show More Button */}
+        {showMore && (
+          <button
+            onClick={handleShowMore}
+            className='mt-6 w-full text-teal-500 text-lg hover:underline p-3'
+          >
+            Show More
+          </button>
+        )}
       </div>
     </div>
   );

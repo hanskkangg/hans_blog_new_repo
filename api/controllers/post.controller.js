@@ -91,6 +91,15 @@ export const getposts = async (req, res, next) => {
       { $match: query }, 
       {
         $lookup: {
+          from: "users",  // ✅ Populate the author name
+          localField: "userId",
+          foreignField: "_id",
+          as: "authorData",
+        }
+      },
+      {
+        $lookup: {
+          
           from: "comments",
           localField: "_id",
           foreignField: "postId",
@@ -106,7 +115,10 @@ export const getposts = async (req, res, next) => {
               else: 0 
             }
           },
-          commentsCount: { $size: "$commentsData" },
+          commentsCount: { $size: "$commentsData" }
+          ,
+          author: { $arrayElemAt: ["$authorData.username", 0] } // ✅ Extract the author's name
+       
         }
       },
       { $sort: sortOption }, // ✅ Apply corrected sorting
@@ -124,7 +136,8 @@ export const getposts = async (req, res, next) => {
           createdAt: 1,
           views: 1,
           likesCount: 1,  
-          commentsCount: 1 
+          commentsCount: 1,
+          author: 1,  // ✅ Ensure the author's name is included in the response
         },
       }
     ];
