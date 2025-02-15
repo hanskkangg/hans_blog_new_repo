@@ -4,8 +4,6 @@ import mongoose from "mongoose"; // ✅ Add this line
 import Comment from '../models/comment.model.js'; // ✅ Import Comment model
 
 let sortOption = { createdAt: -1 }; // Default: Latest posts first
-
-
 export const create = async (req, res, next) => {
   try {
     console.log("🔥 Incoming Request:", req.body);
@@ -14,13 +12,23 @@ export const create = async (req, res, next) => {
       return next(errorHandler(400, "Missing title or content"));
     }
 
-    const slug = req.body.title
+    // ✅ Check if a post with the same title already exists
+    const existingPost = await Post.findOne({ title: req.body.title });
+    if (existingPost) {
+      return next(errorHandler(400, "🚨 A post with this title already exists. Please choose a unique title."));
+    }
+
+    // ✅ Generate a slug safely
+    let slug = req.body.title
       .toLowerCase()
       .trim()
-      .replace(/[^a-zA-Z0-9 ]/g, "") // Remove special characters
+      .replace(/[^a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣 ]/g, "") // Allow Korean and English
       .replace(/\s+/g, "-"); // Replace spaces with `-`
 
-    console.log("🔹 Generated Slug:", slug); // ✅ Debugging the slug
+    // ✅ Ensure slug is not empty
+    if (!slug) {
+      return next(errorHandler(400, "Slug could not be generated. Please use a valid title."));
+    }
 
     const newPost = new Post({
       title: req.body.title,
@@ -40,7 +48,6 @@ export const create = async (req, res, next) => {
     next(error);
   }
 };
-
 
 export const getposts = async (req, res, next) => {
   try {
@@ -243,6 +250,7 @@ export const deletepost = async (req, res, next) => {
     next(error);
   }
 };
+
 export const updatepost = async (req, res, next) => {
   try {
     if (!req.user.isAdmin && req.user.id !== req.params.userId) {
@@ -260,24 +268,26 @@ export const updatepost = async (req, res, next) => {
       return next(errorHandler(404, "🚨 Post not found!"));
     }
 
-    let slug = existingPost.slug; // ✅ Keep the existing slug
+    let slug = existingPost.slug; // ✅ Keep the existing slug if the title is unchanged
 
-    // ✅ If the title changes, generate a new slug
+    // ✅ If the title is changed, generate a new slug
     if (req.body.title && req.body.title !== existingPost.title) {
       slug = req.body.title
         .trim()
         .toLowerCase()
-        .replace(/[^a-zA-Z0-9 ]/g, "")
+        .replace(/[^a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣 ]/g, "")
         .replace(/\s+/g, "-");
 
-      // ✅ Check if the new slug already exists
+      // ✅ Check if another post already has the same slug
       const slugExists = await Post.findOne({ slug });
+
+      // ✅ If the slug is taken, append a timestamp to make it unique
       if (slugExists && slugExists._id.toString() !== existingPost._id.toString()) {
-        return next(errorHandler(400, "🚨 Slug already exists! Choose a different title."));
+        slug = `${slug}-${Date.now()}`;
       }
     }
 
-    // ✅ Update post without changing `updatedAt` when only views are modified
+    // ✅ Update post
     const updatedPost = await Post.findByIdAndUpdate(
       req.params.postId,
       {
