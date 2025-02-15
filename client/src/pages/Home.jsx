@@ -4,16 +4,30 @@ import { useEffect, useState } from 'react';
 import PostCard from '../components/PostCard';
 
 export default function Home() {
-  const [posts, setPosts] = useState([]);
+  const [recentPosts, setRecentPosts] = useState([]);
+  const [trendingPosts, setTrendingPosts] = useState([]);
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const res = await fetch('/api/post/getPosts');
-      const data = await res.json();
-      setPosts(data.posts);
+      try {
+        // ✅ Fetch recent posts
+        const recentRes = await fetch('/api/post/getPosts?limit=5&sort=desc');
+        const recentData = await recentRes.json();
+
+        // ✅ Fetch trending posts (most liked)
+        const trendingRes = await fetch('/api/post/getPosts?limit=5&sort=most-liked');
+        const trendingData = await trendingRes.json();
+
+        setRecentPosts(recentData.posts);
+        setTrendingPosts(trendingData.posts);
+      } catch (error) {
+        console.error("🔥 Error fetching posts:", error);
+      }
     };
+
     fetchPosts();
   }, []);
+
   return (
     <div>
       <div className='flex flex-col gap-6 p-28 px-3 max-w-6xl mx-auto '>
@@ -29,27 +43,33 @@ export default function Home() {
           View all posts
         </Link>
       </div>
+
+      {/* 🔥 Call to Action Section */}
       <div className='p-3 bg-amber-100 dark:bg-slate-700'>
         <CallToAction />
       </div>
 
-      <div className='max-w-6xl mx-auto p-3 flex flex-col gap-8 py-7'>
-        {posts && posts.length > 0 && (
+      {/* 🔥 Two-Column Layout: Recent Posts (Left) & Trending Posts (Right) */}
+      <div className='max-w-6xl mx-auto p-3 py-7 grid grid-cols-1 md:grid-cols-2 gap-8'>
+        {/* ✅ Left Column: Recent Posts (1 per row) */}
+        <div>
+          <h2 className='text-2xl font-semibold mb-4 text-center md:text-left'>Recent Posts</h2>
           <div className='flex flex-col gap-6'>
-            <h2 className='text-2xl font-semibold text-center'>Recent Posts</h2>
-            <div className='flex flex-wrap gap-4'>
-              {posts.map((post) => (
-                <PostCard key={post._id} post={post} />
-              ))}
-            </div>
-            <Link
-              to={'/search'}
-              className='text-lg text-teal-500 hover:underline text-center'
-            >
-              View all posts
-            </Link>
+            {recentPosts.map((post) => (
+              <PostCard key={post._id} post={post} />
+            ))}
           </div>
-        )}
+        </div>
+
+        {/* ✅ Right Column: Trending Posts (Most Liked) */}
+        <div>
+          <h2 className='text-2xl font-semibold mb-4 text-center md:text-left'>🔥 Trending Posts</h2>
+          <div className='flex flex-col gap-6'>
+            {trendingPosts.map((post) => (
+              <PostCard key={post._id} post={post} /> // ✅ Same format as Recent Posts
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
