@@ -1,8 +1,7 @@
-import { Button, Select, TextInput } from 'flowbite-react';
+import { Button, TextInput } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import PostCardSearch from '../components/PostCardSearch';
-
 
 export default function Search() {
   const [sidebarData, setSidebarData] = useState({
@@ -17,6 +16,10 @@ export default function Search() {
 
   const location = useLocation();
   const navigate = useNavigate();
+
+  const categories = [
+    'all', 'javascript', 'reactjs', 'nextjs', 'nodejs', 'mongodb'
+  ];
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -60,6 +63,14 @@ export default function Search() {
     navigate(`/search?${urlParams.toString()}`);
   };
 
+  const handleCategoryClick = (category) => {
+    const urlParams = new URLSearchParams();
+    urlParams.set('searchTerm', sidebarData.searchTerm);
+    urlParams.set('sort', sidebarData.sort);
+    urlParams.set('category', category);
+    navigate(`/search?${urlParams.toString()}`);
+  };
+
   const handleShowMore = async () => {
     const startIndex = posts.length;
     const urlParams = new URLSearchParams(location.search);
@@ -74,7 +85,7 @@ export default function Search() {
   return (
     <div className='flex flex-col w-full max-w-4xl mx-auto p-6'>
 
-      {/* ✅ Search Filters (One Line) */}
+      {/* ✅ Search Bar & Sorting */}
       <form 
         onSubmit={handleSubmit} 
         className='flex flex-col sm:flex-row items-center gap-4 bg-gray-100 dark:bg-gray-900 p-4 rounded-lg shadow-md'
@@ -90,35 +101,39 @@ export default function Search() {
         />
 
         {/* Sort By */}
-        <Select 
+        <select 
           id='sort' 
           value={sidebarData.sort} 
           onChange={handleChange} 
-          className='w-full sm:w-auto'
+          className='w-full sm:w-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 p-2 rounded-md'
         >
           <option value='desc'>Latest</option>
           <option value='asc'>Oldest</option>
           <option value='most-viewed'>Most Viewed</option>
           <option value='most-liked'>Most Liked</option>
-        </Select>
-
-        {/* Category */}
-        <Select 
-          id='category' 
-          value={sidebarData.category} 
-          onChange={handleChange} 
-          className='w-full sm:w-auto'
-        >
-          <option value='all'>All Categories</option>
-          <option value='javascript'>JavaScript</option>
-          <option value='reactjs'>React.js</option>
-          <option value='nextjs'>Next.js</option>
-        </Select>
+        </select>
 
         <Button type='submit' gradientDuoTone='purpleToPink' className='w-full sm:w-auto'>
           Search
         </Button>
       </form>
+
+      {/* ✅ Category Filters (Clickable Buttons) */}
+      <div className='flex flex-wrap gap-2 mt-4'>
+        {categories.map((category) => (
+          <button
+            key={category}
+            onClick={() => handleCategoryClick(category)}
+            className={`px-4 py-2 rounded-lg text-sm font-medium ${
+              sidebarData.category === category
+                ? 'bg-teal-500 text-white' 
+                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-teal-400 hover:text-white'
+            } transition-all`}
+          >
+            {category.charAt(0).toUpperCase() + category.slice(1)}
+          </button>
+        ))}
+      </div>
 
       {/* ✅ Posts Section */}
       <div className='w-full mt-6'>
@@ -128,14 +143,14 @@ export default function Search() {
 
         {/* ✅ Display One Post Per Line */}
         <div className='space-y-4'>
-  {loading && <p className='text-lg text-gray-500'>Loading...</p>}
-  {!loading && posts.length === 0 && <p className='text-lg text-gray-500'>No posts found.</p>}
-  {!loading &&
-    posts.map((post) => (
-      <PostCardSearch key={post._id} post={{ ...post, likesCount: post.likesCount || 0 }} />
-    ))
-  }
-</div>
+          {loading && <p className='text-lg text-gray-500'>Loading...</p>}
+          {!loading && posts.length === 0 && <p className='text-lg text-gray-500'>No posts found.</p>}
+          {!loading &&
+            posts.map((post) => (
+              <PostCardSearch key={post._id} post={{ ...post, likesCount: post.likesCount || 0 }} />
+            ))
+          }
+        </div>
 
         {/* ✅ Show More Button */}
         {showMore && (
