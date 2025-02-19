@@ -23,20 +23,19 @@ export default function Home() {
     website: "https://www.hanskang.com",
   };
 
-
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         const recentRes = await fetch("/api/post/getPosts?limit=5&sort=desc");
         const recentData = await recentRes.json();
         setRecentPosts(recentData.posts);
-
+  
         const trendingRes = await fetch(
           "/api/post/getPosts?limit=10&sort=most-liked"
         );
         const trendingData = await trendingRes.json();
         setTrendingPosts(trendingData.posts);
-
+  
         const mostViewedRes = await fetch(
           "/api/post/getPosts?limit=10&sort=most-viewed"
         );
@@ -46,22 +45,10 @@ export default function Home() {
         console.error("🔥 Error fetching posts:", error);
       }
     };
-
-    const fetchAuthorProfile = async () => {
-      try {
-        const res = await fetch("/api/user/homeProfile");
-        if (res.ok) {
-          const data = await res.json();
-          setAuthorProfile(data);
-        }
-      } catch (error) {
-        console.error("🔥 Error fetching author profile:", error);
-      }
-    };
-
+  
     fetchPosts();
-    fetchAuthorProfile();
-  }, []);
+  }, []); // ✅ No need to fetch authorProfile
+  
 
   return (
     <div className="p-5 w-full max-w-full overflow-hidden flex flex-col md:flex-row gap-8">
