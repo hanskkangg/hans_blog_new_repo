@@ -1,7 +1,8 @@
 import { Button, Select, TextInput } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import PostCard from '../components/PostCard';
+import PostCardSearch from '../components/PostCardSearch';
+
 
 export default function Search() {
   const [sidebarData, setSidebarData] = useState({
@@ -126,17 +127,15 @@ export default function Search() {
         </h1>
 
         {/* ✅ Display One Post Per Line */}
-        <div className='space-y-6'>
-          {loading && <p className='text-lg text-gray-500'>Loading...</p>}
-          {!loading && posts.length === 0 && <p className='text-lg text-gray-500'>No posts found.</p>}
-          {!loading &&
-            posts.map((post) => (
-              <div key={post._id} className="w-full">
-                <PostCard post={{ ...post, likesCount: post.likesCount || 0 }} />
-              </div>
-            ))
-          }
-        </div>
+        <div className='space-y-4'>
+  {loading && <p className='text-lg text-gray-500'>Loading...</p>}
+  {!loading && posts.length === 0 && <p className='text-lg text-gray-500'>No posts found.</p>}
+  {!loading &&
+    posts.map((post) => (
+      <PostCardSearch key={post._id} post={{ ...post, likesCount: post.likesCount || 0 }} />
+    ))
+  }
+</div>
 
         {/* ✅ Show More Button */}
         {showMore && (
