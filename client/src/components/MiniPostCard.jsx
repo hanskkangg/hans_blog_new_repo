@@ -2,9 +2,9 @@ import { Link } from 'react-router-dom';
 
 export default function MiniPostCard({ post }) {
   return (
-    <div className="flex items-center gap-3 py-3 border-b border-gray-300 dark:border-gray-600">
+    <div className="flex items-center gap-3 py-3 border-b border-gray-300 dark:border-gray-600 last:border-none">
       {/* Left: Thumbnail Image */}
-      <div className="w-14 h-14 flex-shrink-0">
+      <div className="w-16 h-16 flex-shrink-0 border border-gray-300 dark:border-gray-600 rounded-md">
         <img
           src={post.headerImage || "/default-placeholder.jpg"}
           onError={(e) => (e.target.src = "/default-placeholder.jpg")}
@@ -14,14 +14,18 @@ export default function MiniPostCard({ post }) {
       </div>
 
       {/* Right: Post Info */}
-      <div className="flex-1">
-        {/* Title */}
-        <Link to={`/post/${post.slug}`} className="block font-semibold text-base truncate">
+      <div className="flex-1 overflow-hidden">
+        {/* Title (Truncated if too long) */}
+        <Link
+          to={`/post/${post.slug}`}
+          className="block font-semibold text-sm truncate hover:text-indigo-500"
+          style={{ maxWidth: '100%' }} // Ensure it fits within the border
+        >
           {post.title}
         </Link>
 
         {/* Author & Date */}
-        <div className="text-xs text-gray-500">
+        <div className="text-xs text-gray-500 truncate">
           {post.author || "Unknown"} • {new Date(post.updatedAt).toLocaleDateString()}
         </div>
 
