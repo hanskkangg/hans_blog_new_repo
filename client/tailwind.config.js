@@ -6,7 +6,12 @@ export default {
     'node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        ovo: ['Ovo', 'serif'], // ✅ Define Ovo font in Tailwind
+        outfit: ['Outfit', 'sans-serif'],
+      },
+    },
   },
   plugins: [
     require('flowbite/plugin'),

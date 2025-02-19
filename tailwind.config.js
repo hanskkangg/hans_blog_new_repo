@@ -5,7 +5,13 @@ module.exports = {
     "./node_modules/flowbite/**/*.js"
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        ovo: ['Ovo', 'serif'], 
+        
+        outfit: ['Outfit', 'sans-serif'],// ✅ Define Ovo font in Tailwind
+      },
+    },
   },
   plugins: [
     require('tailwind-scrollbar'), // Now compatible with Tailwind v4

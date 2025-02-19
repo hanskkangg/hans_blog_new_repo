@@ -1,8 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Ovo&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
 
 body {
+  font-family: 'Outfit', serif; /* ✅ Apply Ovo font to all content */
   overflow-x: hidden;
   width: 100%;
 }
@@ -18,13 +22,13 @@ body {
 .post-content h1 {
   font-size: 1.5rem;
   font-weight: 600;
-  font-family: sans-serif;
+  font-family: 'Outfit', serif; /* ✅ Apply Ovo font */
   margin: 1.5rem 0;
 }
 
 .post-content h2 {
   font-size: 1.4rem;
-  font-family: sans-serif;
+  font-family: 'Outfit', serif; /* ✅ Apply Ovo font */
   margin: 1.5rem 0;
 }
 
