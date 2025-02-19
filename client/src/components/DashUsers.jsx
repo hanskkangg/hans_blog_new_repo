@@ -11,9 +11,18 @@ export default function DashUsers() {
   const [showModal, setShowModal] = useState(false);
   const [userIdToDelete, setUserIdToDelete] = useState('');
   useEffect(() => {
+    
     const fetchUsers = async () => {
       try {
-        const res = await fetch(`/api/user/getusers`);
+        const res = await fetch(`/api/user/getusers`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${currentUser.token}`, // ✅ Include token
+          },
+          credentials: "include", // ✅ Ensure cookies are sent if needed
+        });
+    
         const data = await res.json();
         if (res.ok) {
           setUsers(data.users);
@@ -22,9 +31,10 @@ export default function DashUsers() {
           }
         }
       } catch (error) {
-        console.log(error.message);
+        console.log("🔥 Fetch Error:", error.message);
       }
     };
+    
     if (currentUser.isAdmin) {
       fetchUsers();
     }
@@ -48,20 +58,27 @@ export default function DashUsers() {
 
   const handleDeleteUser = async () => {
     try {
-        const res = await fetch(`/api/user/delete/${userIdToDelete}`, {
-            method: 'DELETE',
-        });
-        const data = await res.json();
-        if (res.ok) {
-            setUsers((prev) => prev.filter((user) => user._id !== userIdToDelete));
-            setShowModal(false);
-        } else {
-            console.log(data.message);
-        }
+      const res = await fetch(`/api/user/delete/${userIdToDelete}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${currentUser.token}`, // ✅ Add Authorization header
+        },
+        credentials: "include", // ✅ Ensure cookies are sent if needed
+      });
+  
+      const data = await res.json();
+      if (res.ok) {
+        setUsers((prev) => prev.filter((user) => user._id !== userIdToDelete));
+        setShowModal(false);
+      } else {
+        console.log(data.message);
+      }
     } catch (error) {
-        console.log(error.message);
+      console.log("🔥 Fetch Error:", error.message);
     }
   };
+  
 
   return (
     <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>

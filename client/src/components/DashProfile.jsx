@@ -47,7 +47,14 @@ export default function DashProfile() {
   
     console.log("🟢 Fetching user data for:", currentUser._id);
   
-    fetch(`/api/user/get/${currentUser._id}`)
+    fetch(`/api/user/get/${currentUser._id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${currentUser.token}`, // ✅ Include the token
+      },
+      credentials: "include", // ✅ Ensure cookies are sent if needed
+    })
       .then(async (res) => {
         if (!res.ok) {
           const errorText = await res.text(); // ✅ Read response as text

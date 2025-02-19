@@ -23,7 +23,15 @@ export default function DashboardComp() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await fetch('/api/user/getusers?limit=5');
+        const res = await fetch('/api/user/getusers?limit=5', {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${currentUser.token}`, // ✅ Include token
+          },
+          credentials: "include",
+        });
+    
         const data = await res.json();
         if (res.ok) {
           setUsers(data.users);
@@ -33,8 +41,30 @@ export default function DashboardComp() {
       } catch (error) {
         console.log(error.message);
       }
-      
     };
+    
+    const fetchComments = async () => {
+      try {
+        const res = await fetch('/api/comment/getcomments?limit=5', {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${currentUser.token}`, // ✅ Include token
+          },
+          credentials: "include",
+        });
+    
+        const data = await res.json();
+        if (res.ok) {
+          setComments(data.comments);
+          setTotalComments(data.totalComments);
+          setLastMonthComments(data.lastMonthComments);
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+    
     const fetchPosts = async () => {
       try {
         const res = await fetch('/api/post/getposts?limit=5'); // ✅ Keep limit for recent posts
@@ -53,19 +83,6 @@ export default function DashboardComp() {
       }
     };
     
-    const fetchComments = async () => {
-      try {
-        const res = await fetch('/api/comment/getcomments?limit=5');
-        const data = await res.json();
-        if (res.ok) {
-          setComments(data.comments);
-          setTotalComments(data.totalComments);
-          setLastMonthComments(data.lastMonthComments);
-        }
-      } catch (error) {
-        console.log(error.message);
-      }
-    };
     if (currentUser.isAdmin) {
       fetchUsers();
       fetchPosts();
