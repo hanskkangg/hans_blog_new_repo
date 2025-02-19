@@ -2,9 +2,9 @@ import { Link } from "react-router-dom";
 
 export default function MiniPostCard({ post }) {
   return (
-    <div className="flex items-center gap-4 py-4 border-b border-gray-300 dark:border-gray-600 last:border-none">
+    <div className="flex items-center gap-4 py-3 border-b border-gray-300 dark:border-gray-600 last:border-none">
       {/* Left: Thumbnail Image */}
-      <div className="w-20 h-20 flex-shrink-0 border border-gray-300 dark:border-gray-600 rounded-md overflow-hidden">
+      <div className="w-16 h-16 flex-shrink-0 border border-gray-300 dark:border-gray-600 rounded-md overflow-hidden">
         <img
           src={post.headerImage || "/default-placeholder.jpg"}
           onError={(e) => (e.target.src = "/default-placeholder.jpg")}
@@ -18,11 +18,11 @@ export default function MiniPostCard({ post }) {
         {/* Title (Multi-line support) */}
         <Link
           to={`/post/${post.slug}`}
-          className="block font-bold text-lg leading-tight text-gray-900 dark:text-gray-200 hover:text-indigo-500"
+          className="block font-semibold text-sm leading-tight text-gray-900 dark:text-gray-200 hover:text-indigo-500"
           style={{
             display: "-webkit-box",
             WebkitBoxOrient: "vertical",
-            WebkitLineClamp: 3, // Allows up to 3 lines before truncation
+            WebkitLineClamp: 2, // Allows up to 2 lines before truncation
             overflow: "hidden",
           }}
         >
@@ -30,12 +30,12 @@ export default function MiniPostCard({ post }) {
         </Link>
 
         {/* Author & Date */}
-        <div className="text-md text-gray-600 dark:text-gray-400 font-medium mt-1">
+        <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
           {post.author || "Unknown"} • {new Date(post.updatedAt).toLocaleDateString()}
         </div>
 
         {/* Post Stats */}
-        <div className="flex items-center text-md text-gray-500 mt-2">
+        <div className="flex items-center text-xs text-gray-500 mt-2">
           <span>👁️ {post.views || 0}</span>
           <span className="ml-3">❤️ {post.likesCount || 0}</span>
           <span className="ml-3">💬 {post.commentsCount || 0}</span>
