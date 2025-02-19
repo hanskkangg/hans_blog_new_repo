@@ -44,72 +44,54 @@ export default function DashSidebar() {
   };
 
   return (
-    <Sidebar className='w-full md:w-56'>
+    <Sidebar className="w-full md:w-56">
       <Sidebar.Items>
-        <Sidebar.ItemGroup className='flex flex-col gap-1'>
+        <Sidebar.ItemGroup className="flex flex-col gap-1">
           {currentUser && currentUser.isAdmin && (
-            <Link to='/dashboard?tab=dash'>
-              <Sidebar.Item
-                active={tab === 'dash' || !tab}
-                icon={HiChartPie}
-                as='div'
-              >
-                Dashboard
-              </Sidebar.Item>
-            </Link>
+            <Sidebar.Item as={Link} to="/dashboard?tab=dash" icon={HiChartPie} active={tab === 'dash' || !tab}>
+              Dashboard
+            </Sidebar.Item>
           )}
 
-          <Link to='/dashboard?tab=profile'>
-            <Sidebar.Item
-              active={tab === 'profile'}
-              icon={HiUser}
-              label={currentUser.isAdmin ? 'Admin' : 'User'}
-              labelColor='dark'
-              as='div'
-            >
-              Profile
-            </Sidebar.Item>
-          </Link>
+          <Sidebar.Item as={Link} to="/dashboard?tab=profile" icon={HiUser} active={tab === 'profile'}>
+            Profile
+          </Sidebar.Item>
 
           {currentUser.isAdmin ? (
             <>
-              <Link to='/dashboard?tab=posts'>
-                <Sidebar.Item active={tab === 'posts'} icon={HiDocumentText} as='div'>
-                  Posts
-                </Sidebar.Item>
-              </Link>
+              <Sidebar.Item as={Link} to="/dashboard?tab=posts" icon={HiDocumentText} active={tab === 'posts'}>
+                Posts
+              </Sidebar.Item>
 
-              <Link to='/dashboard?tab=users'>
-                <Sidebar.Item active={tab === 'users'} icon={HiOutlineUserGroup} as='div'>
-                  Users
-                </Sidebar.Item>
-              </Link>
+              <Sidebar.Item as={Link} to="/dashboard?tab=users" icon={HiOutlineUserGroup} active={tab === 'users'}>
+                Users
+              </Sidebar.Item>
 
-              <Link to='/dashboard?tab=comments'>
-                <Sidebar.Item active={tab === 'comments'} icon={HiAnnotation} as='div'>
-                  All Comments
-                </Sidebar.Item>
-              </Link>
+              <Sidebar.Item as={Link} to="/dashboard?tab=comments" icon={HiAnnotation} active={tab === 'comments'}>
+                All Comments
+              </Sidebar.Item>
 
               {/* ✅ CREATE POST BUTTON FOR ADMIN ONLY */}
-              <Link to='/create-post'>
-                <Sidebar.Item
-                  icon={HiPencilAlt} // ✏️ Pencil Icon
-                  className='text-green-600 font-semibold hover:bg-green-200 dark:text-green-300 dark:hover:bg-green-700'
-                >
-                  Create Post
-                </Sidebar.Item>
-              </Link>
+              <Sidebar.Item
+                as={Link}
+                to="/create-post"
+                icon={HiPencilAlt} // ✏️ Pencil Icon
+                className="text-green-600 font-semibold hover:bg-green-200 dark:text-green-300 dark:hover:bg-green-700"
+              >
+                Create Post
+              </Sidebar.Item>
             </>
           ) : (
-            <Link to='/dashboard?tab=mycomments'>
-              <Sidebar.Item active={tab === 'mycomments'} icon={HiAnnotation} as='div'>
-                My Comments
-              </Sidebar.Item>
-            </Link>
+            <Sidebar.Item as={Link} to="/dashboard?tab=mycomments" icon={HiAnnotation} active={tab === 'mycomments'}>
+              My Comments
+            </Sidebar.Item>
           )}
 
-          <Sidebar.Item icon={HiArrowSmRight} className='text-red-700 hover:bg-red-300 dark:text-red-700 dark:hover:bg-red-300 cursor-pointer' onClick={handleSignout}>
+          <Sidebar.Item
+            icon={HiArrowSmRight}
+            className="text-red-700 hover:bg-red-300 dark:text-red-700 dark:hover:bg-red-300 cursor-pointer"
+            onClick={handleSignout}
+          >
             Sign Out
           </Sidebar.Item>
         </Sidebar.ItemGroup>

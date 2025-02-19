@@ -48,6 +48,7 @@ export const create = async (req, res, next) => {
     next(error);
   }
 };
+
 export const getposts = async (req, res, next) => {
   try {
     console.log("🔹 Received Request:", req.query);
@@ -256,63 +257,83 @@ export const deletepost = async (req, res, next) => {
     next(error);
   }
 };
-
 export const updatepost = async (req, res, next) => {
   try {
-    if (!req.user.isAdmin && req.user.id !== req.params.userId) {
-      return next(errorHandler(403, "🚨 You are not allowed to update this post"));
+    const { postId, userId } = req.params;
+    console.log("🟢 Received UPDATE request for Post ID:", postId, "by User ID:", userId);
+    console.log("🔹 Request Body:", req.body);
+
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+      console.log("🚨 Invalid Post ID:", postId);
+      return res.status(400).json({ error: "🚨 Invalid post ID!" });
     }
 
-    console.log("🟢 Updating Post ID:", req.params.postId);
-
-    if (!mongoose.Types.ObjectId.isValid(req.params.postId)) {
-      return next(errorHandler(400, "🚨 Invalid post ID!"));
-    }
-
-    const existingPost = await Post.findById(req.params.postId);
+    const existingPost = await Post.findById(postId);
     if (!existingPost) {
-      return next(errorHandler(404, "🚨 Post not found!"));
+      console.log("🚨 Post not found:", postId);
+      return res.status(404).json({ error: "🚨 Post not found!" });
     }
 
-    let slug = existingPost.slug; // ✅ Keep the existing slug if the title is unchanged
+    if (!req.user || (!req.user.isAdmin && req.user.id !== userId)) {
+      console.log("🚨 Unauthorized attempt by User ID:", userId);
+      return res.status(403).json({ error: "🚨 You are not allowed to update this post!" });
+    }
 
-    // ✅ If the title is changed, generate a new slug
+    let slug = existingPost.slug;
     if (req.body.title && req.body.title !== existingPost.title) {
-      slug = req.body.title
-        .trim()
-        .toLowerCase()
-        .replace(/[^a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣 ]/g, "")
-        .replace(/\s+/g, "-");
-
-      // ✅ Check if another post already has the same slug
+      slug = req.body.title.trim().toLowerCase().replace(/\s+/g, "-");
       const slugExists = await Post.findOne({ slug });
 
-      // ✅ If the slug is taken, append a timestamp to make it unique
       if (slugExists && slugExists._id.toString() !== existingPost._id.toString()) {
         slug = `${slug}-${Date.now()}`;
       }
     }
 
-    // ✅ Update post
+    console.log("🔹 Updating Post with slug:", slug);
+
     const updatedPost = await Post.findByIdAndUpdate(
-      req.params.postId,
+      postId,
       {
         $set: {
           title: req.body.title || existingPost.title,
           content: req.body.content || existingPost.content,
           category: req.body.category || existingPost.category,
           headerImage: req.body.headerImage || existingPost.headerImage,
-          media: req.body.media || existingPost.media,
-          slug, // ✅ Keep or update the slug
+          slug,
         },
       },
       { new: true }
     );
 
-    console.log("✅ Post Updated Successfully:", updatedPost);
-    res.status(200).json(updatedPost);
+    console.log("✅ Successfully Updated Post:", updatedPost);
+    return res.status(200).json(updatedPost);
   } catch (error) {
-    console.error("🔥 Server Error:", error);
-    next(error);
+    console.error("🔥 Server Error in updatepost:", error);
+    return res.status(500).json({ error: "Internal Server Error", details: error.message });
+  }
+};
+export const getpost = async (req, res, next) => {
+  try {
+    const { postId } = req.params;
+    console.log("🟢 Received GET request for postId:", postId);
+
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+      console.log("🚨 Invalid postId format:", postId);
+      return res.status(400).json({ error: "🚨 Invalid post ID format!" });
+    }
+
+    const post = await Post.findById(postId);
+    if (!post) {
+      console.log("🚨 No post found with ID:", postId);
+      return res.status(404).json({ error: "🚨 Post not found!" });
+    }
+
+    const responseData = { success: true, post };
+    console.log("🔹 Sending Response:", JSON.stringify(responseData, null, 2));
+
+    return res.status(200).json(responseData);
+  } catch (error) {
+    console.error("🔥 Server Error in `getpost`:", error);
+    return res.status(500).json({ error: "Internal Server Error", details: error.message });
   }
 };

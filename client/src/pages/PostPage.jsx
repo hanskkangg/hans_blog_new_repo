@@ -121,24 +121,43 @@ export default function PostPage() {
       console.error("🔥 Like Error:", error);
     }
   };
-  
   const handleDeletePost = async () => {
+    if (!post?._id) {
+      console.error("🚨 postId is missing!");
+      return;
+    }
+  
     try {
-      const res = await fetch(`/api/post/deletepost/${post._id}/${currentUser._id}`, {
-        method: 'DELETE',
-      });
-
-      if (!res.ok) {
-        console.error("Error deleting post");
-        return;
+      const token = currentUser?.token;
+      if (!token) {
+        throw new Error("🚨 Unauthorized! Token is missing.");
       }
-
-      navigate('/'); // ✅ Redirect to homepage after deletion
+  
+      console.log(`🗑 Deleting Post ID: ${post._id}`);
+  
+      const res = await fetch(
+        `/api/post/deletepost/${post._id}/${currentUser._id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          },
+        }
+      );
+  
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || "🚨 Unauthorized request!");
+      }
+  
+      console.log("✅ Post deleted successfully!");
+      navigate("/"); // ✅ Redirect after deletion
     } catch (error) {
-      console.error("🔥 Delete Error:", error);
+      console.error("🔥 Error deleting post:", error.message);
     }
   };
-
+  
   if (loading) return <p>Loading...</p>;
   if (error || !post) return <p>Error loading post or post not found.</p>; // ✅ Handle missing post
   
@@ -149,8 +168,10 @@ export default function PostPage() {
     {/* ✅ Top Section: Edit & Delete Buttons - Left */}
     <div className="flex justify-between items-center p-3 w-full">
       {(currentUser && (isAuthor || isAdmin)) && (
-        <div className="flex gap-3">
-          <Button color="blue" onClick={() => navigate(`/update-post/${post._id}`)}>✏️ Edit</Button>
+        <div className="flex gap-3"><Button onClick={() => navigate(`/update-post/${post._id}`)}>
+        ✏️ Edit
+      </Button>
+      
           <Button color="red" onClick={() => setShowDeleteModal(true)}>🗑 Delete</Button>
         </div>
       )}

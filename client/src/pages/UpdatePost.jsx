@@ -16,259 +16,201 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 export default function UpdatePost() {
-  const [file, setFile] = useState(null);
-  const [headerImage, setHeaderImage] = useState(""); // ✅ For previewing image
-  const [imageUploadProgress, setImageUploadProgress] = useState(null);
-  const [imageUploadError, setImageUploadError] = useState(null);
-  const [formData, setFormData] = useState({ 
-    title: "",
-    category: "uncategorized",
-    content: "",
-    headerImage: "",
-  });
-  const [publishError, setPublishError] = useState(null);
   const { postId } = useParams();
   const { currentUser } = useSelector((state) => state.user);
-
-  const quillRef = useRef(null);
   const navigate = useNavigate();
 
-  console.log("🟢 postId from URL:", postId);
+  const [file, setFile] = useState(null);
+  const [headerImage, setHeaderImage] = useState('');
+  const [imageUploadProgress, setImageUploadProgress] = useState(null);
+  const [imageUploadError, setImageUploadError] = useState(null);
+  const [publishError, setPublishError] = useState(null);
+  const quillRef = useRef(null);
 
+  const [formData, setFormData] = useState({
+    title: '',
+    category: 'uncategorized',
+    content: '',
+    headerImage: '',
+    _id: '',
+  });
+  
+  console.log("🟢 Extracted postId from URL:", postId); // ✅ Debugging log
   useEffect(() => {
-    const fetchPost = async () => {
-      try {
-        console.log("🟢 Fetching post with postId:", postId);
-        const res = await fetch(`/api/post/getposts?postId=${postId}`);
-        const data = await res.json();
-
-        if (!res.ok) {
-          console.log("🚨 API Error:", data.message);
-          setPublishError(data.message);
-          return;
-        }
-
-        if (data.posts.length > 0) {
-          const postData = data.posts[0];
-
-          console.log("🟢 Post Data Fetched:", postData);
-
-          // ✅ Set state
-          setFormData({ 
-            title: postData.title || "",
-            category: postData.category || "uncategorized",
-            content: postData.content || "",
-            headerImage: postData.headerImage || "",
-            _id: postId 
-          }); // ✅ Set current header image
-        } else {
-          console.log("🚨 No post found!");
-        }
-      } catch (error) {
-        console.log("🔥 Fetch Error:", error.message);
-      }
-    };
-
-    if (postId) fetchPost();
-  }, [postId]);
-
-  // ✅ Handle Header Image Upload with Preview & Progress Bar
-  const handleUploadImage = async () => {
-    try {
-      if (!file) {
-        setImageUploadError('Please select an image');
-        return;
-      }
-      setImageUploadError(null);
-      const storage = getStorage(app);
-      const fileName = new Date().getTime() + '-' + file.name;
-      const storageRef = ref(storage, fileName);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setImageUploadProgress(progress.toFixed(0));
-        },
-        (error) => {
-          setImageUploadError('Image upload failed');
-          setImageUploadProgress(null);
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            setImageUploadProgress(null);
-            setImageUploadError(null);
-            setHeaderImage(downloadURL); // ✅ Update preview
-            setFormData((prevData) => ({ ...prevData, headerImage: downloadURL })); // ✅ Save in form data
-          });
-        }
-      );
-    } catch (error) {
-      setImageUploadError('Image upload failed');
-      setImageUploadProgress(null);
-      console.log(error);
-    }
-  };
-
-  // ✅ Handle Image Upload in Quill Editor
-  const imageHandler = () => {
-    const input = document.createElement('input');
-    input.setAttribute('type', 'file');
-    input.setAttribute('accept', 'image/*');
-    input.click();
-
-    input.onchange = async () => {
-      const file = input.files[0];
-      if (!file) return;
-
-      try {
-        const url = await uploadToFirebase(file);
-
-        // Insert image into Quill editor
-        const quill = quillRef.current.getEditor();
-        const range = quill.getSelection();
-        quill.insertEmbed(range.index, 'image', url);
-
-        // Store in content state
-        setFormData((prevData) => ({ ...prevData, content: quill.root.innerHTML }));
-      } catch (error) {
-        console.error("🔥 Image Upload Failed:", error);
-      }
-    };
-  };
-
-  
-  const uploadToFirebase = async (file) => {
-    return new Promise((resolve, reject) => {
-      const storage = getStorage(app);
-      const fileName = `${Date.now()}-${file.name}`;
-      const storageRef = ref(storage, fileName);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-
-      uploadTask.on(
-        'state_changed',
-        null,
-        (error) => reject(error),
-        async () => {
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          resolve(downloadURL);
-        }
-      );
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log("🟢 Submitting Form Data:", formData);
-  
-    if (!formData._id) {
+    if (!postId) {
+      console.error("🚨 Post ID is missing in the URL!");
       setPublishError("🚨 Post ID is missing!");
       return;
     }
   
-    // ✅ Ensure the slug is generated properly
-    let slug = formData.slug || formData.title.trim().toLowerCase()
-      .replace(/[^a-zA-Z0-9 ]/g, "") // Remove special characters
-      .replace(/\s+/g, "-"); // Replace spaces with dashes
+    const fetchPost = async () => {
+      try {
+        console.log("🟢 Fetching post with postId:", postId);
   
-    // ✅ If the generated slug is empty, create a unique fallback
-    if (!slug) {
-      slug = `post-${Date.now()}`;
-    }
+        const res = await fetch(`/api/post/getpost/${postId}`);
+        console.log("🔹 Response Status:", res.status);
   
-    // ✅ Ensure the slug is included in the update
-    const updatedData = {
-      ...formData,
-      slug, // Include the updated slug
+        if (!res.ok) {
+          const errorText = await res.text();
+          console.error("🚨 API Error Response:", errorText);
+          throw new Error(`🚨 API Error: ${errorText}`);
+        }
+  
+        const data = await res.json();
+        console.log("✅ Post Data Fetched:", data);
+  
+        if (!data.post) {
+          throw new Error("🚨 Post not found!");
+        }
+  
+        // ✅ Update formData with correct post ID
+        setFormData((prevState) => {
+          const updatedData = {
+            ...prevState,
+            title: data.post?.title || "",
+            category: data.post?.category || "uncategorized",
+            content: data.post?.content || "",
+            headerImage: data.post?.headerImage || "",
+            _id: data.post?._id || postId,  // ✅ Ensure _id is set
+          };
+          console.log("✅ Updated formData after setting:", updatedData);
+          return updatedData;  // ✅ Ensure state is fully updated
+        });
+        
+      } catch (error) {
+        console.error("🔥 Fetch Error:", error.message);
+        setPublishError(error.message);
+      }
     };
   
+    fetchPost();
+  }, [postId]);
+  
+  
+  
+  const handleUploadImage = async () => {
+    if (!file) {
+      setImageUploadError('Please select an image');
+      return;
+    }
+
+    setImageUploadError(null);
+    const storage = getStorage(app);
+    const fileName = new Date().getTime() + '-' + file.name;
+    const storageRef = ref(storage, fileName);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setImageUploadProgress(progress.toFixed(0));
+      },
+      (error) => {
+        setImageUploadError('Image upload failed');
+        setImageUploadProgress(null);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setImageUploadProgress(null);
+          setImageUploadError(null);
+          setHeaderImage(downloadURL);
+          setFormData((prevData) => ({ ...prevData, headerImage: downloadURL }));
+        });
+      }
+    );
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("🟢 Checking Form Data Before Submission:", formData);
+  
+    if (!formData._id || formData._id === "") {
+      console.error("🚨 Post ID is missing! Retrying update...");
+      setFormData((prev) => ({
+        ...prev,
+        _id: postId,  // ✅ Force reassigning postId
+      }));
+      return;
+    }
+    
+  
     try {
+      console.log("🔹 Sending update request with ID:", formData._id);
+  
       const res = await fetch(`/api/post/updatepost/${formData._id}/${currentUser._id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedData),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${currentUser.token}`,
+        },
+        body: JSON.stringify(formData),
       });
   
+      console.log("🔹 Response Status:", res.status);
+  
       const data = await res.json();
-      if (!res.ok) {
-        console.log("🚨 API Response Error:", data);
-        setPublishError(data.message);
+      console.log("✅ Post Updated:", data);
+  
+      if (data.error) {
+        setPublishError(data.error);
         return;
       }
   
-      console.log("✅ Post Updated:", data);
       navigate(`/post/${data.slug}`);
     } catch (error) {
-      console.log("🔥 Submit Error:", error);
-      setPublishError("Something went wrong");
+      console.error("🔥 Submit Error:", error);
+      setPublishError(error.message);
     }
   };
   
   
-
-  // ✅ Custom Video Handler for YouTube
-  const videoHandler = () => {
-    const quill = quillRef.current.getEditor();
-    const url = prompt("Enter a YouTube video URL:");
-
-    if (url) {
-      const videoId = extractYouTubeVideoId(url);
-      if (videoId) {
-        const embedUrl = `https://www.youtube.com/embed/${videoId}`;
-        const range = quill.getSelection();
-        quill.insertEmbed(range.index, "video", embedUrl);
-      } else {
-        alert("Invalid YouTube URL. Please enter a valid link.");
-      }
-    }
-  };
-
-  // ✅ Function to Extract YouTube Video ID
-  const extractYouTubeVideoId = (url) => {
-    const match = url.match(
-      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
-    );
-    return match ? match[1] : null;
-  };
 
   const quillModules = useMemo(() => ({
     toolbar: {
       container: [
-        ["bold", "italic", "underline"],
-        [{ header: "1" }, { header: "2" }],
-        [{ list: "ordered" }, { list: "bullet" }],
-        ["link", "image", "video"], // ✅ Now includes the Video Button
+        ['bold', 'italic', 'underline'],
+        [{ header: '1' }, { header: '2' }],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        ['link', 'image', 'video'],
       ],
-      handlers: {
-        image: imageHandler,
-        video: videoHandler, // ✅ Added video handler
-      },
     },
   }), []);
 
-
   return (
-    <div className='p-3 max-w-3xl mx-auto min-h-screen'>
-      <h1 className='text-center text-3xl my-7 font-semibold'>Update Post</h1>
-      <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
-        <TextInput type='text' placeholder='Title' required value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} />
+    <div className="p-3 max-w-3xl mx-auto min-h-screen">
+      <h1 className="text-center text-3xl my-7 font-semibold">Update Post</h1>
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+        <TextInput
+          type="text"
+          placeholder="Title"
+          required
+          value={formData.title}
+          onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+        />
+
         <Select value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })}>
-          <option value='uncategorized'>Select a category</option>
-          <option value='javascript'>JavaScript</option>
-          <option value='reactjs'>React.js</option>
-          <option value='nextjs'>Next.js</option>
+          <option value="uncategorized">Select a category</option>
+          <option value="javascript">JavaScript</option>
+          <option value="reactjs">React.js</option>
+          <option value="nextjs">Next.js</option>
         </Select>
 
-        <FileInput type='file' accept='image/*' onChange={(e) => setFile(e.target.files[0])} />
-        <Button type='button' onClick={handleUploadImage} disabled={imageUploadProgress}>Upload Image</Button>
+        <FileInput type="file" accept="image/*" onChange={(e) => setFile(e.target.files[0])} />
+        <Button type="button" onClick={handleUploadImage} disabled={imageUploadProgress}>
+          Upload Image
+        </Button>
         {headerImage && <img src={headerImage} alt="Updated Header" className="w-full h-40 object-cover mt-2" />}
 
-        {/* ✅ Quill Editor with YouTube Video Support */}
-        <ReactQuill ref={quillRef} theme="snow" value={formData.content} onChange={(value) => setFormData({ ...formData, content: value })} modules={quillModules} />
+        <ReactQuill
+          ref={quillRef}
+          theme="snow"
+          value={formData.content}
+          onChange={(value) => setFormData({ ...formData, content: value })}
+          modules={quillModules}
+        />
 
-        <Button type='submit'>Update Post</Button>
-        {publishError && <Alert color='failure'>{publishError}</Alert>}
+        <Button type="submit">Update Post</Button>
+        {publishError && <Alert color="failure">{publishError}</Alert>}
       </form>
     </div>
   );
