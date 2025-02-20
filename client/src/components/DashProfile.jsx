@@ -239,7 +239,16 @@ export default function DashProfile() {
   };
 
   return (
-    <div className='max-w-lg mx-auto p-3 w-full'>
+    <div className="flex h-screen bg-black text-white">
+    <div className="hidden md:block w-4/6 h-full relative">
+      <video className="w-full h-full object-cover object-center" autoPlay loop muted>
+        <source src="/pf1.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    </div>
+
+    
+    <div className="w-full md:w-4/6 p-10 flex flex-col justify-center bg-white text-black">
       <h1 className='my-7 text-center font-semibold text-3xl'>Profile</h1>
       <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
         <input
@@ -291,7 +300,10 @@ export default function DashProfile() {
         {imageFileUploadError && (
           <Alert color='failure'>{imageFileUploadError}</Alert>
         )}
+
+
         <TextInput
+       
           type='text'
           id='username'
           placeholder='username'
@@ -299,6 +311,7 @@ export default function DashProfile() {
           onChange={handleChange}
         />
         <TextInput
+      
           type='email'
           id='email'
           placeholder='email'
@@ -307,32 +320,30 @@ export default function DashProfile() {
           disabled
         />
         <TextInput
+     
           type='password'
           id='password'
           placeholder='password'
           onChange={handleChange}
         />
-        <Button
-          type='submit'
-          gradientDuoTone='purpleToBlue'
-          outline
-          disabled={loading || imageFileUploading}
-        >
-          {loading ? 'Loading...' : 'Update'}
-        </Button>
-        
-        {currentUser.isAdmin && (
-          <Link to={'/create-post'}>
-            <Button
-              type='button'
-              gradientDuoTone='purpleToPink'
-              className='w-full'
-            >
-              Create a post
-            </Button>
-          </Link>
-        )}
-      </form>
+
+<Button type='submit' className='bg-black text-white hover:bg-gray-800 border-none' disabled={loading || imageFileUploading}>
+            {loading ? 'Loading...' : 'Update'}
+          </Button>
+
+          
+          {currentUser.isAdmin && (
+            <Link to={'/create-post'}>
+              <Button type='button' className='bg-black text-white hover:bg-gray-800 border-none w-full'>
+                Create a post
+              </Button>
+            </Link>
+          )}
+        </form>
+
+
+
+
       <div className='text-red-500 flex justify-between mt-5'>
         <span onClick={() => setShowModal(true)} className='cursor-pointer'>
           Delete Account
@@ -377,9 +388,22 @@ export default function DashProfile() {
                 No, cancel
               </Button>
             </div>
+
+            
           </div>
+
+          
         </Modal.Body>
       </Modal>
+    </div>
+
+    <div className="w-1/6 h-full relative hidden md:block ">
+      <video className="hidden md:block w-full h-full object-cover object-right" autoPlay loop muted>
+        <source src="/pf1.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  
     </div>
   );
 }
