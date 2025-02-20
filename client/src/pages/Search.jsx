@@ -84,56 +84,65 @@ export default function Search() {
 
   return (
     <div className='flex flex-col w-full max-w-4xl mx-auto p-6'>
+{/* ✅ Search Bar & Sorting */} 
+<form 
+    onSubmit={handleSubmit} 
+    className="flex flex-col sm:flex-row items-center gap-4 bg-gray-100 dark:bg-gray-900 p-4 rounded-lg shadow-md"
+>
+    {/* Search Bar */}
+    <TextInput
+        placeholder="Search posts..."
+        id="searchTerm"
+        type="text"
+        value={sidebarData.searchTerm}
+        onChange={handleChange}
+        className="flex-1 w-full sm:w-auto"
+    />
 
-      {/* ✅ Search Bar & Sorting */}
-      <form 
-        onSubmit={handleSubmit} 
-        className='flex flex-col sm:flex-row items-center gap-4 bg-gray-100 dark:bg-gray-900 p-4 rounded-lg shadow-md'
-      >
-        {/* Search Bar */}
-        <TextInput
-          placeholder='Search posts...'
-          id='searchTerm'
-          type='text'
-          value={sidebarData.searchTerm}
-          onChange={handleChange}
-          className='flex-1 w-full sm:w-auto'
-        />
+    {/* Sort By */}
+    <select 
+        id="sort" 
+        value={sidebarData.sort} 
+        onChange={handleChange} 
+        className="w-full sm:w-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 p-2 rounded-md"
+    >
+        <option value="desc">Latest</option>
+        <option value="asc">Oldest</option>
+        <option value="most-viewed">Most Viewed</option>
+        <option value="most-liked">Most Liked</option>
+    </select>
 
-        {/* Sort By */}
-        <select 
-          id='sort' 
-          value={sidebarData.sort} 
-          onChange={handleChange} 
-          className='w-full sm:w-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 p-2 rounded-md'
-        >
-          <option value='desc'>Latest</option>
-          <option value='asc'>Oldest</option>
-          <option value='most-viewed'>Most Viewed</option>
-          <option value='most-liked'>Most Liked</option>
-        </select>
+    {/* ✅ Updated Search Button */}
+    <Button 
+        type="submit" 
+        className={`px-6 py-2 rounded-md text-sm font-medium border transition-all
+          bg-white text-black border-black hover:bg-black hover:text-white w-full sm:w-auto
+        `}
+    >
+        Search
+    </Button>
+</form>
 
-        <Button type='submit' gradientDuoTone='purpleToPink' className='w-full sm:w-auto'>
-          Search
-        </Button>
-      </form>
 
-      {/* ✅ Category Filters (Clickable Buttons) */}
-      <div className='flex flex-wrap gap-2 mt-4'>
-        {categories.map((category) => (
-          <button
-            key={category}
-            onClick={() => handleCategoryClick(category)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium ${
-              sidebarData.category === category
-                ? 'bg-teal-500 text-white' 
-                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-teal-400 hover:text-white'
-            } transition-all`}
-          >
-            {category.charAt(0).toUpperCase() + category.slice(1)}
-          </button>
-        ))}
-      </div>
+     {/* ✅ Category Filters (Modern Black and White Design) */}
+<div className="flex flex-wrap gap-2 mt-4">
+  {categories.map((category) => (
+    <button
+      key={category}
+      onClick={() => handleCategoryClick(category)}
+      className={`px-4 py-2 rounded-md text-sm font-medium border transition-all
+        ${
+          sidebarData.category === category
+            ? "bg-black text-white border-black"
+            : "bg-white text-black border-gray-300 hover:bg-black hover:text-white"
+        }
+      `}
+    >
+      {category.charAt(0).toUpperCase() + category.slice(1)}
+    </button>
+  ))}
+</div>
+
 
       {/* ✅ Posts Section */}
       <div className='w-full mt-6'>

@@ -42,37 +42,34 @@ export default function SignUp() {
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-start">
+    <div className="relative min-h-screen flex items-center justify-center bg-black">
       {/* Video Background */}
       <video
         autoPlay
         loop
         muted
-        className="absolute top-0 left-0 w-full h-full object-cover z-0"
+        className="absolute top-0 left-0 w-full h-full object-cover z-0 opacity-10"
       >
         <source src="/sign.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
 
-      {/* Overlay for darkening the video */}
-      <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 z-10" />
-
-      {/* SignUp Form on the Right Side */}
-      <div className="relative z-20 h-full w-96 ml-auto bg-white bg-opacity-90 p-8 shadow-lg flex flex-col justify-center border-l-4 border-purple-500">
-        <div className="mb-8">
-          <Link to="/" className="font-bold text-4xl text-purple-500">
+      {/* SignUp Form */}
+      <div className="relative z-20 max-w-md w-full bg-white p-8 rounded-2xl shadow-2xl">
+        <div className="mb-8 text-center">
+          <Link to="/" className="font-extrabold text-3xl text-black">
             Hans Blog
           </Link>
-          <p className="text-sm mt-2 text-gray-600">
-            This is a demo project. You can sign up with your email and password
-            or with Google.
+          <p className="text-sm mt-2 text-gray-500">
+            Sign up with email
           </p>
         </div>
 
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+        <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
           <div>
-            <Label value="Your username" />
+            <Label className="text-black" value="Your username" />
             <TextInput
+              className="mt-2 text-black placeholder-gray-400 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-black"
               type="text"
               placeholder="Username"
               id="username"
@@ -80,8 +77,9 @@ export default function SignUp() {
             />
           </div>
           <div>
-            <Label value="Your email" />
+            <Label className="text-black" value="Your email" />
             <TextInput
+              className="mt-2 text-black placeholder-gray-400 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-black"
               type="email"
               placeholder="name@company.com"
               id="email"
@@ -89,20 +87,21 @@ export default function SignUp() {
             />
           </div>
           <div>
-            <Label value="Your password" />
+            <Label className="text-black" value="Your password" />
             <TextInput
+              className="mt-2 text-black placeholder-gray-400 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-black"
               type="password"
               placeholder="Password"
               id="password"
               onChange={handleChange}
             />
           </div>
+
           <Button
             ref={buttonRef}
-            gradientDuoTone="purpleToPink"
             type="submit"
             disabled={loading}
-            className="w-full"
+            className="w-full bg-white text-black border border-black rounded-lg py-3 hover:bg-black hover:text-white transition-all"
           >
             {loading ? (
               <>
@@ -110,23 +109,24 @@ export default function SignUp() {
                 <span className="pl-3">Loading...</span>
               </>
             ) : (
-              'Sign Up'
+              'Sign up with email'
             )}
           </Button>
         </form>
 
-        <div className="my-3" />
+        <div className="my-4 border-b border-gray-300" />
+
         <OAuth buttonWidthRef={buttonRef} />
 
-        <div className="flex gap-2 text-sm mt-5">
-          <span className="text-gray-600">Have an account?</span>
-          <Link to="/sign-in" className="text-blue-500">
+        <div className="flex gap-2 text-sm mt-6 justify-center">
+          <span className="text-gray-500">Have an account?</span>
+          <Link to="/sign-in" className="text-black font-semibold hover:underline">
             Sign In
           </Link>
         </div>
 
         {errorMessage && (
-          <Alert className="mt-5" color="failure">
+          <Alert className="mt-6" color="failure">
             {errorMessage}
           </Alert>
         )}

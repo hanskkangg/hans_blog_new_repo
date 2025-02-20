@@ -40,10 +40,10 @@ export default function OAuth() {
 
   return (
     <button
-      onClick={handleGoogleClick}
-      className="flex items-center justify-center gap-2 px-4 py-2 border border-pink-500 text-pink-500 rounded-md 
-                 hover:bg-pink-500 hover:text-white transition duration-300 ease-in-out"
-    >
+    onClick={handleGoogleClick}
+    className="flex items-center justify-center gap-2 w-full px-4 py-2 border border-black text-black bg-white rounded-md 
+               hover:bg-gray-100 transition duration-300 ease-in-out"
+  >
       <AiFillGoogleCircle className="w-6 h-6" />
       Continue with Google
     </button>

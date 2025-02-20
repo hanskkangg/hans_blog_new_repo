@@ -44,17 +44,28 @@ export default function Header() {
   };
 
   return (
-    <Navbar className="border-b-2 shadow-md bg-white dark:bg-gray-900 px-6 py-2 flex items-center justify-between">
-      {/* ✅ Blog Title */}
-      <Link to="/" className="text-lg font-semibold dark:text-white flex-shrink-0">
-        <span className="px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white">
+    <Navbar className="border-b-2 shadow-md bg-white dark:bg-gray-900 px-6 py-4 flex items-center justify-between">
+      {/* Blog Title */}
+      <Link to="/" className="flex items-center space-x-2">
+        <span className="text-2xl font-bold text-black dark:text-white">
           Hans
         </span>
-        Blog
+        <span className="text-xl font-light text-gray-600 dark:text-gray-300">
+          Blog
+        </span>
       </Link>
 
       {/* ✅ Centered Navigation Links */}
-      <div className="hidden md:flex items-center gap-6 text-gray-700 dark:text-gray-300">
+<div className="hidden md:flex items-center gap-6 text-gray-700 dark:text-gray-300">
+      <Link
+        to="/home"
+        className={`hover:text-indigo-500 transition ${
+            path === "/home" ? "text-indigo-600 font-semibold" : ""
+        }`}
+    >
+        Home
+    </Link>
+
         <Link
           to="/search"
           className={`hover:text-indigo-500 transition ${
@@ -136,8 +147,17 @@ export default function Header() {
           </Dropdown>
         ) : (
           <Link to="/sign-in">
-            <Button className="px-4 py-1.5 text-sm">Sign In</Button>
-          </Link>
+          <button 
+              className="px-4 py-1 text-xs md:px-6 md:py-2 md:text-sm font-semibold border transition-all
+                         bg-white text-black border-black rounded-md
+                         hover:bg-black hover:text-white"
+          >
+              Sign In
+          </button>
+      </Link>
+      
+      
+      
         )}
       </div>
 
@@ -146,6 +166,9 @@ export default function Header() {
 
       {/* ✅ Dropdown Menu for Mobile */}
       <Navbar.Collapse className="lg:hidden">
+      <Navbar.Link active={path === "/home"} as="div">
+        <Link to="/home">Home</Link>
+    </Navbar.Link>
         <Navbar.Link active={path === "/search"} as="div">
           <Link to="/search">Posts</Link>
         </Navbar.Link>

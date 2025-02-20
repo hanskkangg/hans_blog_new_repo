@@ -60,18 +60,17 @@ export default function Home() {
         ) : (
           <p className="text-gray-500 text-center">No recent posts yet.</p>
         )}
+<div className="flex justify-center mt-10">
+    <Button
+        as={Link}
+        to="/search"
+        className="px-6 py-2 rounded-md text-sm font-medium border transition-all
+                   bg-white text-black border-black hover:bg-black hover:text-white w-full sm:w-auto"
+    >
+        Show More Posts
+    </Button>
+</div>
 
-        {/* Show More Button */}
-        <div className="flex justify-center mt-10">
-          <Button
-            gradientDuoTone="purpleToPink"
-            as={Link}
-            to="/search"
-            className="px-10 py-3 text-lg"
-          >
-            Show More Posts
-          </Button>
-        </div>
       </div>
 
       {/* Right Sidebar */}
