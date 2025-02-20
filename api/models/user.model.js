@@ -5,7 +5,9 @@ const userSchema = new mongoose.Schema(
     username: {
       type: String,
       required: true,
-      unique: true,
+      lowercase: true, // Ensure all usernames are stored in lowercase
+      trim: true
+
     },
     email: {
       type: String,
@@ -28,6 +30,9 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Use schema.index for unique case-insensitive username
+userSchema.index({ username: 1 }, { unique: true, collation: { locale: 'en', strength: 2 } });
 
 const User = mongoose.model('User', userSchema);
 

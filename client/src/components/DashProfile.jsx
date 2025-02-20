@@ -142,6 +142,14 @@ export default function DashProfile() {
       setUpdateUserError("❌ No changes made");
       return;
     }
+
+
+    if (!formData.username) {
+      setUpdateUserError("❌ Username cannot be empty");
+      return;
+    }
+
+
   
     if (imageFileUploading) {
       setUpdateUserError("❌ Please wait for image to upload");
@@ -172,8 +180,14 @@ export default function DashProfile() {
   
       const data = await res.json();
   
+  
       if (!res.ok) {
-        throw new Error(data.message || "❌ Update failed");
+        if (data.message && data.message.includes('E11000 duplicate key error')) {
+          setUpdateUserError("❌ Username already taken");
+        } else {
+          throw new Error(data.message || "❌ Update failed");
+        }
+        return;
       }
   
       dispatch(updateSuccess(data));
@@ -185,6 +199,7 @@ export default function DashProfile() {
     }
   };
   
+
   
   
   
@@ -289,6 +304,7 @@ export default function DashProfile() {
           placeholder='email'
           defaultValue={currentUser.email}
           onChange={handleChange}
+          disabled
         />
         <TextInput
           type='password'

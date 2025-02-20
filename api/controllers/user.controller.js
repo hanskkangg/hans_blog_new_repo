@@ -45,6 +45,11 @@ export const signup = async (req, res, next) => {
       return next(errorHandler(400, 'Your email address contains inappropriate content. Please use a valid email address.'));
   }
 
+
+  // Always store username and email in lowercase
+  username = username.toLowerCase();
+  email = email.toLowerCase();
+
   const hashedPassword = bcryptjs.hashSync(password, 10);
 
   try {
@@ -81,6 +86,25 @@ export const updateUser = async (req, res, next) => {
       req.body.password = bcryptjs.hashSync(req.body.password, 10);
     }
 
+
+    // Check for existing username case-insensitively
+    if (req.body.username) {
+      req.body.username = req.body.username.toLowerCase().trim();
+      const existingUser = await User.findOne({
+        username: req.body.username,
+        _id: { $ne: req.params.userId } // Exclude the current user from the check
+      }).collation({ locale: 'en', strength: 2 });
+
+      if (existingUser) {
+        return res.status(409).json({ message: "❌ Username already taken" });
+      }
+    }
+
+    
+   const existingUser = await User.findOne({ username: req.body.username.toLowerCase() });
+    if (existingUser && existingUser._id.toString() !== req.params.userId) {
+      return res.status(409).json({ message: "❌ Username already taken" });
+    }
     const updatedUser = await User.findByIdAndUpdate(
       req.params.userId,
       { $set: req.body },
@@ -108,7 +132,7 @@ export const updateUser = async (req, res, next) => {
 
   } catch (error) {
     console.error("🔥 Server Error in updateUser:", error); // ✅ Log full error
-    res.status(500).json({ message: "❌ Internal server error", error: error.message });
+    res.status(500).json({ message: "❌The username is already taken.", error: error.message });
   }
 };
 
