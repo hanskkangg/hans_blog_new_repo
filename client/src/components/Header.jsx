@@ -54,43 +54,35 @@ export default function Header() {
           Blog
         </span>
       </Link>
-
       {/* ✅ Centered Navigation Links */}
-<div className="hidden md:flex items-center gap-6 text-gray-700 dark:text-gray-300">
-      <Link
+      <div className="hidden md:flex items-center gap-10 text-white">
+    <Link
         to="/home"
-        className={`hover:text-indigo-500 transition ${
-            path === "/home" ? "text-indigo-600 font-semibold" : ""
+        className={`hover:text-gray-300 transition ${
+            path === "/home" ? "text-white font-semibold border-b-2 border-white" : "text-gray-500"
         }`}
     >
         Home
     </Link>
 
-        <Link
-          to="/search"
-          className={`hover:text-indigo-500 transition ${
-            path === "/search" ? "text-indigo-600 font-semibold" : ""
-          }`}
-        >
-          Posts
-        </Link>
-        <Link
-          to="/about"
-          className={`hover:text-indigo-500 transition ${
-            path === "/about" ? "text-indigo-600 font-semibold" : ""
-          }`}
-        >
-          About Me
-        </Link>
-        <Link
-          to="/projects"
-          className={`hover:text-indigo-500 transition ${
-            path === "/projects" ? "text-indigo-600 font-semibold" : ""
-          }`}
-        >
-          Projects
-        </Link>
-      </div>
+    <Link
+        to="/search"
+        className={`hover:text-gray-300 transition ${
+            path === "/search" ? "text-white font-semibold border-b-2 border-white" : "text-gray-500"
+        }`}
+    >
+        Posts
+    </Link>
+
+    <Link
+        to="/about"
+        className={`hover:text-gray-300 transition ${
+            path === "/about" ? "text-white font-semibold border-b-2 border-white" : "text-gray-500"
+        }`}
+    >
+        About Me
+    </Link>
+</div>
 
       {/* ✅ Centered Search Bar - Compact */}
       <form onSubmit={handleSubmit} className="hidden md:flex w-full max-w-xs lg:max-w-sm">
@@ -174,9 +166,6 @@ export default function Header() {
         </Navbar.Link>
         <Navbar.Link active={path === "/about"} as="div">
           <Link to="/about">About Me</Link>
-        </Navbar.Link>
-        <Navbar.Link active={path === "/projects"} as="div">
-          <Link to="/projects">Projects</Link>
         </Navbar.Link>
       </Navbar.Collapse>
     </Navbar>
