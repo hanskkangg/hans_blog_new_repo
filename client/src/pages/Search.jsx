@@ -121,27 +121,30 @@ export default function Search() {
     >
         Search
     </Button>
-</form>
 
+    </form>
 
-     {/* ✅ Category Filters (Modern Black and White Design) */}
-<div className="flex flex-wrap gap-2 mt-4">
-  {categories.map((category) => (
-    <button
-      key={category}
-      onClick={() => handleCategoryClick(category)}
-      className={`px-4 py-2 rounded-md text-sm font-medium border transition-all
-        ${
-          sidebarData.category === category
-            ? "bg-black text-white border-black"
-            : "bg-white text-black border-gray-300 hover:bg-black hover:text-white"
-        }
-      `}
-    >
-      {category.charAt(0).toUpperCase() + category.slice(1)}
-    </button>
-  ))}
+    {/* ✅ Category Filters (Responsive Design with Flex Wrapping) */}
+<div className="flex flex-wrap gap-6 sm:gap-10 mt-6 justify-center border-t-2 border-b-2 border-gray-300 dark:border-gray-600 py-3">
+    {categories.map((category) => (
+        <button
+            key={category}
+            onClick={() => handleCategoryClick(category)}
+            className={` 
+                relative px-2 py-1 sm:px-4 sm:py-2 text-base sm:text-lg font-semibold transition-all 
+                text-black dark:text-white whitespace-nowrap
+                ${sidebarData.category === category 
+                    ? 'underline underline-offset-4 decoration-4 decoration-black' 
+                    : 'hover:underline hover:underline-offset-4 hover:decoration-gray-500 hover:decoration-4'}
+            `}
+        >
+            {category.charAt(0).toUpperCase() + category.slice(1)}
+        </button>
+    ))}
 </div>
+
+
+
 
 
       {/* ✅ Posts Section */}
