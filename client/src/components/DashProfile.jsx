@@ -290,7 +290,7 @@ export default function DashProfile() {
     'https://cdn-icons-png.flaticon.com/512/3607/3607444.png' // ✅ Default avatar
   }
   alt="user"
-  className={`rounded-full w-full h-full object-cover border-8 border-[lightgray] ${
+  className={`rounded-full w-full h-full object-cover  ${
     imageFileUploadProgress && imageFileUploadProgress < 100 && 'opacity-60'
   }`}
 />

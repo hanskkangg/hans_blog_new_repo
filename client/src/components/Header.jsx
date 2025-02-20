@@ -135,7 +135,7 @@ export default function Header() {
         <img
           alt="user"
           src={currentUser?.profilePicture?.trim() || 'https://cdn-icons-png.flaticon.com/512/3607/3607444.png'}
-          className="w-12 h-12 md:w-14 md:h-14 rounded-full "
+          className="w-12 h-12 md:w-16 md:h-16 rounded-full "
         />
       </div>
     }
