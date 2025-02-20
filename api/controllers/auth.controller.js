@@ -17,21 +17,39 @@ export const signup = async (req, res, next) => {
     next(errorHandler(400, 'The email you entered isn’t connected to an account. '));
   }
 
-  const hashedPassword = bcryptjs.hashSync(password, 10);
+    // Username Validation
+    const usernameRegex = /^[a-zA-Z0-9._]{4,15}$/;
+    if (!usernameRegex.test(username)) {
+      return next(errorHandler(400, 'Username must be 4-15 characters long and can only contain letters, numbers, underscores, and periods.'));
+    }
 
-  const newUser = new User({
-    username,
-    email,
-    password: hashedPassword,
-  });
+      // Email Validation
+  const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (email.length < 10 || email.length > 25 || !emailRegex.test(email)) {
+    return next(errorHandler(400, 'Email must be 10-25 characters long and in a valid format (e.g., name@example.com).'));
+  }
+   // Password Validation
+   if (password.length < 8 || password.length > 64) {
+    return next(errorHandler(400, 'Password must be between 8 and 64 characters.'));
+  }
 
   try {
+    const hashedPassword = bcryptjs.hashSync(password, 10);
+
+    const newUser = new User({
+      username,
+      email,
+      password: hashedPassword,
+    });
+
     await newUser.save();
     res.json('Signup successful');
   } catch (error) {
     next(error);
   }
 };
+
+
 export const signin = async (req, res, next) => {
   const { email, password } = req.body;
 

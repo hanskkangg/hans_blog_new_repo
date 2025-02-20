@@ -22,6 +22,46 @@ export const test = (req,res) =>  {
 
     
 };
+
+
+export const signup = async (req, res, next) => {
+  const { username, email, password } = req.body;
+
+  if (!username || !email || !password) {
+      return next(errorHandler(400, 'All fields are required.'));
+  }
+
+  // Check for prohibited words in username and email
+  const containsProhibitedWords = (text) => {
+      const lowerText = text.toLowerCase();
+      return prohibitedWords.some((word) => lowerText.includes(word));
+  };
+
+  if (containsProhibitedWords(username)) {
+      return next(errorHandler(400, 'Your username contains inappropriate content. Please choose a different username.'));
+  }
+
+  if (containsProhibitedWords(email)) {
+      return next(errorHandler(400, 'Your email address contains inappropriate content. Please use a valid email address.'));
+  }
+
+  const hashedPassword = bcryptjs.hashSync(password, 10);
+
+  try {
+      const newUser = new User({
+          username,
+          email,
+          password: hashedPassword,
+      });
+
+      await newUser.save();
+      res.json({ success: true, message: 'Signup successful' });
+  } catch (error) {
+      next(error);
+  }
+};
+
+
 export const updateUser = async (req, res, next) => {
   try {
     console.log("🛠 Incoming Update Request:", req.body); // ✅ Log request body

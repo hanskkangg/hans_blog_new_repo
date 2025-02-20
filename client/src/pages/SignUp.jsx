@@ -10,6 +10,64 @@ export default function SignUp() {
   const [loading, setLoading] = useState(false);
   const { theme } = useSelector((state) => state.theme); // Get theme from redux or global state
   const navigate = useNavigate();
+// Validation Rules
+const prohibitedWords = [
+  'nigger', 'fuck', 'shit', 'bitch', 'asshole', 'racist', 'niger', 'nig3r', 'nigg3r',
+  'chink', 'ching', 'bastard', 'damn', 'crap', 'dick', 'pussy', 'cunt', 'twat',
+  'bollocks', 'prick', 'wanker', 'douche', 'motherfucker', 'moron', 'motherfuker',
+  'hoe','nigga', 'faggot', 'homo', 'tranny','retard', 'cripple', 'spaz', 'mongoloid','whore', 'slut', 'cum', 'jizz', 'fap', 'porn', 'dildo', 'boobs', 
+  'tits', 'vagina', 'penis', 'orgy', 'rape', 'molest', 'incest', 'blowjob',
+  'kill', 'murder', 'terrorist', 'bomb', 'explode', 'genocide',
+ 'assassinate', 'stab', 'behead', 'shoot', 'abuse', 'pedophile',
+  'hitler', 'nazi','whitepower', 'supremacy', 'zionist', 'jihadi',
+  'suicide', 'selfharm','hang', 'overdose', 'depress', 'killself'
+];
+
+
+  // Validation Rules
+  const validateForm = () => {
+    const { username, email, password } = formData;
+
+ // Prohibited Word Check
+ const containsProhibitedWords = (text) => {
+  const lowerText = text.toLowerCase();
+  return prohibitedWords.some((word) => lowerText.includes(word));
+};
+
+if (containsProhibitedWords(username)) {
+  return 'Username contains inappropriate content. Please choose a different username.';
+}
+
+if (containsProhibitedWords(email)) {
+  return 'Email address contains inappropriate content. Please use a valid email address.';
+}
+        // Username Validation
+        const usernameRegex = /^[a-zA-Z0-9._]{4,15}$/;
+        if (!usernameRegex.test(username)) {
+          return 'Username must be 4-15 characters long and can only contain letters, numbers, underscores, and periods.';
+        }
+
+         // Email Validation
+  
+    // Email Validation
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (email.length < 10) {
+        return 'Please enter a valid email address (Email address must be at least 10 characters long)';
+    }
+    if (email.length > 25) {
+        return 'Email address must not exceed 25 characters.';
+    }
+    if (!emailRegex.test(email)) {
+        return 'Please enter a valid email address (e.g., name@example.com).';
+    }
+
+    // Password Validation
+    if (password.length < 8 || password.length > 64) {
+      return 'Password must be between 8 and 64 characters.';
+    }
+
+    return null; // No validation errors
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
@@ -18,8 +76,16 @@ export default function SignUp() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.username || !formData.email || !formData.password) {
-      return setErrorMessage('Please fill out all fields.');
+      return setErrorMessage('All fields are required. Please ensure no fields are left empty.');
     }
+
+
+    const validationError = validateForm();
+    if (validationError) {
+        setLoading(false); // ⬅️ Ensure loading is set to false
+        return setErrorMessage(validationError);
+    }
+
     try {
       setLoading(true);
       setErrorMessage(null);
@@ -30,6 +96,7 @@ export default function SignUp() {
       });
       const data = await res.json();
       if (data.success === false) {
+            setLoading(false); // ⬅️ Reset loading state on error
         return setErrorMessage(data.message);
       }
       setLoading(false);
@@ -110,24 +177,23 @@ export default function SignUp() {
                 onChange={handleChange}
               />
             </div>
-
             <Button
-              type="submit"
-              disabled={loading}
-              className={`w-full border rounded-lg py-3 transition-all
-                ${theme === 'dark' 
-                  ? 'bg-gray-700 text-white border-gray-600 hover:bg-gray-600' 
-                  : 'bg-white text-black border-black hover:bg-black hover:text-white'}`}
-            >
-              {loading ? (
-                <>
-                  <Spinner size="sm" />
-                  <span className="pl-3">Loading...</span>
-                </>
-              ) : (
-                'Sign Up'
-              )}
-            </Button>
+  type="submit"
+  disabled={loading}
+  className={`w-full border border-black rounded-lg py-3 transition-colors duration-300
+    bg-white text-black hover:bg-black hover:text-white focus:ring-0 active:ring-0`}
+>
+  {loading ? (
+    <>
+      <Spinner size="sm" />
+      <span className="pl-3">Loading...</span>
+    </>
+  ) : (
+    'Sign Up'
+  )}
+</Button>
+
+
           </form>
 
           <div className={`my-4 border-b ${theme === 'dark' ? 'border-gray-600' : 'border-gray-300'}`} />
