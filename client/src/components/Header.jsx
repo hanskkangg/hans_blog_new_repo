@@ -54,12 +54,19 @@ export default function Header() {
           Blog
         </span>
       </Link>
+
+
+
       {/* ✅ Centered Navigation Links */}
-      <div className="hidden md:flex items-center gap-10 text-white">
+
+
+<div className="hidden md:flex items-center gap-10 text-black dark:text-white">
     <Link
         to="/home"
-        className={`hover:text-gray-300 transition ${
-            path === "/home" ? "text-white font-semibold border-b-2 border-white" : "text-gray-500"
+        className={`transition pb-1 ${
+            path === "/home" 
+                ? "font-semibold border-b-4 border-black dark:border-white" 
+                : "hover:text-gray-500"
         }`}
     >
         Home
@@ -67,8 +74,10 @@ export default function Header() {
 
     <Link
         to="/search"
-        className={`hover:text-gray-300 transition ${
-            path === "/search" ? "text-white font-semibold border-b-2 border-white" : "text-gray-500"
+        className={`transition pb-1 ${
+            path === "/search" 
+                ? "font-semibold border-b-4 border-black dark:border-white" 
+                : "hover:text-gray-500"
         }`}
     >
         Posts
@@ -76,13 +85,16 @@ export default function Header() {
 
     <Link
         to="/about"
-        className={`hover:text-gray-300 transition ${
-            path === "/about" ? "text-white font-semibold border-b-2 border-white" : "text-gray-500"
+        className={`transition pb-1 ${
+            path === "/about" 
+                ? "font-semibold border-b-4 border-black dark:border-white" 
+                : "hover:text-gray-500"
         }`}
     >
         About Me
     </Link>
 </div>
+
 
       {/* ✅ Centered Search Bar - Compact */}
       <form onSubmit={handleSubmit} className="hidden md:flex w-full max-w-xs lg:max-w-sm">
@@ -114,19 +126,21 @@ export default function Header() {
         </Button>
 
         {/* User Profile Dropdown */}
-        {currentUser ? (
-          <Dropdown
-            arrowIcon={false}
-            inline
-            label={
-              <Avatar
-                alt="user"
-                img={currentUser?.profilePicture?.trim() || 'https://cdn-icons-png.flaticon.com/512/3607/3607444.png'}
-                rounded
-                className="w-10 h-10"
-              />
-            }
-          >
+{currentUser ? (
+  <Dropdown
+    arrowIcon={false}
+    inline
+    label={
+      <div className="flex items-center gap-2">
+        <img
+          alt="user"
+          src={currentUser?.profilePicture?.trim() || 'https://cdn-icons-png.flaticon.com/512/3607/3607444.png'}
+          className="w-12 h-12 md:w-14 md:h-14 rounded-full "
+        />
+      </div>
+    }
+  >
+
             <Dropdown.Header>
               <span className="block text-sm font-semibold">{currentUser.username}</span>
               <span className="block text-sm text-gray-500 truncate">{currentUser.email}</span>
