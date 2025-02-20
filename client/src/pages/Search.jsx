@@ -2,6 +2,7 @@ import { Button, TextInput } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import PostCardSearch from '../components/PostCardSearch';
+import MiniPostCard from '../components/MiniPostCard';
 
 export default function Search() {
   const [sidebarData, setSidebarData] = useState({
@@ -13,6 +14,8 @@ export default function Search() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showMore, setShowMore] = useState(false);
+  const [trendingPosts, setTrendingPosts] = useState([]);
+  const [mostViewedPosts, setMostViewedPosts] = useState([]);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -47,9 +50,25 @@ export default function Search() {
       setShowMore(data.posts.length === 9);
     };
 
-    fetchPosts();
-  }, [location.search]);
 
+    const fetchSidebarPosts = async () => {
+      try {
+        const trendingRes = await fetch("/api/post/getPosts?limit=5&sort=most-liked");
+        const trendingData = await trendingRes.json();
+        setTrendingPosts(trendingData.posts);
+
+        const mostViewedRes = await fetch("/api/post/getPosts?limit=5&sort=most-viewed");
+        const mostViewedData = await mostViewedRes.json();
+        setMostViewedPosts(mostViewedData.posts);
+      } catch (error) {
+        console.error("Error fetching sidebar posts:", error);
+      }
+    };
+
+    fetchPosts();
+    fetchSidebarPosts();
+  }, [location.search]);
+  
   const handleChange = (e) => {
     setSidebarData({ ...sidebarData, [e.target.id]: e.target.value });
   };
@@ -83,88 +102,69 @@ export default function Search() {
   };
 
   return (
-    <div className='flex flex-col w-full max-w-4xl mx-auto p-6'>
-{/* ✅ Search Bar & Sorting */} 
-<form 
-    onSubmit={handleSubmit} 
-    className="flex flex-col sm:flex-row items-center gap-4 bg-gray-100 dark:bg-gray-900 p-4 rounded-lg shadow-md"
->
-    {/* Search Bar */}
-    <TextInput
-        placeholder="Search posts..."
-        id="searchTerm"
-        type="text"
-        value={sidebarData.searchTerm}
-        onChange={handleChange}
-        className="flex-1 w-full sm:w-auto"
-    />
-
-    {/* Sort By */}
-    <select 
-        id="sort" 
-        value={sidebarData.sort} 
-        onChange={handleChange} 
-        className="w-full sm:w-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 p-2 rounded-md"
-    >
-        <option value="desc">Latest</option>
-        <option value="asc">Oldest</option>
-        <option value="most-viewed">Most Viewed</option>
-        <option value="most-liked">Most Liked</option>
-    </select>
-
-    {/* ✅ Updated Search Button */}
-    <Button 
-        type="submit" 
-        className={`px-6 py-2 rounded-md text-sm font-medium border transition-all
-          bg-white text-black border-black hover:bg-black hover:text-white w-full sm:w-auto
-        `}
-    >
-        Search
-    </Button>
-
-    </form>
-
-    {/* ✅ Category Filters (Responsive Design with Flex Wrapping) */}
-<div className="flex flex-wrap gap-6 sm:gap-10 mt-6 justify-center border-t-2 border-b-2 border-gray-300 dark:border-gray-600 py-3">
-    {categories.map((category) => (
-        <button
-            key={category}
-            onClick={() => handleCategoryClick(category)}
-            className={` 
-                relative px-2 py-1 sm:px-4 sm:py-2 text-base sm:text-lg font-semibold transition-all 
-                text-black dark:text-white whitespace-nowrap
-                ${sidebarData.category === category 
-                    ? 'underline underline-offset-4 decoration-4 decoration-black' 
-                    : 'hover:underline hover:underline-offset-4 hover:decoration-gray-500 hover:decoration-4'}
-            `}
+    <div className="flex flex-col w-full max-w-6xl mx-auto p-6">
+      
+      {/* Search Bar & Sorting */}
+      <form 
+        onSubmit={handleSubmit} 
+        className="flex flex-col sm:flex-row items-center gap-4 bg-gray-100 dark:bg-gray-900 p-4 rounded-lg shadow-md"
+      >
+        <TextInput
+            placeholder="Search posts..."
+            id="searchTerm"
+            type="text"
+            value={sidebarData.searchTerm}
+            onChange={handleChange}
+            className="flex-1 w-full sm:w-auto"
+        />
+        <select 
+            id="sort" 
+            value={sidebarData.sort} 
+            onChange={handleChange} 
+            className="w-full sm:w-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 p-2 rounded-md"
         >
-            {category.charAt(0).toUpperCase() + category.slice(1)}
-        </button>
-    ))}
-</div>
+            <option value="desc">Latest</option>
+            <option value="asc">Oldest</option>
+            <option value="most-viewed">Most Viewed</option>
+            <option value="most-liked">Most Liked</option>
+        </select>
+        <Button type="submit" className="px-6 py-2 rounded-md text-sm font-medium border bg-white text-black border-black hover:bg-black hover:text-white w-full sm:w-auto">
+            Search
+        </Button>
+      </form>
 
+      {/* Categories */}
+      <div className="flex flex-wrap gap-6 sm:gap-10 mt-6 justify-center border-t-2 border-b-2 border-gray-300 dark:border-gray-600 py-3">
+          {categories.map((category) => (
+              <button
+                  key={category}
+                  onClick={() => handleCategoryClick(category)}
+                  className={`relative px-2 py-1 sm:px-4 sm:py-2 text-base sm:text-lg font-semibold transition-all text-black dark:text-white whitespace-nowrap
+                      ${sidebarData.category === category 
+                          ? 'underline underline-offset-4 decoration-4 decoration-black' 
+                          : 'hover:underline hover:underline-offset-4 hover:decoration-gray-500 hover:decoration-4'}`}
+              >
+                  {category.charAt(0).toUpperCase() + category.slice(1)}
+              </button>
+          ))}
+      </div>
 
-
-
-
-      {/* ✅ Posts Section */}
-      <div className='w-full mt-6'>
-        <h1 className='text-2xl font-semibold text-gray-800 dark:text-white mb-4'>
-          Search Results
-        </h1>
-
-        {/* ✅ Display One Post Per Line */}
-        <div className='space-y-4'>
-          {loading && <p className='text-lg text-gray-500'>Loading...</p>}
-          {!loading && posts.length === 0 && <p className='text-lg text-gray-500'>No posts found.</p>}
-          {!loading &&
-            posts.map((post) => (
-              <PostCardSearch key={post._id} post={{ ...post, likesCount: post.likesCount || 0 }} />
-            ))
-          }
-        </div>
-
-        {/* ✅ Show More Button */}
+      {/* Main Content & Sidebar */}
+      <div className="flex flex-col md:flex-row gap-8 mt-6">
+        
+        {/* Search Results (70%) */}
+        <div className="w-full md:w-[70%]">
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">
+            Search Results
+          </h1>
+          <div className="space-y-4">
+            {loading && <p className='text-lg text-gray-500'>Loading...</p>}
+            {!loading && posts.length === 0 && <p className='text-lg text-gray-500'>No posts found.</p>}
+            {!loading && posts.map((post) => (
+              <PostCardSearch key={post._id} post={post} />
+            ))}
+            
+           {/* ✅ Show More Button */}
         {showMore && (
           <button
             onClick={handleShowMore}
@@ -173,6 +173,31 @@ export default function Search() {
             Show More
           </button>
         )}
+          </div>
+        </div>
+
+        {/* Sidebar (30%) */}
+        <div className="w-full md:w-[30%] space-y-6">
+          <div className="p-5 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold mb-4 border-b border-gray-300 pb-2 text-center">
+              🔥 Trending Posts
+            </h2>
+            {trendingPosts.map((post) => (
+              <MiniPostCard key={post._id} post={post} />
+            ))}
+          </div>
+          <div className="p-5 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold mb-4 border-b border-gray-300 pb-2 text-center">
+              👁️ Most Viewed Posts
+            </h2>
+            {mostViewedPosts.map((post) => (
+              <MiniPostCard key={post._id} post={post} />
+            ))}
+          </div>
+
+          
+      </div>
+        
       </div>
     </div>
   );
