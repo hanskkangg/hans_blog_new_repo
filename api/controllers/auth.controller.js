@@ -14,7 +14,7 @@ export const signup = async (req, res, next) => {
     email === '' ||
     password === ''
   ) {
-    next(errorHandler(400, 'All fields are required'));
+    next(errorHandler(400, 'The email you entered isn’t connected to an account. '));
   }
 
   const hashedPassword = bcryptjs.hashSync(password, 10);
@@ -36,18 +36,18 @@ export const signin = async (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return next(errorHandler(400, 'All fields are required'));
+    return next(errorHandler(400, 'The email you entered isn’t connected to an account. '));
   }
 
   try {
     const validUser = await User.findOne({ email });
     if (!validUser) {
-      return next(errorHandler(404, 'User not found'));
+      return next(errorHandler(404, "Sorry, we didn't recognize that email."));
     }
 
     const validPassword = bcryptjs.compareSync(password, validUser.password);
     if (!validPassword) {
-      return next(errorHandler(400, 'Invalid password'));
+      return next(errorHandler(400, 'The password you’ve entered is incorrect.'));
     }
 
     const token = jwt.sign(
