@@ -128,10 +128,18 @@ export default function Search() {
             <option value="most-viewed">Most Viewed</option>
             <option value="most-liked">Most Liked</option>
         </select>
-        <Button type="submit" className="px-6 py-2 rounded-md text-sm font-medium border bg-white text-black border-black hover:bg-black hover:text-white w-full sm:w-auto">
-            Search
-        </Button>
-      </form>
+        
+    {/* ✅ Custom Button */}
+    <button 
+        type="submit" 
+        className="px-6 py-2 rounded-md text-sm font-medium border 
+                   bg-white text-black border-black 
+                   hover:bg-black hover:text-white 
+                   transition-colors duration-300 w-full sm:w-auto"
+    >
+        Search
+    </button>
+</form>
 
       {/* Categories */}
       <div className="flex flex-wrap gap-6 sm:gap-10 mt-6 justify-center border-t-2 border-b-2 border-gray-300 dark:border-gray-600 py-3">

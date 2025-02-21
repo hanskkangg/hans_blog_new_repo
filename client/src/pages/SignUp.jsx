@@ -176,22 +176,28 @@ if (containsProhibitedWords(email)) {
                 id="password"
                 onChange={handleChange}
               />
+
+
             </div>
-            <Button
-  type="submit"
-  disabled={loading}
-  className={`w-full border border-black rounded-lg py-3 transition-colors duration-300
-    bg-white text-black hover:bg-black hover:text-white focus:ring-0 active:ring-0`}
->
-  {loading ? (
-    <>
-      <Spinner size="sm" />
-      <span className="pl-3">Loading...</span>
-    </>
-  ) : (
-    'Sign Up'
-  )}
-</Button>
+
+            
+  {/* ✅ Custom Black and White Button */}
+  <button
+    type="submit"
+    disabled={loading}
+    className={`w-full py-3 border rounded-lg transition-colors duration-300 
+      bg-white text-black border-black hover:bg-black hover:text-white 
+      focus:ring-0 active:ring-0 ${loading ? 'cursor-not-allowed opacity-70' : ''}`}
+  >
+    {loading ? (
+      <div className="flex items-center justify-center">
+        <span className="animate-spin h-5 w-5 border-2 border-black border-t-transparent rounded-full"></span>
+        <span className="pl-3">Loading...</span>
+      </div>
+    ) : (
+      'Sign Up'
+    )}
+  </button>
 
 
           </form>

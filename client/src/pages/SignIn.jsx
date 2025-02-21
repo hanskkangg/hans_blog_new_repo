@@ -110,23 +110,24 @@ export default function SignIn() {
               />
             </div>
 
-            <Button
-              type="submit"
-              disabled={loading}
-              className={`w-full border rounded-lg py-3 transition-all
-                ${theme === 'dark' 
-                  ? 'bg-gray-700 text-white border-gray-600 hover:bg-gray-600' 
-                  : 'bg-white text-black border-black hover:bg-black hover:text-white'}`}
-            >
-              {loading ? (
-                <>
-                  <Spinner size="sm" />
-                  <span className="pl-3">Loading...</span>
-                </>
-              ) : (
-                'Sign In'
-              )}
-            </Button>
+           {/* ✅ Custom Button */}
+  <button
+    type="submit"
+    disabled={loading}
+    className={`w-full py-3 border rounded-lg transition-colors duration-300 
+      ${theme === 'dark' 
+        ? 'bg-gray-700 text-white border-gray-600 hover:bg-gray-600' 
+        : 'bg-white text-black border-black hover:bg-black hover:text-white'}`}
+  >
+    {loading ? (
+      <div className="flex items-center justify-center">
+        <Spinner size="sm" />
+        <span className="pl-3">Loading...</span>
+      </div>
+    ) : (
+      'Sign In'
+    )}
+  </button>
           </form>
 
           <div className={`my-4 border-b ${theme === 'dark' ? 'border-gray-600' : 'border-gray-300'}`} />
