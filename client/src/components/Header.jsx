@@ -15,6 +15,7 @@ export default function Header() {
   const { currentUser } = useSelector((state) => state.user);
   const { theme } = useSelector((state) => state.theme);
   const [searchTerm, setSearchTerm] = useState('');
+  const [menuOpen, setMenuOpen] = useState(false); // ✅ State to handle menu open/close
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -43,9 +44,20 @@ export default function Header() {
     navigate(`/search?${searchQuery}`);
   };
 
+  const handleMenuClick = () => {
+    setMenuOpen(!menuOpen);
+  };
+
+  const handleLinkClick = () => {
+    setMenuOpen(false); // ✅ Close menu on link click
+  };
+
   return (
-    <Navbar className="border-b-2 shadow-md bg-white dark:bg-gray-900 px-6 py-4 flex items-center justify-between">
-      {/* Blog Title */}
+
+      <Navbar
+      className="border-b-2 shadow-md bg-white dark:bg-gray-900 px-6 py-4 flex items-center justify-between"
+      
+    >   {/* Blog Title */}
       <Link to="/" className="flex items-center space-x-2">
         <span className="text-2xl font-bold text-black dark:text-white">
           Hans
@@ -91,7 +103,7 @@ export default function Header() {
                 : "hover:text-gray-500"
         }`}
     >
-        About Me
+        About
     </Link>
 </div>
 
@@ -167,18 +179,18 @@ export default function Header() {
         )}
       </div>
 
-      {/* ✅ Navbar Collapse for Small Screens */}
-      <Navbar.Toggle className="md:hidden" />
+      {/* Navbar Collapse for Small Screens */}
+      <Navbar.Toggle onClick={handleMenuClick} className="md:hidden" />
 
-      {/* ✅ Dropdown Menu for Mobile */}
-      <Navbar.Collapse className="lg:hidden">
-      <Navbar.Link active={path === "/home"} as="div">
-        <Link to="/home">Home</Link>
-    </Navbar.Link>
-        <Navbar.Link active={path === "/search"} as="div">
+      {/* Dropdown Menu for Mobile */}
+      <Navbar.Collapse className={`${menuOpen ? 'block' : 'hidden'} lg:hidden`}>
+        <Navbar.Link active={path === '/home'} as="div" onClick={handleLinkClick}>
+          <Link to="/home">Home</Link>
+        </Navbar.Link>
+        <Navbar.Link active={path === '/search'} as="div" onClick={handleLinkClick}>
           <Link to="/search">Posts</Link>
         </Navbar.Link>
-        <Navbar.Link active={path === "/about"} as="div">
+        <Navbar.Link active={path === '/about'} as="div" onClick={handleLinkClick}>
           <Link to="/about">About</Link>
         </Navbar.Link>
       </Navbar.Collapse>

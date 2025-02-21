@@ -1,7 +1,7 @@
 import { Modal, Table, Button } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom'; // ✅ Import Link for navigation
+import { Link } from 'react-router-dom';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
 
 export default function MyComments() {
@@ -72,65 +72,66 @@ export default function MyComments() {
   };
 
   return (
-    <div className="table-auto overflow-x-scroll md:mx-auto p-3">
+    <div className="p-3 max-w-full md:max-w-5xl mx-auto">
       {comments.length > 0 ? (
         <>
-          <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Your Comments</h2>
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">Your Comments</h2>
 
-          <Table hoverable className="shadow-md mt-4">
-            <Table.Head>
-              <Table.HeadCell>Date updated</Table.HeadCell>
-              <Table.HeadCell>Comment content</Table.HeadCell>
-              <Table.HeadCell>Number of likes</Table.HeadCell>
-              <Table.HeadCell>Post Title</Table.HeadCell>
-              <Table.HeadCell>Delete</Table.HeadCell>
-            </Table.Head>
+          <div className="overflow-x-auto">
+            <Table hoverable className="w-full">
+              <Table.Head>
+                <Table.HeadCell className="whitespace-nowrap">Date</Table.HeadCell>
+                <Table.HeadCell className="whitespace-nowrap">Comment</Table.HeadCell>
+                <Table.HeadCell className="whitespace-nowrap">Likes</Table.HeadCell>
+                <Table.HeadCell className="whitespace-nowrap">Post</Table.HeadCell>
+                <Table.HeadCell className="whitespace-nowrap">Delete</Table.HeadCell>
+              </Table.Head>
 
-            <Table.Body className="divide-y">
-              {comments.map((comment) => (
-                <Table.Row key={comment._id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                  <Table.Cell>{new Date(comment.updatedAt).toLocaleDateString()}</Table.Cell>
+              <Table.Body className="divide-y">
+                {comments.map((comment) => (
+                  <Table.Row key={comment._id} className="bg-white dark:bg-gray-800">
+                    <Table.Cell className="text-xs">{new Date(comment.updatedAt).toLocaleDateString()}</Table.Cell>
+                    
+                    <Table.Cell className="max-w-xs text-xs whitespace-normal break-words">
+                      <div className="p-2 border border-gray-300 dark:border-gray-600 rounded-md">
+                        {comment.content}
+                      </div>
+                    </Table.Cell>
 
-                  <Table.Cell className="max-w-xs">
-                    <div className="whitespace-normal break-words overflow-hidden text-ellipsis p-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm">
-                      {comment.content}
-                    </div>
-                  </Table.Cell>
+                    <Table.Cell className="text-center text-xs">{comment.numberOfLikes}</Table.Cell>
 
-                  <Table.Cell>{comment.numberOfLikes}</Table.Cell>
+                    <Table.Cell className="text-xs">
+                      {comment.postId ? (
+                        <Link
+                          to={`/post/${comment.postId.slug || comment.postId._id}`}
+                          className="text-teal-500 hover:underline"
+                        >
+                          {comment.postId.title}
+                        </Link>
+                      ) : (
+                        "Unknown Post"
+                      )}
+                    </Table.Cell>
 
-                  <Table.Cell>
-  {comment.postId ? (
-    <Link
-      to={`/post/${comment.postId.slug || comment.postId._id}`} 
-      className="text-teal-500 hover:underline"
-    >
-      {comment.postId.title}
-    </Link>
-  ) : (
-    "Unknown Post"
-  )}
-</Table.Cell>
-
-
-                  <Table.Cell>
-                    <span
-                      onClick={() => {
-                        setShowModal(true);
-                        setCommentIdToDelete(comment._id);
-                      }}
-                      className="font-medium text-red-500 hover:underline cursor-pointer"
-                    >
-                      Delete
-                    </span>
-                  </Table.Cell>
-                </Table.Row>
-              ))}
-            </Table.Body>
-          </Table>
+                    <Table.Cell className="text-center">
+                      <span
+                        onClick={() => {
+                          setShowModal(true);
+                          setCommentIdToDelete(comment._id);
+                        }}
+                        className="font-medium text-red-500 hover:underline cursor-pointer text-xs"
+                      >
+                        Delete
+                      </span>
+                    </Table.Cell>
+                  </Table.Row>
+                ))}
+              </Table.Body>
+            </Table>
+          </div>
 
           {showMore && (
-            <button onClick={handleShowMore} className="w-full text-teal-500 self-center text-sm py-7">
+            <button onClick={handleShowMore} className="w-full text-teal-500 text-sm py-4">
               Show more
             </button>
           )}
