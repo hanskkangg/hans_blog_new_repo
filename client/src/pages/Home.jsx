@@ -127,7 +127,8 @@ export default function Home() {
         {/* 🔥 Trending Posts */}
         <div className="p-5 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-300 dark:border-gray-600">
           <h2 className="text-xl font-semibold mb-4 border-b border-gray-300 pb-2 text-center">
-            🔥 Trending Posts
+          
+Fan Favorites
           </h2>
           <div className="space-y-4">
             {trendingPosts.length > 0 ? (
@@ -143,7 +144,8 @@ export default function Home() {
         {/* 👁️ Most Viewed Posts */}
         <div className="p-5 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-300 dark:border-gray-600">
           <h2 className="text-xl font-semibold mb-4 border-b border-gray-300 pb-2 text-center">
-            👁️ Most Viewed Posts
+          
+Popular Reads
           </h2>
           <div className="space-y-4">
             {mostViewedPosts.length > 0 ? (

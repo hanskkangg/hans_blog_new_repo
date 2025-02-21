@@ -4,6 +4,8 @@ export default function MiniPostCard({ post }) {
   return (
     <div className="flex items-center gap-4 py-3 border-b border-gray-300 dark:border-gray-600 last:border-none">
       {/* Left: Thumbnail Image */}
+      
+      <Link to={`/post/${post.slug}`} className="flex-shrink-0">
       <div className="w-16 h-16 flex-shrink-0 border border-gray-300 dark:border-gray-600 rounded-md overflow-hidden">
         <img
           src={post.headerImage || "/default-placeholder.jpg"}
@@ -11,7 +13,8 @@ export default function MiniPostCard({ post }) {
           alt={post.title}
           className="w-full h-full object-cover"
         />
-      </div>
+        </div>
+      </Link>
 
       {/* Right: Post Info */}
       <div className="flex-1 overflow-hidden">

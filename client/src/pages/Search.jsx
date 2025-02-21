@@ -180,7 +180,8 @@ export default function Search() {
         <div className="w-full md:w-[30%] space-y-6">
           <div className="p-5 bg-white dark:bg-gray-800 rounded-lg shadow-md">
             <h2 className="text-xl font-semibold mb-4 border-b border-gray-300 pb-2 text-center">
-              🔥 Trending Posts
+            
+Fan Favorites
             </h2>
             {trendingPosts.map((post) => (
               <MiniPostCard key={post._id} post={post} />
@@ -188,7 +189,8 @@ export default function Search() {
           </div>
           <div className="p-5 bg-white dark:bg-gray-800 rounded-lg shadow-md">
             <h2 className="text-xl font-semibold mb-4 border-b border-gray-300 pb-2 text-center">
-              👁️ Most Viewed Posts
+              
+Popular Reads
             </h2>
             {mostViewedPosts.map((post) => (
               <MiniPostCard key={post._id} post={post} />
