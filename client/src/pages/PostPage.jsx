@@ -152,7 +152,7 @@ export default function PostPage() {
       }
   
       console.log("✅ Post deleted successfully!");
-      navigate("/"); // ✅ Redirect after deletion
+      navigate("/home"); // ✅ Redirect after deletion
     } catch (error) {
       console.error("🔥 Error deleting post:", error.message);
     }

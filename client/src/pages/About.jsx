@@ -48,12 +48,13 @@ export default function AboutAndContact() {
   };
 
   return (
-    <div className="w-full min-h-screen overflow-y-auto">
+  
+  <div className="w-full min-h-screen overflow-y-auto overflow-x-hidden">
       {/* About Hans' Blog - Full Page */}
-      <div className="w-full min-h-screen flex">
-        {/* Left Side - About Content */}
-        <div className="w-1/2 flex items-center justify-center bg-white text-black p-10">
-          <div className="max-w-lg text-left">
+<div className="w-full min-h-screen flex flex-col md:flex-row">
+       {/* Left Side - About Content */}
+    <div className="w-full md:w-1/2 flex items-center justify-center bg-white text-black p-10">
+    <div className="max-w-lg text-center md:text-left">
             <h1 className="text-5xl font-bold mb-8">About Hans' Blog</h1>
 
             <div className="text-lg flex flex-col gap-6">
@@ -67,8 +68,8 @@ export default function AboutAndContact() {
           </div>
         </div>
 
-        {/* Right Side - Spinning Hockey Puck Video */}
-        <div className="w-1/2 relative">
+  {/* Right Side - Spinning Hockey Puck Video (Hidden on Small Screens) */}
+  <div className="hidden md:block w-1/2 relative">
           <video
             className="w-full h-full object-cover object-center"
             autoPlay
@@ -83,18 +84,19 @@ export default function AboutAndContact() {
       </div>
       {/* Meet the Team - Full Page with Ivory Background */}
 <div className="w-full min-h-screen flex flex-col items-center bg-[rgb(249,245,245)] text-black pt-20 pb-20">
+
   <h2 className="text-3xl  mb-16">Meet the Team</h2>
 
   <div className="flex flex-wrap justify-center gap-16 px-20">
     {teamMembers.map((member, index) => (
       <div
         key={index}
-        className="p-8 w-[30rem] flex flex-col items-center transition-transform transform hover:-translate-y-2"
+         className="p-8 w-full max-w-xs md:max-w-lg flex flex-col items-center transition-transform transform hover:-translate-y-2 mx-auto"
       >
         <img
           src={member.image}
           alt={member.name}
-          className="w-40 h-40 rounded-full object-cover mb-8"
+          className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover mb-6"
         />
         <h3 className="text-2xl mb-4">{member.name}</h3>
         <p className="text-sm text-blue-600 font-medium mb-6">{member.role}</p>
@@ -139,8 +141,9 @@ export default function AboutAndContact() {
   </div>
      {/* Contact Us Section */}
      <div className="w-full min-h-screen flex flex-col items-center bg-white text-black p-10 pt-20">
-        <h1 className="text-5xl font-bold mb-16">Contact Us</h1>
-
+     <h1 className="text-5xl font-bold mb-16 text-center flex justify-center items-center w-full">
+        Contact Us
+    </h1>
         <form
           onSubmit={onSubmit}
           className="max-w-2xl mx-auto space-y-6"
