@@ -72,7 +72,7 @@ export const updateUser = async (req, res, next) => {
     console.log("🛠 Incoming Update Request:", req.body); // ✅ Log request body
 
     if (req.user.id !== req.params.userId) {
-      return res.status(403).json({ message: "❌ You are not allowed to update this user" });
+      return res.status(403).json({ message: "You are not allowed to update this user" });
     }
 
     if (!req.body) {
@@ -81,7 +81,7 @@ export const updateUser = async (req, res, next) => {
 
     if (req.body.password) {
       if (req.body.password.length < 6) {
-        return res.status(400).json({ message: "❌ Password must be at least 6 characters" });
+        return res.status(400).json({ message: "Password must contain at least 6 characters." });
       }
       req.body.password = bcryptjs.hashSync(req.body.password, 10);
     }
@@ -96,14 +96,14 @@ export const updateUser = async (req, res, next) => {
       }).collation({ locale: 'en', strength: 2 });
 
       if (existingUser) {
-        return res.status(409).json({ message: "❌ Username already taken" });
+        return res.status(409).json({ message: "The username is already in use. Please choose a different username." });
       }
     }
 
     
    const existingUser = await User.findOne({ username: req.body.username.toLowerCase() });
     if (existingUser && existingUser._id.toString() !== req.params.userId) {
-      return res.status(409).json({ message: "❌ Username already taken" });
+      return res.status(409).json({ message: "The username is already in use. Please choose a different username." });
     }
     const updatedUser = await User.findByIdAndUpdate(
       req.params.userId,
@@ -132,7 +132,7 @@ export const updateUser = async (req, res, next) => {
 
   } catch (error) {
     console.error("🔥 Server Error in updateUser:", error); // ✅ Log full error
-    res.status(500).json({ message: "❌The username is already taken.", error: error.message });
+    res.status(500).json({ message: "The username is already in use. Please choose a different username.", error: error.message });
   }
 };
 
