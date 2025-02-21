@@ -1,7 +1,12 @@
 import { FaFacebook, FaInstagram, FaGithub } from 'react-icons/fa';
+
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 export default function AboutAndContact() {
+  const { theme } = useSelector((state) => state.theme); // Get the theme from Redux or global state
+  const isDarkMode = theme === 'dark';
+
   const teamMembers = [
     {
       name: 'Min Kang',
@@ -48,13 +53,16 @@ export default function AboutAndContact() {
   };
 
   return (
-  
-  <div className="w-full min-h-screen overflow-y-auto overflow-x-hidden">
+    <div
+    className={`w-full min-h-screen overflow-y-auto overflow-x-hidden transition-colors duration-300 ${
+      isDarkMode ? 'bg-gray-900 text-gray-200' : 'bg-white text-black'
+    }`}
+  >
       {/* About Hans' Blog - Full Page */}
 <div className="w-full min-h-screen flex flex-col md:flex-row">
        {/* Left Side - About Content */}
-    <div className="w-full md:w-1/2 flex items-center justify-center bg-white text-black p-10">
-    <div className="max-w-lg text-center md:text-left">
+       <div className="w-full md:w-1/2 flex items-center justify-center bg-white dark:bg-gray-800 text-black dark:text-gray-200 p-10">
+       <div className="max-w-lg text-center md:text-left">
             <h1 className="text-5xl font-bold mb-8">About Hans' Blog</h1>
 
             <div className="text-lg flex flex-col gap-6">
@@ -82,16 +90,23 @@ export default function AboutAndContact() {
           <div className="absolute inset-0 bg-black bg-opacity-20"></div>
         </div>
       </div>
-      {/* Meet the Team - Full Page with Ivory Background */}
-<div className="w-full min-h-screen flex flex-col items-center bg-[rgb(249,245,245)] text-black pt-20 pb-20">
 
-  <h2 className="text-3xl  mb-16">Meet the Team</h2>
+
+     {/* Meet the Team - Full Page with Dark Mode Support */}
+<div 
+  className={`w-full min-h-screen flex flex-col items-center pt-20 pb-20 transition-colors duration-300 ${
+    isDarkMode ? 'bg-gray-900 text-gray-200' : 'bg-[rgb(249,245,245)] text-black'
+  }`}
+>
+  <h2 className="text-3xl mb-16">Meet the Team</h2>
 
   <div className="flex flex-wrap justify-center gap-16 px-20">
     {teamMembers.map((member, index) => (
       <div
         key={index}
-         className="p-8 w-full max-w-xs md:max-w-lg flex flex-col items-center transition-transform transform hover:-translate-y-2 mx-auto"
+        className={`p-8 w-full max-w-xs md:max-w-lg flex flex-col items-center transition-transform transform hover:-translate-y-2 mx-auto ${
+          isDarkMode ? 'bg-gray-800 text-gray-200' : 'bg-white text-black'
+        } rounded-lg shadow-md`}
       >
         <img
           src={member.image}
@@ -100,7 +115,9 @@ export default function AboutAndContact() {
         />
         <h3 className="text-2xl mb-4">{member.name}</h3>
         <p className="text-sm text-blue-600 font-medium mb-6">{member.role}</p>
-        <p className="mt-2 text-lg text-gray-700 text-center">
+        <p className={`mt-2 text-lg text-center ${
+          isDarkMode ? 'text-gray-300' : 'text-gray-700'
+        }`}>
           {member.bio}
         </p>
       </div>
@@ -109,9 +126,10 @@ export default function AboutAndContact() {
 </div>
 
 
+
 {/* Contact Us Section */}
-<div className="w-full min-h-screen flex flex-col items-center justify-start bg-white text-black p-10 pt-20">
-  
+
+<div className={`w-full min-h-screen flex flex-col items-center p-10 pt-20 ${isDarkMode ? 'bg-gray-900 text-gray-200' : 'bg-white text-black'}`}>
 
   <div className="max-w-3xl text-center text-lg space-y-12">
     <section className="py-10">
@@ -139,50 +157,51 @@ export default function AboutAndContact() {
       </p>
     </section>
   </div>
+
+
      {/* Contact Us Section */}
-     <div className="w-full min-h-screen flex flex-col items-center bg-white text-black p-10 pt-20">
-     <h1 className="text-5xl font-bold mb-16 text-center flex justify-center items-center w-full">
+      <div className="w-full min-h-screen flex flex-col items-center justify-start bg-white dark:bg-gray-900 text-black dark:text-gray-200 p-10 pt-20">
+        <h1 className="text-5xl font-bold mb-16 text-center flex justify-center items-center w-full">
         Contact Us
     </h1>
-        <form
-          onSubmit={onSubmit}
-          className="max-w-2xl mx-auto space-y-6"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <input
-              type="text"
-              placeholder="Enter your name"
-              required
-              className="p-3 outline-none border-[0.5px] border-gray-400 rounded-md bg-white"
-              name="name"
-            />
-            <input
-              type="email"
-              placeholder="Enter your email"
-              required
-              className="p-3 outline-none border-[0.5px] border-gray-400 rounded-md bg-white"
-              name="email"
-            />
-          </div>
-
-          <textarea
-            rows="6"
-            placeholder="Enter your message"
-            required
-            className="w-full p-4 outline-none border-[0.5px] border-gray-400 rounded-md bg-white mb-6"
-            name="message"
-          ></textarea>
-
-<button
-  type="submit"
-  className="py-3 px-8 bg-black text-white rounded-full hover:bg-gray-800 transition mx-auto flex justify-center"
+    <form
+  onSubmit={onSubmit}
+  className="w-full max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl mx-auto space-y-6"
 >
-  Submit now
-</button>
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+    <input
+      type="text"
+      placeholder="Enter your name"
+      required
+      className="p-5 outline-none border-[0.5px] border-gray-400 rounded-md bg-white dark:bg-gray-800 dark:text-white dark:border-gray-600 w-full"
+      name="name"
+    />
+    <input
+      type="email"
+      placeholder="Enter your email"
+      required
+      className="p-5 outline-none border-[0.5px] border-gray-400 rounded-md bg-white dark:bg-gray-800 dark:text-white dark:border-gray-600 w-full"
+      name="email"
+    />
+  </div>
+
+  <textarea
+    rows="8"
+    placeholder="Enter your message"
+    required
+    className="w-full p-5 outline-none border-[0.5px] border-gray-400 rounded-md bg-white dark:bg-gray-800 dark:text-white dark:border-gray-600 mb-6"
+    name="message"
+  ></textarea>
+
+  <button
+    type="submit"
+    className="py-4 px-10 bg-black text-white rounded-full hover:bg-gray-800 transition mx-auto flex justify-center dark:bg-gray-800 dark:text-white dark:border-gray-600"
+  >
+    Submit now
+  </button>
+</form>
 
 
-          <p className="mt-4">{result}</p>
-        </form>
 
         {/* Social Media Icons */}
         <div className="flex gap-8 mt-16">
@@ -219,7 +238,7 @@ export default function AboutAndContact() {
     {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white rounded-lg p-8 w-96 shadow-lg">
-            <h2 className="text-2xl font-semibold mb-4 text-black">Message Sent!</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">Message Sent!</h2>
             <p className="text-gray-700 mb-6">Thank you for reaching out. We'll get back to you soon!</p>
             <button
               onClick={() => setShowModal(false)}

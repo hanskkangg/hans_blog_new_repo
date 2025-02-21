@@ -186,8 +186,9 @@ if (containsProhibitedWords(email)) {
     type="submit"
     disabled={loading}
     className={`w-full py-3 border rounded-lg transition-colors duration-300 
-      bg-white text-black border-black hover:bg-black hover:text-white 
-      focus:ring-0 active:ring-0 ${loading ? 'cursor-not-allowed opacity-70' : ''}`}
+      ${theme === 'dark' 
+        ? 'bg-gray-500 text-white border-gray-600 hover:bg-gray-600' 
+        : 'bg-white text-black border-black hover:bg-black hover:text-white'}`}
   >
     {loading ? (
       <div className="flex items-center justify-center">

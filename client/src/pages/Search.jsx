@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import PostCardSearch from '../components/PostCardSearch';
 import MiniPostCard from '../components/MiniPostCard';
+import { useSelector } from 'react-redux';
 
 export default function Search() {
   const [sidebarData, setSidebarData] = useState({
@@ -16,6 +17,7 @@ export default function Search() {
   const [showMore, setShowMore] = useState(false);
   const [trendingPosts, setTrendingPosts] = useState([]);
   const [mostViewedPosts, setMostViewedPosts] = useState([]);
+  const { theme } = useSelector((state) => state.theme); // Get the theme from Redux or global state
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -130,31 +132,34 @@ export default function Search() {
         </select>
         
     {/* ✅ Custom Button */}
-    <button 
-        type="submit" 
-        className="px-6 py-2 rounded-md text-sm font-medium border 
-                   bg-white text-black border-black 
-                   hover:bg-black hover:text-white 
-                   transition-colors duration-300 w-full sm:w-auto"
+    <button
+      type="submit"
+      className={`px-6 py-2 rounded-md text-sm font-medium border transition-colors duration-300 w-full sm:w-auto 
+        ${theme === 'dark' 
+          ? 'bg-gray-800 text-white border-gray-600 hover:bg-white hover:text-black' 
+          : 'bg-white text-black border-black hover:bg-black hover:text-white'}`}
     >
-        Search
+      Search
     </button>
 </form>
 
       {/* Categories */}
-      <div className="flex flex-wrap gap-6 sm:gap-10 mt-6 justify-center border-t-2 border-b-2 border-gray-300 dark:border-gray-600 py-3">
-          {categories.map((category) => (
-              <button
-                  key={category}
-                  onClick={() => handleCategoryClick(category)}
-                  className={`relative px-2 py-1 sm:px-4 sm:py-2 text-base sm:text-lg font-semibold transition-all text-black dark:text-white whitespace-nowrap
-                      ${sidebarData.category === category 
-                          ? 'underline underline-offset-4 decoration-4 decoration-black' 
-                          : 'hover:underline hover:underline-offset-4 hover:decoration-gray-500 hover:decoration-4'}`}
-              >
-                  {category.charAt(0).toUpperCase() + category.slice(1)}
-              </button>
-          ))}
+      <div className="flex flex-wrap gap-6 sm:gap-10 mt-6 justify-center border-t-2 border-b-2 border-gray-300 dark:border-gray-600 py-3">{categories.map((category) => (
+    <button
+        key={category}
+        onClick={() => handleCategoryClick(category)}
+        className={`relative px-2 py-1 sm:px-4 sm:py-2 text-base sm:text-lg font-semibold transition-all whitespace-nowrap
+            ${
+              sidebarData.category === category 
+                ? 'text-black dark:text-gray-200 underline underline-offset-4 decoration-4 decoration-black dark:decoration-gray-200' 
+                : 'text-black dark:text-gray-200 hover:text-black dark:hover:text-gray-300 hover:underline hover:underline-offset-4 hover:decoration-gray hover:decoration-4'
+            }`}
+    >
+        {category.charAt(0).toUpperCase() + category.slice(1)}
+    </button>
+))}
+
+
       </div>
 
       {/* Main Content & Sidebar */}

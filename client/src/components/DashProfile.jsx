@@ -26,7 +26,10 @@ import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { Link } from 'react-router-dom';
 
 export default function DashProfile() {
+
   const { currentUser, error, loading } = useSelector((state) => state.user);
+  const { theme } = useSelector((state) => state.theme);
+  const isDarkMode = theme === 'dark';
   const [imageFile, setImageFile] = useState(null);
   const [imageFileUrl, setImageFileUrl] = useState(null);
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState(null);
@@ -239,8 +242,12 @@ export default function DashProfile() {
   };
 
   return (
-    <div className="flex h-screen bg-black text-white">
-    <div className="hidden md:block w-4/6 h-full relative">
+    <div
+      className={`flex h-screen transition-colors duration-300 ${
+        isDarkMode ? 'bg-gray-900 text-gray-200' : 'bg-white text-black'
+      }`}
+    >
+      <div className="hidden md:block w-4/6 h-full relative">
       <video className="w-full h-full object-cover object-center" autoPlay loop muted>
         <source src="/pf1.mp4" type="video/mp4" />
         Your browser does not support the video tag.
@@ -248,7 +255,7 @@ export default function DashProfile() {
     </div>
 
     
-    <div className="w-full md:w-4/6 p-10 flex flex-col justify-center bg-white text-black">
+    <div className="w-full md:w-4/6 p-10 flex flex-col justify-center">
       <h1 className='my-7 text-center font-semibold text-3xl'>Profile</h1>
       <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
         <input

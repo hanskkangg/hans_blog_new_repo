@@ -275,7 +275,7 @@ export default function PostPage() {
   {/* ✅ Show message if the user has already liked the post */}
   {hasUserLiked && (
     <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">
-      ✅ Thank you for liking this post!
+      ❤️You've just liked this post!
     </p>
   )}
 </div>

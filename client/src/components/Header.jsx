@@ -165,11 +165,15 @@ export default function Header() {
           </Dropdown>
         ) : (
           <Link to="/sign-in">
-          <button 
-              className="px-4 py-1 text-xs md:px-6 md:py-2 md:text-sm font-semibold border transition-all
-                         bg-white text-black border-black rounded-md
-                         hover:bg-black hover:text-white"
-          >
+         <button
+      className={`px-4 py-1 text-xs md:px-6 md:py-2 md:text-sm font-semibold border transition-all
+        rounded-md
+        ${
+          theme === 'dark'
+            ? 'bg-gray-800 text-white border-gray-600 hover:bg-gray-700'
+            : 'bg-white text-black border-black hover:bg-black hover:text-white'
+        }`}
+    >
               Sign In
           </button>
       </Link>
