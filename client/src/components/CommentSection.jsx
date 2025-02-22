@@ -72,6 +72,10 @@ export default function CommentSection({ postId }) {
       }
       const res = await fetch(`/api/comment/likeComment/${commentId}`, {
         method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${currentUser?.token}`, // ✅ Add Token
+          'Content-Type': 'application/json'
+      }
       });
       if (res.ok) {
         const data = await res.json();
@@ -109,6 +113,10 @@ export default function CommentSection({ postId }) {
       }
       const res = await fetch(`/api/comment/deleteComment/${commentId}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${currentUser?.token}`, // ✅ Add Token
+          'Content-Type': 'application/json'
+      }
       });
       if (res.ok) {
         const data = await res.json();
