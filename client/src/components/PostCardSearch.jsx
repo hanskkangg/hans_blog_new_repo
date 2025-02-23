@@ -51,7 +51,7 @@ export default function PostCardSearch({ post }) {
         <div className="flex justify-between items-center text-xs text-gray-500 mt-3">
           
           {/* Stats: Icons with Counts */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 text-sm">
             <span>👁️ {post.views || 0}</span>
             <span>❤️ {post.likesCount || 0}</span>
             <span>💬 {post.commentsCount || 0}</span>

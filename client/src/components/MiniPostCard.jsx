@@ -38,12 +38,13 @@ export default function MiniPostCard({ post }) {
 </div>
 
 
-        {/* Post Stats */}
-        <div claassName="flex items-center text-xs text-gray-500 mt-2">
-          <span>👁️ {post.views || 0}</span>
-          <span className="ml-3">❤️ {post.likesCount || 0}</span>
-          <span className="ml-3">💬 {post.commentsCount || 0}</span>
-        </div>
+        {/* Post Stats */}{/* Post Stats */}
+<div className="flex items-center text-xs text-gray-500 mt-1 space-x-2">
+  <span>👁️ {post.views || 0}</span>
+  <span>❤️ {post.likesCount || 0}</span>
+  <span>💬 {post.commentsCount || 0}</span>
+</div>
+
       </div>
     </div>
   );

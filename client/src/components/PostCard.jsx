@@ -49,7 +49,7 @@ export default function PostCard({ post }) {
           <div className="flex items-center space-x-4 text-gray-500 text-sm">
             <span>👁️ {post.views || 0}</span>
             <span>❤️ {post.likesCount || 0}</span>
-            <span>💬 {post.commentsCount || 0}</span>
+            <span>💬 {post.commentsCount || 0}</span> {/* ✅ Display Comments Count */}
           </div>
         </div>
       </div>

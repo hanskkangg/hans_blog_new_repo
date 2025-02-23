@@ -93,12 +93,23 @@ export const getposts = async (req, res, next) => {
           as: "authorData",
         },
       },
+    
+    {
+      $lookup: {
+        from: "comments", // Collection name in your database
+        localField: "_id",
+        foreignField: "postId",
+        as: "commentsData",
+      },
+    },
+  
       {
         $addFields: {
           author: { $ifNull: [{ $arrayElemAt: ["$authorData.username", 0] }, "Unknown"] },
           authorEmail: { $ifNull: [{ $arrayElemAt: ["$authorData.email", 0] }, ""] },
           likesCount: { $size: { $ifNull: ["$likes", []] } },
           views: { $ifNull: ["$views", 0] },
+      commentsCount: { $size: { $ifNull: ["$commentsData", []] } }, // ✅ Add this line
         },
       },
       { $sort: sortOption },
