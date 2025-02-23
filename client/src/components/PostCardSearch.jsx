@@ -24,9 +24,12 @@ export default function PostCardSearch({ post }) {
         
         {/* Author & Date (Small Text, Centered on Mobile) */}
         <div className="text-xs text-gray-500 dark:text-gray-400 flex justify-between mb-1">
-          <span>{post.author || 'Unknown'}</span>
-          <span>{new Date(post.updatedAt).toLocaleDateString()}</span>
-        </div>
+          
+          <span>{post?.author || "Unknown Author"}</span>
+
+    <span>{new Date(post.updatedAt).toLocaleDateString()}</span>
+</div>
+
 
         {/* Clickable Full or Truncated Title */}
         <Link to={`/post/${post.slug}`} className="block">

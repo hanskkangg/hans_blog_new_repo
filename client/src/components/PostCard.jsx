@@ -17,9 +17,11 @@ export default function PostCard({ post }) {
       <div className="p-6">
         {/* Author & Date */}
         <div className="text-sm text-gray-500 flex justify-between items-center mb-2">
-          <span className="font-medium">{post.author || 'Unknown Author'}</span>
-          <span>{new Date(post.updatedAt).toLocaleDateString()}</span>
-        </div>
+  <span className="font-medium">{post.author || 'Unknown Author'}</span>
+  <span>{new Date(post.updatedAt).toLocaleDateString()}</span>
+</div>
+
+
 
         {/* Clickable Title */}
         <Link to={`/post/${post.slug}`} className="block">

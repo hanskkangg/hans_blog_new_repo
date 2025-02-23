@@ -120,3 +120,27 @@ export const google = async (req, res, next) => {
     next(error);
   }
 };
+
+// verifyUser.js// verifyUser.js
+export const verifyToken = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    console.error("🚨 No authorization header found.");
+    return next(errorHandler(401, "No token provided"));
+  }
+
+  const token = authHeader.split(" ")[1]; // ✅ Parse Bearer token correctly
+  console.log("🔍 Extracted Token:", token);
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) {
+      console.error("🚨 Invalid token:", err.message);
+      return next(errorHandler(403, "Invalid token"));
+    }
+    
+    req.user = user; // ✅ Set req.user for access in route handlers
+    console.log("✅ User authenticated:", req.user);
+    next();
+  });
+};

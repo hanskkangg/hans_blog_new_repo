@@ -184,9 +184,12 @@ export default function PostPage() {
   
     {/* ✅ Author & Date */}
     <div className="text-center text-gray-500 dark:text-gray-400 text-sm mt-2 flex flex-wrap justify-center items-center gap-4 max-w-full">
-      <span>By <span className="font-medium">{post.author || "Unknown"}</span></span>
-      <span>• {new Date(post.createdAt).toLocaleDateString()}</span>
-    </div>
+      
+      <span>By <span className="font-medium">{post?.author || "Unknown Author"}</span></span>
+
+  <span>• {new Date(post.createdAt).toLocaleDateString()}</span>
+</div>
+
   
     {/* ✅ Views, Comments, and Likes - Below Author & Date */}
     <div className="text-center text-gray-500 dark:text-gray-400 text-sm mt-2 flex flex-wrap justify-center items-center gap-4 max-w-full">

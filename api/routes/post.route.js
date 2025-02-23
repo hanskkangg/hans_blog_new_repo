@@ -4,7 +4,7 @@ import { create, deletepost, getposts, updatepost, incrementViews,likePost,getpo
 
 const router = express.Router();
 
-router.post('/create', create)
+router.post('/create', verifyToken, create); // ✅ Middleware applied here
 router.get('/getposts', getposts)
 router.delete('/deletepost/:postId/:userId', verifyToken, deletepost)
 router.put('/updatepost/:postId/:userId', verifyToken, updatepost)

@@ -13,8 +13,11 @@ import { useState, useRef, useMemo } from 'react';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux'; // ✅ Import Redux Hook
+
 
 export default function CreatePost() {
+  
   const [file, setFile] = useState(null);
   const [headerImage, setHeaderImage] = useState("");
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
@@ -29,6 +32,10 @@ export default function CreatePost() {
   const [publishError, setPublishError] = useState(null);
   const quillRef = useRef(null);
   const navigate = useNavigate();
+
+  // ✅ Get currentUser from Redux store
+  const { currentUser } = useSelector((state) => state.user);
+  console.log("✅ Current User:", currentUser);
 
   // ✅ Define Quill Modules with Custom YouTube Video Handler
   const quillModules = useMemo(() => ({
@@ -158,39 +165,53 @@ export default function CreatePost() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    const finalData = {
-      ...formData,
-      headerImage: headerImage || "https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2021/09/how-to-write-a-blog-post.png",
-      content,
-    };
-  
-    console.log("📨 Sending payload:", finalData);
-  
-    try {
-      const res = await fetch('/api/post/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(finalData),
-      });
-  
-      const responseData = await res.json();
-      console.log("✅ Server Response:", responseData);
-  
-      if (!res.ok) throw new Error(responseData.error || "Failed to publish");
-  
-      navigate(`/post/${responseData.slug}`);
-    } catch (error) {
-      console.error("🔥 Publish Error:", error.message);
-      setPublishError(error.message);
-    }
-  };
 
-  
+    if (!currentUser || !currentUser.token) {
+        setPublishError("🚨 You must be logged in to create a post!");
+        return;
+    }
+
+    const finalData = {
+        title: formData.title,
+        content: content || "<p>Default content</p>",
+        category: formData.category || "uncategorized",
+        headerImage: headerImage || "https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2021/09/how-to-write-a-blog-post.png", // ✅ Use a reliable placeholder URL
+        slug: formData.title.trim().toLowerCase().replace(/\s+/g, "-"),
+    };
+
+    console.log("📨 Sending payload:", finalData);
+    console.log("🔍 Current User Token:", currentUser.token);
+
+    try {
+        const res = await fetch('/api/post/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${currentUser.token}`, // ✅ Correctly send Bearer token
+            },
+            body: JSON.stringify(finalData),
+        });
+
+        const responseData = await res.json();
+        console.log("✅ Server Response:", responseData);
+
+        if (!res.ok) {
+            console.error("🚨 Server responded with error:", responseData.message);
+            throw new Error(responseData.message || "Failed to publish");
+        }
+
+        navigate(`/post/${responseData.slug}`);
+    } catch (error) {
+        console.error("🔥 Publish Error:", error.message);
+        setPublishError(error.message);
+    }
+};
+
 
   return (
     <div className='p-3 max-w-3xl mx-auto min-h-screen'>
       <h1 className='text-center text-3xl my-7 font-semibold'>Create a post</h1>
+
       <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
         {/* 🔥 Title Input */}
         <TextInput

@@ -26,29 +26,39 @@ export default function Home() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
+        // 🆕 Fetch Recent Posts
         const recentRes = await fetch("/api/post/getPosts?limit=5&sort=desc");
+        if (!recentRes.ok) throw new Error("Failed to fetch recent posts");
         const recentData = await recentRes.json();
-        setRecentPosts(recentData.posts);
-  
-        const trendingRes = await fetch(
-          "/api/post/getPosts?limit=10&sort=most-liked"
-        );
+        setRecentPosts(recentData.posts || []);
+
+        // 🆕 Fetch Most Liked Posts (Fan Favorites)
+        const trendingRes = await fetch("/api/post/getPosts?limit=10&sort=most-liked");
+        if (!trendingRes.ok) throw new Error("Failed to fetch most liked posts");
         const trendingData = await trendingRes.json();
-        setTrendingPosts(trendingData.posts);
-  
-        const mostViewedRes = await fetch(
-          "/api/post/getPosts?limit=10&sort=most-viewed"
-        );
+        setTrendingPosts(trendingData.posts || []);
+
+        // 🆕 Fetch Most Viewed Posts (Popular Reads)
+        const mostViewedRes = await fetch("/api/post/getPosts?limit=10&sort=most-viewed");
+        if (!mostViewedRes.ok) throw new Error("Failed to fetch most viewed posts");
         const mostViewedData = await mostViewedRes.json();
-        setMostViewedPosts(mostViewedData.posts);
+        setMostViewedPosts(mostViewedData.posts || []);
+
+        console.log("✅ Recent Posts:", recentData.posts);
+        console.log("✅ Most Liked Posts:", trendingData.posts);
+        console.log("✅ Most Viewed Posts:", mostViewedData.posts);
+
       } catch (error) {
-        console.error("🔥 Error fetching posts:", error);
+        console.error("🔥 Error fetching posts:", error.message);
+        setRecentPosts([]);
+        setTrendingPosts([]);
+        setMostViewedPosts([]);
       }
     };
-  
+
     fetchPosts();
-  }, []); // ✅ No need to fetch authorProfile
-  
+  }, []);
+
 
   return (
     <div className="p-5 w-full max-w-full overflow-hidden flex flex-col md:flex-row gap-8">

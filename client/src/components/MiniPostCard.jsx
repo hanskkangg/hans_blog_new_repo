@@ -34,11 +34,12 @@ export default function MiniPostCard({ post }) {
 
         {/* Author & Date */}
         <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-          {post.author || "Unknown"} • {new Date(post.updatedAt).toLocaleDateString()}
-        </div>
+  {post.author || "Unknown"} • {new Date(post.updatedAt).toLocaleDateString()}
+</div>
+
 
         {/* Post Stats */}
-        <div className="flex items-center text-xs text-gray-500 mt-2">
+        <div claassName="flex items-center text-xs text-gray-500 mt-2">
           <span>👁️ {post.views || 0}</span>
           <span className="ml-3">❤️ {post.likesCount || 0}</span>
           <span className="ml-3">💬 {post.commentsCount || 0}</span>

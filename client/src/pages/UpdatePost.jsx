@@ -33,58 +33,58 @@ export default function UpdatePost() {
     content: '',
     headerImage: '',
     _id: '',
+
+
+    
   });
-  
-  console.log("🟢 Extracted postId from URL:", postId); // ✅ Debugging log
   useEffect(() => {
     if (!postId) {
-      console.error("🚨 Post ID is missing in the URL!");
-      setPublishError("🚨 Post ID is missing!");
-      return;
+        console.error("🚨 Post ID is missing in the URL!");
+        setPublishError("🚨 Post ID is missing!");
+        return;
     }
-  
+
     const fetchPost = async () => {
-      try {
-        console.log("🟢 Fetching post with postId:", postId);
-  
-        const res = await fetch(`/api/post/getpost/${postId}`);
-        console.log("🔹 Response Status:", res.status);
-  
-        if (!res.ok) {
-          const errorText = await res.text();
-          console.error("🚨 API Error Response:", errorText);
-          throw new Error(`🚨 API Error: ${errorText}`);
+        try {
+            console.log("🟢 Fetching post with postId:", postId);
+
+            const res = await fetch(`/api/post/getpost/${postId}`);
+            if (!res.ok) {
+                const errorText = await res.text();
+                console.error("🚨 API Error Response:", errorText);
+                throw new Error(`🚨 API Error: ${errorText}`);
+            }
+
+            const data = await res.json();
+            console.log("✅ Post Data Fetched:", data);
+
+            if (!data.post) {
+                throw new Error("🚨 Post not found!");
+            }
+
+            // ✅ Pre-fill the form with existing post data
+            setFormData({
+                title: data.post?.title || "",
+                category: data.post?.category || "uncategorized",
+                content: data.post?.content || "",
+                headerImage: data.post?.headerImage || "",
+                _id: data.post?._id || postId,
+                author: data.post?.userId?.username || "Unknown Author",
+            });
+
+            // ✅ Ensure the header image is displayed
+            setHeaderImage(data.post?.headerImage || "");
+
+        } catch (error) {
+            console.error("🔥 Fetch Error:", error.message);
+            setPublishError(error.message);
         }
-  
-        const data = await res.json();
-        console.log("✅ Post Data Fetched:", data);
-  
-        if (!data.post) {
-          throw new Error("🚨 Post not found!");
-        }
-  
-        // ✅ Update formData with correct post ID
-        setFormData((prevState) => {
-          const updatedData = {
-            ...prevState,
-            title: data.post?.title || "",
-            category: data.post?.category || "uncategorized",
-            content: data.post?.content || "",
-            headerImage: data.post?.headerImage || "",
-            _id: data.post?._id || postId,  // ✅ Ensure _id is set
-          };
-          console.log("✅ Updated formData after setting:", updatedData);
-          return updatedData;  // ✅ Ensure state is fully updated
-        });
-        
-      } catch (error) {
-        console.error("🔥 Fetch Error:", error.message);
-        setPublishError(error.message);
-      }
     };
-  
+
     fetchPost();
-  }, [postId]);
+}, [postId]);
+
+
   
   
   

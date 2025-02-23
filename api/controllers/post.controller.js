@@ -4,50 +4,41 @@ import mongoose from "mongoose"; // ✅ Add this line
 import Comment from '../models/comment.model.js'; // ✅ Import Comment model
 
 let sortOption = { createdAt: -1 }; // Default: Latest posts first
+// create controller in post.controller.js
 export const create = async (req, res, next) => {
   try {
-    console.log("🔥 Incoming Request:", req.body);
+    console.log("🔥 Incoming Request Body:", req.body);
+    console.log("🔍 User from Request:", req.user); // ✅ Add this log
 
     if (!req.body.title || !req.body.content) {
+      console.error("🚨 Missing required fields: title or content");
       return next(errorHandler(400, "Missing title or content"));
     }
 
-    // ✅ Check if a post with the same title already exists
-    const existingPost = await Post.findOne({ title: req.body.title });
-    if (existingPost) {
-      return next(errorHandler(400, "🚨 A post with this title already exists. Please choose a unique title."));
-    }
-
-    // ✅ Generate a slug safely
-    let slug = req.body.title
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣 ]/g, "") // Allow Korean and English
-      .replace(/\s+/g, "-"); // Replace spaces with `-`
-
-    // ✅ Ensure slug is not empty
-    if (!slug) {
-      return next(errorHandler(400, "Slug could not be generated. Please use a valid title."));
+    if (!req.user || !req.user.id) {
+      console.error("🚨 Unauthorized: No user ID found in request");
+      return next(errorHandler(403, "Unauthorized! Please log in to create a post."));
     }
 
     const newPost = new Post({
       title: req.body.title,
       content: req.body.content,
-      slug: slug,
+      slug: req.body.slug || req.body.title.toLowerCase().replace(/\s+/g, "-"),
       category: req.body.category || "uncategorized",
       headerImage: req.body.headerImage,
-      userId: req.user?._id || "67ac37bb4d40a958638c0265",
+      userId: req.user.id, 
     });
 
     const savedPost = await newPost.save();
-    console.log("✅ Post Created:", savedPost);
+    console.log("✅ Post Created Successfully:", savedPost);
 
     res.status(201).json(savedPost);
   } catch (error) {
-    console.error("❌ Error:", error);
+    console.error("❌ Error in create controller:", error.message);
     next(error);
   }
 };
+
 
 export const getposts = async (req, res, next) => {
   try {
@@ -83,85 +74,44 @@ export const getposts = async (req, res, next) => {
 
     console.log("🔹 Fetching Posts with Query:", query);
 
-    // ✅ Apply correct sorting based on query parameter
-    let sortOption = { createdAt: -1 }; // Default: Latest posts first
-
+    let sortOption = { createdAt: -1 }; // Default to latest
     if (req.query.sort === "asc") {
-      sortOption = { createdAt: 1 }; // ✅ Oldest first
+      sortOption = { createdAt: 1 };
     } else if (req.query.sort === "most-liked") {
-      sortOption = { likesCount: -1 }; // ✅ Most liked
+      sortOption = { likesCount: -1 };
     } else if (req.query.sort === "most-viewed") {
-      sortOption = { views: -1 }; // ✅ Most viewed
+      sortOption = { views: -1 };
     }
 
-    // ✅ Set last month's date correctly
-    const lastMonth = new Date();
-    lastMonth.setMonth(lastMonth.getMonth() - 1);
-
-    // ✅ Count posts created last month
-    const lastMonthPosts = await Post.countDocuments({
-      createdAt: { $gte: lastMonth },
-    });
-
-    let aggregationPipeline = [
-      { $match: query }, 
+    const posts = await Post.aggregate([
+      { $match: query },
       {
         $lookup: {
-          from: "users",  // ✅ Populate the author name
+          from: "users",
           localField: "userId",
           foreignField: "_id",
           as: "authorData",
-        }
-      },
-      {
-        $lookup: {
-          from: "comments",
-          localField: "_id",
-          foreignField: "postId",
-          as: "commentsData",
-        }
+        },
       },
       {
         $addFields: {
-          likesCount: { 
-            $cond: { 
-              if: { $isArray: "$likes" }, 
-              then: { $size: "$likes" }, 
-              else: 0 
-            }
-          },
-          commentsCount: { $size: "$commentsData" },
-          author: { $arrayElemAt: ["$authorData.username", 0] } // ✅ Extract the author's name
-        }
+          author: { $ifNull: [{ $arrayElemAt: ["$authorData.username", 0] }, "Unknown"] },
+          authorEmail: { $ifNull: [{ $arrayElemAt: ["$authorData.email", 0] }, ""] },
+          likesCount: { $size: { $ifNull: ["$likes", []] } },
+          views: { $ifNull: ["$views", 0] },
+        },
       },
-      { $sort: sortOption }, // ✅ Apply corrected sorting
+      { $sort: sortOption },
       { $skip: startIndex },
       { $limit: limit },
-      {
-        $project: {
-          _id: 1,
-          title: 1,
-          slug: 1,
-          content: 1,
-          category: 1,
-          headerImage: 1,
-          updatedAt: 1,
-          createdAt: 1,
-          views: 1,
-          likesCount: 1,  
-          commentsCount: 1,
-          author: 1,  // ✅ Ensure the author's name is included in the response
-        },
-      }
-    ];
+    ]);
 
     const totalPosts = await Post.countDocuments(query);
-    const posts = await Post.aggregate(aggregationPipeline);
 
-    console.log("✅ Found Posts:", posts.length, "Total Posts:", totalPosts, "Last Month Posts:", lastMonthPosts);
-    res.status(200).json({ posts, totalPosts, lastMonthPosts }); // ✅ Include lastMonthPosts in response
+    console.log("✅ Found Posts:", posts.length, "Total Posts:", totalPosts);
+    res.status(200).json({ posts: posts || [], totalPosts });
   } catch (error) {
-    console.error("🔥 Server Error:", error.message);
+    console.error("🔥 Server Error in getposts:", error);
     res.status(500).json({ error: "Internal Server Error", details: error.message });
   }
 };
@@ -257,6 +207,7 @@ export const deletepost = async (req, res, next) => {
     next(error);
   }
 };
+
 export const updatepost = async (req, res, next) => {
   try {
     const { postId, userId } = req.params;
@@ -303,7 +254,7 @@ export const updatepost = async (req, res, next) => {
         },
       },
       { new: true }
-    );
+    ).populate("userId", "username email"); // ✅ Populate author information
 
     console.log("✅ Successfully Updated Post:", updatedPost);
     return res.status(200).json(updatedPost);
@@ -312,6 +263,8 @@ export const updatepost = async (req, res, next) => {
     return res.status(500).json({ error: "Internal Server Error", details: error.message });
   }
 };
+
+
 export const getpost = async (req, res, next) => {
   try {
     const { postId } = req.params;
