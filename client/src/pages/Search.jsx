@@ -104,7 +104,7 @@ export default function Search() {
   };
 
   return (
-    <div className="flex flex-col w-full max-w-6xl mx-auto p-6">
+    <div className="flex flex-col w-full max-w-7xl mx-auto p-6"> {/* Increased max width */}
       
       {/* Search Bar & Sorting */}
       <form 

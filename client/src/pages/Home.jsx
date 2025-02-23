@@ -61,7 +61,13 @@ export default function Home() {
 
 
   return (
-    <div className="p-5 w-full max-w-full overflow-hidden flex flex-col md:flex-row gap-8">
+
+    
+
+<div className="p-5 w-full max-w-7xl mx-auto overflow-hidden flex flex-col md:flex-row gap-8"> 
+
+{/* <div className="p-5 w-full max-w-full overflow-hidden flex flex-col md:flex-row gap-8"> */}
+      
       {/* Main Content (Recent Posts) - 70% width */}
       <div className="w-full md:w-[70%] max-w-full p-5 rounded-lg bg-white dark:bg-gray-800">
         <h2 className="text-3xl font-semibold mb-6">Recent Posts</h2>

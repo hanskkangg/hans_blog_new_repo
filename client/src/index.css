@@ -45,3 +45,23 @@ body {
   color: red;
 }
 
+/* Ensure embedded videos are full width and maintain aspect ratio */
+.ql-editor iframe {
+  width: 100% !important;
+  max-width: 900px; /* Increased max-width for larger screens */
+  height: 500px !important;
+  border-radius: 8px;
+  margin: 20px auto; /* Center the video */
+  display: block;
+}
+
+
+/* Ensure embedded videos are full width and maintain aspect ratio */
+.post-content iframe {
+  width: 100% !important;
+  max-width: 900px; /* Increased max-width for larger screens */
+  height: 500px !important;
+  border-radius: 8px;
+  margin: 20px auto; /* Center the video */
+  display: block;
+}

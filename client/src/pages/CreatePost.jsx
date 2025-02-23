@@ -52,23 +52,34 @@ export default function CreatePost() {
       },
     },
   }), []);
+// ✅ Custom Video Handler for YouTube
+const videoHandler = () => {
+  const quill = quillRef.current.getEditor();
+  const url = prompt("Enter a YouTube video URL:");
 
-  // ✅ Custom Video Handler for YouTube
-  const videoHandler = () => {
-    const quill = quillRef.current.getEditor();
-    const url = prompt("Enter a YouTube video URL:");
-
-    if (url) {
+  if (url) {
       const videoId = extractYouTubeVideoId(url);
       if (videoId) {
-        const embedUrl = `https://www.youtube.com/embed/${videoId}`;
-        const range = quill.getSelection();
-        quill.insertEmbed(range.index, 'video', embedUrl);
+          const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+          const range = quill.getSelection();
+
+          // ✅ Insert video with custom styles for larger display
+          quill.clipboard.dangerouslyPasteHTML(
+              range.index,
+              `<iframe 
+                  src="${embedUrl}" 
+                  frameborder="0" 
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                  allowfullscreen
+                  style="width:100%; height:500px; max-width:900px; border-radius:8px; margin: 20px auto; display: block;"
+              ></iframe>`
+          );
       } else {
-        alert("Invalid YouTube URL. Please enter a valid link.");
+          alert("Invalid YouTube URL. Please enter a valid link.");
       }
-    }
-  };
+  }
+};
+
 
   // ✅ Function to Extract YouTube Video ID
   const extractYouTubeVideoId = (url) => {
