@@ -37,24 +37,35 @@ export default function DashPosts() {
 
     fetchPosts();
   }, []);
-
   const handleShowMore = async () => {
     const startIndex = userPosts.length;
     try {
-      const res = await fetch(
-        `/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`
-      );
-      const data = await res.json();
-      if (res.ok) {
-        setUserPosts((prev) => [...prev, ...data.posts]);
-        if (data.posts.length < 9) {
-          setShowMore(false);
+        const url = currentUser.isAdmin
+            ? `/api/post/getposts?startIndex=${startIndex}`
+            : `/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`;
+
+        console.log("Fetching more posts from:", url);
+
+        const res = await fetch(url, { cache: "no-store" });
+        const data = await res.json();
+
+        if (res.ok) {
+            setUserPosts((prev) => [...prev, ...data.posts]);
+            console.log("Fetched posts:", data.posts);
+
+            // Hide the "Show More" button if fewer than expected posts are returned
+            if (data.posts.length < 9) {
+                setShowMore(false);
+                console.log("No more posts to load, hiding the button.");
+            }
+        } else {
+            console.error("Error fetching more posts:", data.message);
         }
-      }
     } catch (error) {
-      console.log(error.message);
+        console.log("Fetch Error:", error.message);
     }
-  };
+};
+
 
   const handleDeletePost = async () => {
     setShowModal(false);
