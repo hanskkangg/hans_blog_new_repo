@@ -95,7 +95,7 @@ export default function Comment({ comment, onLike, onEdit, onDelete }) {
         </div>
       )}
 
-      
+
       {/* ✅ Show Textarea when Editing, Otherwise Show Comment Text */}
       {isEditing ? (
         <>
@@ -115,7 +115,7 @@ export default function Comment({ comment, onLike, onEdit, onDelete }) {
           </div>
         </>
       ) : (
-        <p className="text-gray-700 dark:text-gray-300 break-words whitespace-pre-wrap border-l-4 border-teal-500 pl-2 py-1">
+        <p className="text-gray-700 dark:text-gray-300 break-words whitespace-pre-wrap  pl-2 py-1">
           {comment.content}
         </p>
       )}
