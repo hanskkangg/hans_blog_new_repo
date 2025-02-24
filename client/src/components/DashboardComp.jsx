@@ -64,24 +64,30 @@ export default function DashboardComp() {
         console.log(error.message);
       }
     };
-    
+
     const fetchPosts = async () => {
       try {
-        const res = await fetch('/api/post/getposts?limit=5'); // ✅ Keep limit for recent posts
-        const data = await res.json();
-        console.log("🟢 Posts API Response:", data); // ✅ Debug API response
-    
-        if (res.ok) {
-          setPosts(data.posts);
-          setTotalPosts(data.totalPosts); // ✅ Use total count from API response
-          setLastMonthPosts(data.lastMonthPosts || 0);
-        } else {
-          console.error("🚨 API Error:", data.message);
-        }
+          const res = await fetch('/api/post/getposts?limit=5'); 
+          const data = await res.json();
+          console.log("🟢 Posts API Response:", data); 
+  
+          if (res.ok) {
+              setPosts(data.posts);
+              setTotalPosts(data.totalPosts); 
+              
+              // Check if lastMonthPosts is present in the response
+              console.log("📅 Last Month Posts:", data.lastMonthPosts);
+              
+              setLastMonthPosts(data.lastMonthPosts || 0);
+          } else {
+              console.error("🚨 API Error:", data.message);
+          }
       } catch (error) {
-        console.log("🔥 Fetch Error:", error.message);
+          console.log("🔥 Fetch Error:", error.message);
       }
-    };
+  };
+  
+  
     
     if (currentUser.isAdmin) {
       fetchUsers();
@@ -89,6 +95,8 @@ export default function DashboardComp() {
       fetchComments();
     }
   }, [currentUser]);
+
+  
   return (
     <div className='p-3 md:mx-auto'>
       <div className='flex-wrap flex gap-4 justify-center'>
@@ -134,13 +142,15 @@ export default function DashboardComp() {
             </div>
             <HiDocumentText className='bg-lime-600  text-white rounded-full text-5xl p-3 shadow-lg' />
           </div>
-          <div className='flex  gap-2 text-sm'>
-            <span className='text-green-500 flex items-center'>
-              <HiArrowNarrowUp />
-              {lastMonthPosts}
-            </span>
-            <div className='text-gray-500'>Last month</div>
-          </div>
+          <div className='flex gap-2 text-sm'>
+    <span className='text-green-500 flex items-center'>
+        <HiArrowNarrowUp />
+        {lastMonthPosts > 0 ? lastMonthPosts : "No new posts"}
+    </span>
+    <div className='text-gray-500'>Last month</div>
+</div>
+
+
         </div>
       </div>
       <div className='flex flex-wrap gap-4 py-3 mx-auto justify-center'>

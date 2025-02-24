@@ -38,8 +38,6 @@ export const create = async (req, res, next) => {
     next(error);
   }
 };
-
-
 export const getposts = async (req, res, next) => {
   try {
     console.log("🔹 Received Request:", req.query);
@@ -83,6 +81,19 @@ export const getposts = async (req, res, next) => {
       sortOption = { views: -1 };
     }
 
+    // 🔥 Calculate Last Month Date
+    const lastMonth = new Date();
+    lastMonth.setMonth(lastMonth.getMonth() - 1);
+
+    // ✅ Calculate total posts and last month posts
+    const totalPosts = await Post.countDocuments(query);
+    const lastMonthPosts = await Post.countDocuments({
+      ...query,
+      createdAt: { $gte: lastMonth },
+    });
+
+    console.log("📅 Last Month Posts Count:", lastMonthPosts);
+
     const posts = await Post.aggregate([
       { $match: query },
       {
@@ -93,23 +104,21 @@ export const getposts = async (req, res, next) => {
           as: "authorData",
         },
       },
-    
-    {
-      $lookup: {
-        from: "comments", // Collection name in your database
-        localField: "_id",
-        foreignField: "postId",
-        as: "commentsData",
+      {
+        $lookup: {
+          from: "comments", 
+          localField: "_id",
+          foreignField: "postId",
+          as: "commentsData",
+        },
       },
-    },
-  
       {
         $addFields: {
           author: { $ifNull: [{ $arrayElemAt: ["$authorData.username", 0] }, "Unknown"] },
           authorEmail: { $ifNull: [{ $arrayElemAt: ["$authorData.email", 0] }, ""] },
           likesCount: { $size: { $ifNull: ["$likes", []] } },
           views: { $ifNull: ["$views", 0] },
-      commentsCount: { $size: { $ifNull: ["$commentsData", []] } }, // ✅ Add this line
+          commentsCount: { $size: { $ifNull: ["$commentsData", []] } },
         },
       },
       { $sort: sortOption },
@@ -117,15 +126,14 @@ export const getposts = async (req, res, next) => {
       { $limit: limit },
     ]);
 
-    const totalPosts = await Post.countDocuments(query);
-
     console.log("✅ Found Posts:", posts.length, "Total Posts:", totalPosts);
-    res.status(200).json({ posts: posts || [], totalPosts });
+    res.status(200).json({ posts: posts || [], totalPosts, lastMonthPosts });
   } catch (error) {
     console.error("🔥 Server Error in getposts:", error);
     res.status(500).json({ error: "Internal Server Error", details: error.message });
   }
 };
+
 
 export const likePost = async (req, res, next) => {
   try {
