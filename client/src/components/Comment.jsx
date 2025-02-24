@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { FaThumbsUp } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import { Button, Textarea, Badge } from 'flowbite-react';
+import { Award } from 'lucide-react';
 
 export default function Comment({ comment, onLike, onEdit, onDelete }) {
   const [user, setUser] = useState({});
@@ -74,7 +75,7 @@ export default function Comment({ comment, onLike, onEdit, onDelete }) {
   return (
     <div
     className={`relative flex flex-col p-4 rounded-lg shadow-sm bg-gray-50 dark:bg-gray-800 
-    ${comment.isMostLiked ? 'border-2 border-yellow-400' : 'border border-gray-300 dark:border-gray-700'}`}
+    ${comment.isMostLiked ? 'border-2 border-black' : 'border border-gray-300 dark:border-gray-700'}`}
 >
       <div className="flex items-center mb-2">
         <img
@@ -90,13 +91,15 @@ export default function Comment({ comment, onLike, onEdit, onDelete }) {
         </div>
       </div>
 
-       {/* 🔥 Fire Emoji and "Most Liked Comment" Badge */}
-      {comment.isMostLiked && (
-        <div className="absolute top-2 right-2 flex items-center gap-1 z-10">
-          <span className="text-lg" role="img" aria-label="Most Liked">🔥</span>
-          <Badge color="warning">Most Liked Comment</Badge>
-        </div>
-      )}
+
+{comment.isMostLiked && (
+    <div className="absolute top-2 right-2 flex items-center gap-2 z-10 bg-white dark:bg-gray-800 px-2 py-1 rounded-md shadow-md border border-gray-300">
+        <Award className="text-black dark:text-white w-4 h-4" />
+        <span className="text-xs text-gray-700 dark:text-gray-200 font-medium">
+            Top Comments
+        </span>
+    </div>
+)}
 
 
       {/* ✅ Show Textarea when Editing, Otherwise Show Comment Text */}

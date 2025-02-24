@@ -200,13 +200,21 @@ export default function CommentSection({ postId }) {
             value={comment}
           />
           <div className='flex justify-between items-center mt-5'>
-            <p className='text-gray-500 text-xs'>
-              {200 - comment.length} characters remaining
-            </p>
-            <Button outline gradientDuoTone='purpleToBlue' type='submit'>
-              Submit
-            </Button>
-          </div>
+  <p className='text-gray-500 text-xs'>
+    {200 - comment.length} characters remaining
+  </p>
+  
+  {/* ✅ Custom Submit Button */}
+  <button
+    type="submit"
+    disabled={false} // Set loading state if needed
+    className={`py-2 px-4 border rounded-lg transition-colors duration-300 
+      bg-white text-black border-black hover:bg-black hover:text-white`}
+  >
+    Submit
+  </button>
+</div>
+
           {commentError && (
             <Alert color='failure' className='mt-5'>
               {commentError}
