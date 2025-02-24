@@ -61,16 +61,55 @@ export const createComment = async (req, res, next) => {
   }
 };
 
+
 export const getPostComments = async (req, res, next) => {
   try {
-    const comments = await Comment.find({ postId: req.params.postId }).sort({
-      createdAt: -1,
+    const sortOption = req.query.sort || "most-liked"; // Default to most liked
+    let sortQuery = { createdAt: 1 }; // Default to oldest first
+
+    if (sortOption === "newest") {
+        sortQuery = { createdAt: -1 }; // Sort by newest first
+    } else if (sortOption === "oldest") {
+        sortQuery = { createdAt: 1 }; // Sort by oldest first
+    }
+
+    const postId = req.params.postId;
+
+    // Fetch the top 3 most liked comments with at least 1 like
+    const mostLikedComments = await Comment.find({ postId, numberOfLikes: { $gt: 0 } })
+      .sort({ numberOfLikes: -1, createdAt: -1 })
+      .limit(3)
+      .populate("userId", "username email profilePicture")
+      .lean();
+
+    // Fetch remaining comments based on the selected sort option, excluding the most liked ones
+    const mostLikedCommentIds = mostLikedComments.map(comment => comment._id.toString());
+
+    const otherComments = await Comment.find({
+        postId,
+        _id: { $nin: mostLikedCommentIds }
+      })
+      .sort(sortQuery)
+      .populate("userId", "username email profilePicture")
+      .lean();
+
+    // Mark only comments with likes as "Most Liked"
+    mostLikedComments.forEach(comment => {
+        if (comment.numberOfLikes > 0) {
+            comment.isMostLiked = true;
+        }
     });
-    res.status(200).json(comments);
+
+    // Combine and return the final list
+    const combinedComments = [...mostLikedComments, ...otherComments];
+
+    res.status(200).json(combinedComments);
   } catch (error) {
+    console.error("🔥 Error fetching sorted comments:", error);
     next(error);
   }
 };
+
 
 export const likeComment = async (req, res, next) => {
   try {

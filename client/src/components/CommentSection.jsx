@@ -1,4 +1,4 @@
-import { Alert, Button, Modal, TextInput, Textarea } from 'flowbite-react';
+import { Alert, Button, Modal, TextInput, Textarea,Select } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
@@ -12,7 +12,24 @@ export default function CommentSection({ postId }) {
   const [comments, setComments] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [commentToDelete, setCommentToDelete] = useState(null);
+  const [sortOption, setSortOption] = useState('most-liked'); 
   const navigate = useNavigate();
+
+
+  useEffect(() => {
+    const getComments = async () => {
+      try {
+        const res = await fetch(`/api/comment/getPostComments/${postId}?sort=${sortOption}`);
+        if (res.ok) {
+          const data = await res.json();
+          setComments(data);
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+    getComments();
+  }, [postId, sortOption]); // ✅ Refetch when sort option changes
 
 
   const handleSubmit = async (e) => {
@@ -126,8 +143,27 @@ export default function CommentSection({ postId }) {
       console.log(error.message);
     }
   };
+
+
   return (
     <div className='max-w-2xl mx-auto w-full p-3'>
+        <div className='max-w-2xl mx-auto w-full p-3'>
+      <div className="flex items-center gap-2 mb-5">
+        <label htmlFor="sort" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          Sort Comments:
+        </label>
+        <Select
+          id="sort"
+          value={sortOption}
+          onChange={(e) => setSortOption(e.target.value)}
+          className="max-w-xs"
+        >
+          <option value="most-liked">Most Liked</option>
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+        </Select>
+      </div>
+      
       {currentUser ? (
         <div className='flex items-center gap-1 my-5 text-gray-500 text-sm'>
           <p>Signed in as:</p>
@@ -239,6 +275,7 @@ export default function CommentSection({ postId }) {
           </div>
         </Modal.Body>
       </Modal>
+    </div>
     </div>
   );
 }

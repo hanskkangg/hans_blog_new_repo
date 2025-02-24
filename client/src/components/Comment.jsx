@@ -2,7 +2,7 @@ import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { FaThumbsUp } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
-import { Button, Textarea } from 'flowbite-react';
+import { Button, Textarea, Badge } from 'flowbite-react';
 
 export default function Comment({ comment, onLike, onEdit, onDelete }) {
   const [user, setUser] = useState({});
@@ -18,11 +18,12 @@ export default function Comment({ comment, onLike, onEdit, onDelete }) {
 
     const getUser = async () => {
       try {
-        const res = await fetch(`/api/user/get/${comment.userId}`, {
+        const res = await fetch(`/api/user/get/${comment.userId._id || comment.userId}`, {
           headers: {
-            Authorization: `Bearer ${currentUser?.token}`, // ✅ Ensure token is passed
+            Authorization: `Bearer ${currentUser?.token}`,
           },
         });
+        
 
         if (!res.ok) {
           throw new Error(`Failed to fetch user: ${res.status} ${res.statusText}`);
@@ -70,9 +71,8 @@ export default function Comment({ comment, onLike, onEdit, onDelete }) {
       console.log("🔥 Fetch Error:", error.message);
     }
   };
-
   return (
-    <div className="flex flex-col p-4 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm bg-gray-50 dark:bg-gray-800">
+    <div className="relative flex flex-col p-4 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm bg-gray-50 dark:bg-gray-800">
       <div className="flex items-center mb-2">
         <img
           className="w-10 h-10 rounded-full bg-gray-200"
@@ -87,6 +87,15 @@ export default function Comment({ comment, onLike, onEdit, onDelete }) {
         </div>
       </div>
 
+      {/* 🔥 Fire Emoji and "Most Liked Comment" Badge */}
+      {comment.isMostLiked && (
+        <div className="absolute top-2 right-2 flex items-center gap-1 z-10">
+          <span className="text-lg" role="img" aria-label="Most Liked">🔥</span>
+          <Badge color="warning">Most Liked Comment</Badge>
+        </div>
+      )}
+
+      
       {/* ✅ Show Textarea when Editing, Otherwise Show Comment Text */}
       {isEditing ? (
         <>
