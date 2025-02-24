@@ -72,7 +72,10 @@ export default function Comment({ comment, onLike, onEdit, onDelete }) {
     }
   };
   return (
-    <div className="relative flex flex-col p-4 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm bg-gray-50 dark:bg-gray-800">
+    <div
+    className={`relative flex flex-col p-4 rounded-lg shadow-sm bg-gray-50 dark:bg-gray-800 
+    ${comment.isMostLiked ? 'border-2 border-yellow-400' : 'border border-gray-300 dark:border-gray-700'}`}
+>
       <div className="flex items-center mb-2">
         <img
           className="w-10 h-10 rounded-full bg-gray-200"
@@ -87,7 +90,7 @@ export default function Comment({ comment, onLike, onEdit, onDelete }) {
         </div>
       </div>
 
-      {/* 🔥 Fire Emoji and "Most Liked Comment" Badge */}
+       {/* 🔥 Fire Emoji and "Most Liked Comment" Badge */}
       {comment.isMostLiked && (
         <div className="absolute top-2 right-2 flex items-center gap-1 z-10">
           <span className="text-lg" role="img" aria-label="Most Liked">🔥</span>

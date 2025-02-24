@@ -57,8 +57,6 @@ useEffect(() => {
         return;
       }
     
-      console.log("🟢 Fetching user data for:", currentUser._id);
-    
       fetch(`/api/user/get/${currentUser._id}`, {
         method: "GET",
         headers: {

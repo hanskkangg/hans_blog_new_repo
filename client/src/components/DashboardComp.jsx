@@ -69,7 +69,6 @@ export default function DashboardComp() {
       try {
           const res = await fetch('/api/post/getposts?limit=5'); 
           const data = await res.json();
-          console.log("🟢 Posts API Response:", data); 
   
           if (res.ok) {
               setPosts(data.posts);

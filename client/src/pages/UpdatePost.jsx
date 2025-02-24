@@ -46,7 +46,6 @@ export default function UpdatePost() {
 
     const fetchPost = async () => {
         try {
-            console.log("🟢 Fetching post with postId:", postId);
 
             const res = await fetch(`/api/post/getpost/${postId}`);
             if (!res.ok) {

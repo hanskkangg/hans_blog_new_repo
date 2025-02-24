@@ -230,7 +230,6 @@ export const deletepost = async (req, res, next) => {
 export const updatepost = async (req, res, next) => {
   try {
     const { postId, userId } = req.params;
-    console.log("🟢 Received UPDATE request for Post ID:", postId, "by User ID:", userId);
     console.log("🔹 Request Body:", req.body);
 
     if (!mongoose.Types.ObjectId.isValid(postId)) {
@@ -287,7 +286,6 @@ export const updatepost = async (req, res, next) => {
 export const getpost = async (req, res, next) => {
   try {
     const { postId } = req.params;
-    console.log("🟢 Received GET request for postId:", postId);
 
     if (!mongoose.Types.ObjectId.isValid(postId)) {
       console.log("🚨 Invalid postId format:", postId);
