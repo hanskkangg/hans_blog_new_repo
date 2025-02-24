@@ -141,16 +141,31 @@ export const deleteComment = async (req, res, next) => {
     next(error);
   }
 };
-
 export const getUserComments = async (req, res, next) => {
   try {
     const userId = req.params.userId;
     if (!userId) return next(errorHandler(400, 'User ID is required'));
 
-    const comments = await Comment.find({ userId }).sort({ createdAt: -1 }).populate("postId", "title");
-    
-    res.status(200).json({ comments });
+    // ✅ Handle pagination parameters
+    const startIndex = parseInt(req.query.startIndex) || 0;
+    const limit = parseInt(req.query.limit) || 9;
+
+    console.log("📦 Pagination Params - Start Index:", startIndex, "Limit:", limit);
+
+    // ✅ Fetch comments with pagination and populate the related post data
+    const comments = await Comment.find({ userId })
+      .sort({ createdAt: -1 })
+      .skip(startIndex)
+      .limit(limit)
+      .populate("postId", "title slug");
+
+    // ✅ Count total comments by the user for pagination control
+    const totalComments = await Comment.countDocuments({ userId });
+
+    res.status(200).json({ comments, totalComments });
   } catch (error) {
+    console.error("🔥 Error fetching user comments:", error);
     next(error);
   }
 };
+
