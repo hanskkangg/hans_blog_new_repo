@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { FaThumbsUp } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import { Button, Textarea, Badge } from 'flowbite-react';
-import { Award } from 'lucide-react';
+import { Award,Beer } from 'lucide-react';
 
 export default function Comment({ comment, onLike, onEdit, onDelete }) {
   const [user, setUser] = useState({});
@@ -75,7 +75,7 @@ export default function Comment({ comment, onLike, onEdit, onDelete }) {
   return (
     <div
     className={`relative flex flex-col p-4 rounded-lg shadow-sm bg-gray-50 dark:bg-gray-800 
-    ${comment.isMostLiked ? ' border-2 border-double border-gray-400' : 'border border-gray-300 dark:border-gray-700'}`}
+    ${comment.isMostLiked ? 'bg-slate-100 border-2 border-double border-gray-300' : 'border border-gray-300 dark:border-gray-700'}`}
 >
       <div className="flex items-center mb-2">
         <img
@@ -94,7 +94,7 @@ export default function Comment({ comment, onLike, onEdit, onDelete }) {
 
 {comment.isMostLiked && (
     <div className="absolute top-2 right-2 flex items-center gap-2 z-10 bg-white dark:bg-gray-800 px-2 py-1 rounded-md shadow-md border border-gray-300">
-        <Award className="text-black dark:text-white w-4 h-4" />
+        <Award className="text-yellow-400 dark:text-yellow-400 w-4 h-4" />
         <span className="text-xs text-gray-700 dark:text-gray-200 font-medium">
             Top Comments
         </span>
