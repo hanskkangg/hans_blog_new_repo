@@ -5,7 +5,7 @@ export default function RecentPostCard({ post }) {
     <div className="RecentPostCard bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-5 transition-transform transform hover:scale-105 transition-colors duration-300">
       
       {/* Image Thumbnail */}
-      <Link to={`/post/${post.slug}`} className="block w-full h-[150px] overflow-hidden rounded-md mb-3">
+      <Link to={`/post/${post.slug}`} className="block w-full h-[250px] overflow-hidden rounded-md mb-3">
         <img
           src={post.headerImage || "/default-placeholder.jpg"}
           alt={post.title}
@@ -33,12 +33,12 @@ export default function RecentPostCard({ post }) {
       </p>
 
       {/* Category & Views with Dark Mode */}
-      <div className="flex justify-between items-center">
-        <Link to={`/search?category=${post.category}`}>
-          <span className="text-[11px] bg-black text-white px-2 py-1 rounded-md dark:bg-black dark:text-white">
-            {post.category}
-          </span>
-        </Link>
+      <div className="mb-1">
+          <Link to={`/search?category=${post.category}`}>
+            <span className="text-[12px] text-gray-500 dark:text-gray-400 underline">
+              {post.category}
+            </span>
+          </Link>
       </div>
 
       {/* Footer: Continue Reading & Stats */}
