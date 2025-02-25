@@ -42,15 +42,17 @@ export default function PostCardSearch({ post }) {
           </h3>
         </Link>
         
-        <div className='mt-4'></div>
+        <div className='mt-3'></div>
 
-        {/* Body Content (Shortened for Mobile) */}
-        <p className="text-[10px] sm:text-sm text-gray-600 dark:text-gray-400 line-clamp-1 sm:line-clamp-3">
-          {post.content.replace(/<[^>]+>/g, '').slice(0, 100)}...
+        {/* Body Content (Smaller Font & 3 Lines on Large Screens) */}
+        <p className="text-[8px] sm:text-xs text-gray-600 dark:text-gray-400 line-clamp-2 sm:line-clamp-3">
+          {post.content.replace(/<[^>]+>/g, '').slice(0, 200)}...
         </p>
 
+        <div className='mt-3'></div>
+
         {/* Footer with Stats and Category */}
-        <div className="flex flex-wrap justify-between items-center text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-2 gap-2">
+        <div className="flex flex-wrap justify-between items-center text-[8px] sm:text-xs text-gray-500 dark:text-gray-400 mt-2 gap-2">
           
           {/* Stats Icons with Counts */}
           <div className="flex items-center space-x-2">
@@ -60,7 +62,7 @@ export default function PostCardSearch({ post }) {
 
             {/* Category with Simple Underline */}
             <Link to={`/search?category=${post.category}`}>
-              <span className="text-[10px] sm:text-[12px] text-gray-500 dark:text-gray-400 underline">
+              <span className="text-[8px] sm:text-[10px] text-gray-500 dark:text-gray-400 underline">
                 {post.category}
               </span>
             </Link>
@@ -69,7 +71,7 @@ export default function PostCardSearch({ post }) {
           {/* "Continue Reading" Button */}
           <Link 
             to={`/post/${post.slug}`} 
-            className="text-teal-500 font-medium text-[10px] sm:text-sm hover:underline"
+            className="text-teal-500 font-medium text-[8px] sm:text-xs hover:underline"
           >
             Continue Reading →
           </Link>
