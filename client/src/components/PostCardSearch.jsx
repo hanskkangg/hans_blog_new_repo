@@ -6,7 +6,7 @@ import "@fontsource/arvo";
 export default function PostCardSearch({ post }) {
   return (
     <>
-      <div className="PostCardSearch relative bg-white dark:bg-gray-800 rounded-lg shadow-md sm:border border-gray-200 dark:border-gray-700 p-4 transition-transform duration-200 hover:scale-105 transition-colors flex flex-row gap-4 items-center w-full max-w-full overflow-x-hidden">
+      <div className="PostCardSearch relative bg-white dark:bg-gray-800 rounded-md sm:rounded-lg shadow-md sm:border border-gray-200 dark:border-gray-700 p-2 sm:p-4 transition-transform duration-200 hover:scale-105 transition-colors flex flex-row gap-2 sm:gap-4 items-center w-full max-w-full overflow-x-hidden">
         
         {/* Image on the Left and Vertically Centered */}
         <Link 
@@ -27,7 +27,7 @@ export default function PostCardSearch({ post }) {
         <div className="flex flex-col justify-center flex-grow w-full max-w-full">
           
           {/* Author & Date (Smaller Text on Mobile) */}
-          <div className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 flex justify-between mb-1 w-full">
+          <div className="text-[8px] sm:text-xs text-gray-500 dark:text-gray-400 flex justify-between mb-1 w-full">
             <span>{post?.author || "Unknown Author"}</span>
             <span>{new Date(post.updatedAt).toLocaleDateString()}</span>
           </div>
@@ -35,14 +35,14 @@ export default function PostCardSearch({ post }) {
           {/* Title with Maximum of Two Lines */}
           <Link to={`/post/${post.slug}`} className="block w-full">
             <h3 
-              className="text-sm sm:text-2xl hover:text-teal-500 transition-colors duration-200 text-gray-900 dark:text-gray-200 overflow-hidden text-ellipsis line-clamp-2"
+              className="text-xs sm:text-2xl hover:text-teal-500 transition-colors duration-200 text-gray-900 dark:text-gray-200 overflow-hidden text-ellipsis line-clamp-3"
               title={post.title}
             >
               {post.title}
             </h3>
           </Link>
           
-          <div className='mt-3 hidden sm:block'></div>
+          <div className='mt-3'></div>
           
           {/* Body Content (Hidden on Small Screens, 3 Lines on Large Screens) */}
           <p className="hidden sm:block text-xs text-gray-600 dark:text-gray-400 line-clamp-3 w-full max-w-full">
@@ -52,10 +52,10 @@ export default function PostCardSearch({ post }) {
           <div className='mt-3 hidden sm:block'></div>
 
           {/* Footer with Stats and Category */}
-          <div className="flex flex-wrap justify-between items-center text-[8px] sm:text-xs text-gray-500 dark:text-gray-400 mt-2 gap-2 w-full max-w-full">
+          <div className="flex flex-wrap justify-between items-center text-[8px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1 gap-1 sm:gap-2 w-full max-w-full">
             
             {/* Stats Icons with Counts */}
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1 sm:space-x-2">
               <span>👁️ {post.views || 0}</span>
               <span>❤️ {post.likesCount || 0}</span>
               <span>💬 {post.commentsCount || 0}</span>
@@ -80,7 +80,7 @@ export default function PostCardSearch({ post }) {
       </div>
 
       {/* Separator Line on Small Screens Only */}
-      <hr className="block sm:hidden border-t border-gray-300 dark:border-gray-600 my-2 w-full" />
+      <hr className="block sm:hidden border-t border-gray-300 dark:border-gray-600 my-1 sm:my-2 w-full" />
     </>
   );
 }
