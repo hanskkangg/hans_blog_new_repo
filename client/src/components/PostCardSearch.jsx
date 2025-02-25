@@ -33,19 +33,20 @@ export default function PostCardSearch({ post }) {
           </div>
 
           {/* Title with Maximum of Two Lines */}
-          <Link to={`/post/${post.slug}`} className="block w-full">
-            <h3 
-              className="text-[10px] sm:text-2xl hover:text-teal-500 transition-colors duration-200 text-gray-900 dark:text-gray-200 overflow-hidden text-ellipsis line-clamp-3"
-              title={post.title}
-            >
-              {post.title}
-            </h3>
-          </Link>
-          
+    {/* Title with Different Styles for Small and Large Screens */}
+<Link to={`/post/${post.slug}`} className="block w-full">
+    <h3 
+        className="text-sm sm:text-2xl leading-tight text-gray-900 dark:text-gray-200 hover:text-indigo-500 transition-colors overflow-hidden text-ellipsis line-clamp-3"
+        title={post.title}
+    >
+        {post.title}
+    </h3>
+</Link>
+
           <div className='mt-2'></div>
           
           {/* Body Content (Smaller Font, 2 Lines on Small Screens, 3 Lines on Large Screens) */}
-          <p className="text-[8px] sm:text-xs text-gray-600 dark:text-gray-400 line-clamp-2 sm:line-clamp-3 w-full max-w-full">
+          <p className="text-[8px] sm:text-xs text-gray-600 dark:text-gray-400 line-clamp-1 sm:line-clamp-3 w-full max-w-full">
             {post.content.replace(/<[^>]+>/g, '').slice(0, 200)}...
           </p>
 
