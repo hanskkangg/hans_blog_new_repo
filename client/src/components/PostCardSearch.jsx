@@ -35,21 +35,21 @@ export default function PostCardSearch({ post }) {
           {/* Title with Maximum of Two Lines */}
           <Link to={`/post/${post.slug}`} className="block w-full">
             <h3 
-              className="text-xs sm:text-2xl hover:text-teal-500 transition-colors duration-200 text-gray-900 dark:text-gray-200 overflow-hidden text-ellipsis line-clamp-3"
+              className="text-[10px] sm:text-2xl hover:text-teal-500 transition-colors duration-200 text-gray-900 dark:text-gray-200 overflow-hidden text-ellipsis line-clamp-3"
               title={post.title}
             >
               {post.title}
             </h3>
           </Link>
           
-          <div className='mt-3'></div>
+          <div className='mt-2'></div>
           
-          {/* Body Content (Hidden on Small Screens, 3 Lines on Large Screens) */}
-          <p className="hidden sm:block text-xs text-gray-600 dark:text-gray-400 line-clamp-3 w-full max-w-full">
+          {/* Body Content (Smaller Font, 2 Lines on Small Screens, 3 Lines on Large Screens) */}
+          <p className="text-[8px] sm:text-xs text-gray-600 dark:text-gray-400 line-clamp-2 sm:line-clamp-3 w-full max-w-full">
             {post.content.replace(/<[^>]+>/g, '').slice(0, 200)}...
           </p>
 
-          <div className='mt-2 hidden sm:block'></div>
+          <div className='mt-2'></div>
 
           {/* Footer with Stats and Category */}
           <div className="flex flex-wrap justify-between items-center text-[8px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1 gap-1 sm:gap-2 w-full max-w-full">

@@ -239,7 +239,7 @@ export default function CommentSection({ postId }) {
       {comments.map((comment) => (
         <div 
           key={comment._id}
-          className="border border-gray-300 dark:border-gray-700 rounded-lg p-3 shadow-md bg-white dark:bg-gray-900"
+          className=""
         >
           <Comment
             comment={comment}
