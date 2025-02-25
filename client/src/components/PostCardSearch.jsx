@@ -49,7 +49,7 @@ export default function PostCardSearch({ post }) {
             {post.content.replace(/<[^>]+>/g, '').slice(0, 200)}...
           </p>
 
-          <div className='mt-3 hidden sm:block'></div>
+          <div className='mt-2 hidden sm:block'></div>
 
           {/* Footer with Stats and Category */}
           <div className="flex flex-wrap justify-between items-center text-[8px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1 gap-1 sm:gap-2 w-full max-w-full">
@@ -78,9 +78,6 @@ export default function PostCardSearch({ post }) {
           </div>
         </div>
       </div>
-
-      {/* Separator Line on Small Screens Only */}
-      <hr className="block sm:hidden border-t border-gray-300 dark:border-gray-600 my-1 sm:my-2 w-full" />
     </>
   );
 }

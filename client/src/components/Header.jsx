@@ -55,7 +55,7 @@ export default function Header() {
   return (
 
       <Navbar
-      className="border-b-2 shadow-md bg-white dark:bg-gray-900 px-6 py-4 flex items-center justify-between"
+      className="border-b-2 shadow-md bg-white dark:bg-gray-900 px-6 py-2 flex items-center justify-between"
       
     >   {/* Blog Title */}
       <Link to="/" className="flex items-center space-x-2">
