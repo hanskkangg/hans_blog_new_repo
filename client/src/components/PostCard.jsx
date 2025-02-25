@@ -44,7 +44,7 @@ export default function PostCard({ post }) {
           {/* Left: Continue Reading Button */}
           <Link
             to={`/post/${post.slug}`}
-            className="text-teal-500 font-bold hover:underline"
+            className="text-teal-500  hover:underline"
           >
             Continue Reading →
           </Link>
