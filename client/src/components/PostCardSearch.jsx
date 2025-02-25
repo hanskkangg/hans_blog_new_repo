@@ -10,7 +10,7 @@ export default function PostCardSearch({ post }) {
       {/* Image on the Left and Vertically Centered */}
       <Link 
         to={`/post/${post.slug}`} 
-        className="flex items-center justify-center flex-shrink-0 w-[80px] h-[80px] sm:w-[200px] sm:h-[200px]"
+        className="flex items-center justify-center flex-shrink-0 w-[120px] h-[120px] sm:w-[200px] sm:h-[200px]"
       >
         <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-md overflow-hidden">
           <img
@@ -45,7 +45,8 @@ export default function PostCardSearch({ post }) {
         <div className='mt-3'></div>
 
         {/* Body Content (Smaller Font & 3 Lines on Large Screens) */}
-        <p className="text-[8px] sm:text-xs text-gray-600 dark:text-gray-400 line-clamp-2 sm:line-clamp-3">
+             {/* Body Content (Hidden on Small Screens, 3 Lines on Large Screens) */}
+             <p className="hidden sm:block text-xs text-gray-600 dark:text-gray-400 line-clamp-3">
           {post.content.replace(/<[^>]+>/g, '').slice(0, 200)}...
         </p>
 
