@@ -1,8 +1,12 @@
 import { Link } from 'react-router-dom';
 
+import "@fontsource/roboto"; // Importing Arvo font
+import "@fontsource/arvo"; // Importing Arvo font
+
 export default function PostCard({ post }) {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md mb-8 overflow-hidden">
+    <div className="PostCard bg-white dark:bg-gray-800 rounded-lg shadow-md mb-8 overflow-hidden" 
+   >
       {/* Clickable Header Image */}
       <Link to={`/post/${post.slug}`} className="block w-full h-[300px] md:h-[400px] lg:h-[450px]">
         <img

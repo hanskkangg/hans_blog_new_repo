@@ -75,7 +75,7 @@ export default function Comment({ comment, onLike, onEdit, onDelete }) {
   return (
     <div
     className={`relative flex flex-col p-4 rounded-lg shadow-sm bg-gray-50 dark:bg-gray-800 
-    ${comment.isMostLiked ? 'border-2 border-gray-400' : 'border border-gray-300 dark:border-gray-700'}`}
+    ${comment.isMostLiked ? ' border-2 border-double border-gray-400' : 'border border-gray-300 dark:border-gray-700'}`}
 >
       <div className="flex items-center mb-2">
         <img

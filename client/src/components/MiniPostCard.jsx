@@ -1,11 +1,14 @@
 import { Link } from "react-router-dom";
+import "@fontsource/roboto"; // Importing Arvo font
+import "@fontsource/arvo"; // Importing Arvo font
 
 export default function MiniPostCard({ post }) {
   return (
-    <div className="flex items-center gap-4 py-3 border-b border-gray-300 dark:border-gray-600 last:border-none">
+    <div
+      className="MiniPostCard flex items-center gap-4 py-3 border-b border-gray-300 dark:border-gray-600 last:border-none"  >
       {/* Left: Thumbnail Image */}
       <Link to={`/post/${post.slug}`} className="flex-shrink-0">
-        <div className="w-20 h-20 flex-shrink-0 border border-gray-300 dark:border-gray-600 rounded-md overflow-hidden">
+        <div className="w-24 h-24 flex-shrink-0 border border-gray-300 dark:border-gray-600 rounded-md overflow-hidden">
           <img
             src={post.headerImage || "/default-placeholder.jpg"}
             onError={(e) => (e.target.src = "/default-placeholder.jpg")}
@@ -20,16 +23,19 @@ export default function MiniPostCard({ post }) {
         {/* Title (Multi-line support) */}
         <Link
           to={`/post/${post.slug}`}
-          className="block font-semibold text-sm leading-tight text-gray-900 dark:text-gray-200 hover:text-indigo-500"
+          className="block text-sm leading-tight text-gray-900 dark:text-gray-200 hover:text-indigo-500"
           style={{
             display: "-webkit-box",
             WebkitBoxOrient: "vertical",
-            WebkitLineClamp: 2, // Allows up to 2 lines before truncation
+            WebkitLineClamp: 4,
             overflow: "hidden",
           }}
         >
           {post.title}
         </Link>
+
+        {/* Empty line for spacing */}
+        <div className="my-2"></div>
 
         {/* Author & Date */}
         <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">

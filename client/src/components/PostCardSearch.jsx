@@ -1,8 +1,12 @@
 import { Link } from 'react-router-dom';
 
+import "@fontsource/roboto"; // Importing Arvo font
+import "@fontsource/arvo"; // Importing Arvo font
+
 export default function PostCardSearch({ post }) {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 flex gap-4 p-4 transition-transform duration-200 hover:scale-105">
+    <div className="PostCardSearch bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 flex gap-4 p-4 transition-transform duration-200 hover:scale-105"
+    >
       
       {/* Vertically Centered Header Image with Responsive Size on the Left */}
       <Link 
@@ -41,6 +45,7 @@ export default function PostCardSearch({ post }) {
             {post.title}
           </h3>
         </Link>
+        
 
         {/* Body Content - Only Visible on Larger Screens */}
         <p className="hidden md:block text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-3">
