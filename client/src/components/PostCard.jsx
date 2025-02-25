@@ -1,14 +1,18 @@
 import { Link } from 'react-router-dom';
 
-import "@fontsource/roboto"; // Importing Arvo font
-import "@fontsource/arvo"; // Importing Arvo font
+// Importing Poppins and Roboto fonts
+import "@fontsource/poppins"; // Default weight (400)
+import "@fontsource/roboto"; // Importing Roboto font
 
 export default function PostCard({ post }) {
   return (
-    <div className="PostCard bg-white dark:bg-gray-800 rounded-lg shadow-md mb-8 overflow-hidden" 
-   >
-      {/* Clickable Header Image */}
-      <Link to={`/post/${post.slug}`} className="block w-full h-[300px] md:h-[400px] lg:h-[450px]">
+    <div className="PostCard bg-white dark:bg-gray-900 rounded-lg shadow-md mb-8 overflow-hidden font-poppins transition-colors duration-300">
+      
+      {/* Clickable Header Image with Responsive Height */}
+      <Link 
+        to={`/post/${post.slug}`} 
+        className="block w-full h-[200px] md:h-[250px] lg:h-[450px]"
+      >
         <img
           src={post.headerImage || "/default-placeholder.jpg"}
           onError={(e) => (e.target.src = "/default-placeholder.jpg")}
@@ -17,43 +21,44 @@ export default function PostCard({ post }) {
         />
       </Link>
 
-      {/* Post Content */}
-      <div className="p-6">
-        {/* Author & Date */}
-        <div className="text-sm text-gray-500 flex justify-between items-center mb-2">
-  <span className="font-medium">{post.author || 'Unknown Author'}</span>
-  <span>{new Date(post.updatedAt).toLocaleDateString()}</span>
-</div>
+      {/* Post Content with Gaps */}
+      <div className="p-4 flex flex-col gap-3">
+        
+        {/* Author & Date on the Same Line with Dot Separator */}
+        <div className="text-[10px] md:text-xs text-black dark:text-gray-300 flex items-center justify-center gap-1">
+          <span className="font-medium">{post.author || 'Unknown Author'}</span>
+          <span className="text-gray-400 dark:text-gray-500">●</span>
+          <span>{new Date(post.updatedAt).toLocaleDateString()}</span>
+        </div>
 
-
-
-        {/* Clickable Title */}
+        {/* Clickable Title Centered with Larger Font and Roboto */}
         <Link to={`/post/${post.slug}`} className="block">
-          <h3 className="text-2xl font-semibold mb-3 hover:text-teal-500 transition-colors duration-200">
+          <h3 className="text-lg md:text-2xl font-normal hover:text-teal-500 transition-colors duration-200 text-center break-words font-roboto text-gray-900 dark:text-white">
             {post.title}
           </h3>
         </Link>
 
-        {/* Body Content (Short Preview) */}
-        <p className="text-gray-600 dark:text-gray-400 mb-4">
-          {post.content.replace(/<[^>]+>/g, '').slice(0, 200)}...
+        {/* Body Content (3 Lines Preview on Small Screens, 2 Lines on Larger Screens) */}
+        <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 line-clamp-3 md:line-clamp-2 mb-3">
+          {post.content.replace(/<[^>]+>/g, '')}
         </p>
 
-        {/* Footer: Continue Reading & Stats */}
-        <div className="flex justify-between items-center">
-          {/* Left: Continue Reading Button */}
+        {/* Footer: Continue Reading & Stats with Gap */}
+        <div className="flex justify-between items-center gap-2">
+          
+          {/* Continue Reading Button */}
           <Link
             to={`/post/${post.slug}`}
-            className="text-teal-500  hover:underline"
+            className="text-teal-500 text-xs md:text-sm hover:underline"
           >
             Continue Reading →
           </Link>
 
-          {/* Right: Post Stats */}
-          <div className="flex items-center space-x-4 text-gray-500 text-sm">
+          {/* Post Stats */}
+          <div className="flex items-center space-x-2 text-gray-500 dark:text-gray-400 text-[10px] md:text-xs">
             <span>👁️ {post.views || 0}</span>
             <span>❤️ {post.likesCount || 0}</span>
-            <span>💬 {post.commentsCount || 0}</span> {/* ✅ Display Comments Count */}
+            <span>💬 {post.commentsCount || 0}</span>
           </div>
         </div>
       </div>

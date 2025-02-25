@@ -64,9 +64,9 @@ export default function Home() {
 
     
 
-<div className="p-5 w-full max-w-7xl mx-auto overflow-hidden flex flex-col md:flex-row gap-8">
+ <div className="p-5 w-full max-w-7xl mx-auto overflow-hidden flex flex-col md:flex-row gap-8">
 
- {/*/*<div className="p-5 w-full max-w-full overflow-hidden flex flex-col md:flex-row gap-8"> */}
+ {/* <div className="p-5 w-full max-w-full overflow-hidden flex flex-col md:flex-row gap-8">  */}
       
       {/* Main Content (Recent Posts) - 70% width */}
       <div className="w-full md:w-[70%] max-w-full p-5 rounded-lg bg-white dark:bg-gray-800">
@@ -76,6 +76,8 @@ export default function Home() {
         ) : (
           <p className="text-gray-500 text-center">No recent posts yet.</p>
         )}
+
+        
 <div className="flex justify-center mt-10">
     <Button
         as={Link}

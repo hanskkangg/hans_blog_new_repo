@@ -9,6 +9,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Warang+Citi&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&family=Noto+Sans+Warang+Citi&family=Roboto:ital,wght@0,100..900;1,100..900&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
 
 body {
   font-family: 'Outfit', serif; /* ✅ Apply Ovo font to all content */
@@ -80,5 +81,5 @@ body {
 }
 
 .PostCard {
-  font-family: 'arvo', sans-serif;
+  font-family: 'Arvo', sans-serif;
 }

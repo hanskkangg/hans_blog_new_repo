@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Link, useParams,useNavigate } from 'react-router-dom';
 import CallToAction from '../components/CallToAction';
 import CommentSection from '../components/CommentSection';
-import PostCard from '../components/PostCard';
+import RecentPostCard from '../components/RecentPostCard';
 import { useSelector } from "react-redux"; // ✅ Import Redux Hook
 import { Modal } from 'flowbite-react';
 import { BsInstagram, BsFacebook, BsGithub } from 'react-icons/bs';
@@ -286,20 +286,21 @@ export default function PostPage() {
   
     {/* ✅ Comment Section */}
     <CommentSection postId={post?._id} />
+  {/* ✅ Recent Articles Section with Unique Design */}
+<div className="flex flex-col justify-center items-center mb-5 w-full">
+  <h1 className="text-xl mt-5">Recent Articles</h1>
   
-    {/* ✅ Recent Articles Section */}
-    <div className="flex flex-col justify-center items-center mb-5 w-full">
-      <h1 className="text-xl mt-5">Recent articles</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 mt-5 w-full max-w-6xl mx-auto">
-        {recentPosts.length > 0 ? (
-          recentPosts.map((recentPost) => (
-            <PostCard key={recentPost._id} post={recentPost} />
-          ))
-        ) : (
-          <p className="text-gray-500 dark:text-gray-400">No recent articles available.</p>
-        )}
-      </div>
-    </div>
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-5 w-full max-w-4xl mx-auto">
+    {recentPosts.length > 0 ? (
+      recentPosts.slice(0, 3).map((recentPost) => (
+        <RecentPostCard key={recentPost._id} post={recentPost} />
+      ))
+    ) : (
+      <p className="text-gray-500 dark:text-gray-400">No recent articles available.</p>
+    )}
+  </div>
+</div>
+
   
     {/* ✅ Delete Confirmation Modal */}
     <Modal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} popup size="md">

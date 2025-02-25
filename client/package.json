@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@fontsource/arvo": "^5.1.1",
+    "@fontsource/league-spartan": "^5.1.1",
+    "@fontsource/poppins": "^5.1.1",
     "@fontsource/roboto": "^5.1.1",
     "@fontsource/urbanist": "^5.1.1",
     "@reduxjs/toolkit": "^2.0.1",

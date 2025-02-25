@@ -8,9 +8,11 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        ovo: ['Ovo', 'serif'], // ✅ Define Ovo font in Tailwind
+        ovo: ['Ovo', 'serif'],
         outfit: ['Outfit', 'sans-serif'],
-      },
+        'league-spartan': ['League Spartan', 'sans-serif'],
+    },
+    
     },
   },
   plugins: [
