@@ -33,10 +33,12 @@ export default function PostCard({ post }) {
 
         {/* Clickable Title Centered with Larger Font and Roboto */}
         <Link to={`/post/${post.slug}`} className="block">
-          <h3 className="text-lg md:text-2xl font-normal hover:text-teal-500 transition-colors duration-200 text-center break-words font-roboto text-gray-900 dark:text-white">
+          <h3 className="text-lg md:text-3xl font-normal hover:text-teal-500 transition-colors duration-200 text-center break-words font-roboto text-gray-900 dark:text-white">
             {post.title}
           </h3>
         </Link>
+
+<div className='hidden sm:mt-2 sm:block'></div>
 
         {/* Body Content (3 Lines Preview on Small Screens, 2 Lines on Larger Screens) */}
         <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 line-clamp-3 md:line-clamp-2 mb-3">
