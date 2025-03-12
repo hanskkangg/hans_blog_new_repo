@@ -11,11 +11,11 @@ export default function Home() {
   const [mostViewedPosts, setMostViewedPosts] = useState([]);
 
 
-   // ✅ Hardcoded Profile Data (No Fetching Needed)
+   // Hardcoded Profile Data
    const authorProfile = {
-    username: "Hans Kang",
-    profilePicture: "./pro.png", // Change this to your profile image URL
-    bio: "Web Developer | Tech Enthusiast | Coffee Lover ☕",
+    username: "Min Kang",
+    profilePicture: "./min_logo.png",
+    bio: "Chasing Pucks | Stats, Stories & Analysis",
     pronouns: "he/him",
     instagram: "https://www.instagram.com/kkanghhanss/",
     facebook: "https://www.facebook.com/hans.kkang/",
@@ -44,12 +44,12 @@ export default function Home() {
         const mostViewedData = await mostViewedRes.json();
         setMostViewedPosts(mostViewedData.posts || []);
 
-        console.log("✅ Recent Posts:", recentData.posts);
-        console.log("✅ Most Liked Posts:", trendingData.posts);
-        console.log("✅ Most Viewed Posts:", mostViewedData.posts);
+        console.log("Recent Posts:", recentData.posts);
+        console.log("Most Liked Posts:", trendingData.posts);
+        console.log("Most Viewed Posts:", mostViewedData.posts);
 
       } catch (error) {
-        console.error("🔥 Error fetching posts:", error.message);
+        console.error("Error fetching posts:", error.message);
         setRecentPosts([]);
         setTrendingPosts([]);
         setMostViewedPosts([]);
@@ -93,7 +93,7 @@ export default function Home() {
 
       {/* Right Sidebar */}
       <div className="w-full md:w-[30%] max-w-full space-y-8">
-        {/* ✅ Hardcoded AUTHOR PROFILE SECTION */}
+        {/* Hardcoded AUTHOR PROFILE SECTION */}
         <div className="p-5 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-300 dark:border-gray-600 text-center">
           <img
             src={authorProfile.profilePicture}

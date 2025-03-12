@@ -15,7 +15,7 @@ export default function Header() {
   const { currentUser } = useSelector((state) => state.user);
   const { theme } = useSelector((state) => state.theme);
   const [searchTerm, setSearchTerm] = useState('');
-  const [menuOpen, setMenuOpen] = useState(false); // ✅ State to handle menu open/close
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -49,7 +49,7 @@ export default function Header() {
   };
 
   const handleLinkClick = () => {
-    setMenuOpen(false); // ✅ Close menu on link click
+    setMenuOpen(false); 
   };
 
   return (
@@ -59,17 +59,17 @@ export default function Header() {
       
     >   {/* Blog Title */}
       <Link to="/" className="flex items-center space-x-2">
-        <span className="text-2xl font-bold text-black dark:text-white">
-          Hans
+        <span className="font-outfit text-2xl font-bold text-black dark:text-white xl:text-4xl">
+          Kangaroo
         </span>
-        <span className="text-xl font-light text-gray-600 dark:text-gray-300">
-          Blog
+        <span className="font-league-spartan text-xl font-light text-gray-600 dark:text-gray-300 xl:text-3xl">
+          On Ice
         </span>
       </Link>
 
 
 
-      {/* ✅ Centered Navigation Links */}
+      {/* Centered Navigation Links */}
 
 
 <div className="hidden md:flex items-center gap-10 text-black dark:text-white">
@@ -108,7 +108,7 @@ export default function Header() {
 </div>
 
 
-      {/* ✅ Centered Search Bar - Compact */}
+      {/* Centered Search Bar*/}
       <form onSubmit={handleSubmit} className="hidden md:flex w-full max-w-xs lg:max-w-sm">
         <TextInput
           type="text"
@@ -121,7 +121,7 @@ export default function Header() {
         />
       </form>
 
-      {/* ✅ Icons, User Profile, Theme Toggle */}
+      {/* Icons, User Profile, Theme Toggle */}
       <div className="flex items-center gap-4 flex-shrink-0">
         {/* Theme Toggle */}
         <Button
