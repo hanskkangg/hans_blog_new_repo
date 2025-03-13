@@ -59,10 +59,12 @@ export default function Header() {
       
     >   {/* Blog Title */}
       <Link to="/" className="flex items-center space-x-2">
-        <span className="font-outfit text-2xl font-bold text-black dark:text-white xl:text-4xl">
+      
+    <img src="./min_logo.png" alt="Logo" className="xl:h-10 xl:w-10 rounded-full h-8 w-8" />  
+        <span className="font-outfit text-sm font-bold text-black dark:text-white xl:text-4xl">
           Kangaroo
         </span>
-        <span className="font-league-spartan text-xl font-light text-gray-600 dark:text-gray-300 xl:text-3xl">
+        <span className="font-outfit xl:font-league-spartan text-xs font-light text-gray-600 dark:text-gray-300 xl:text-3xl">
           On Ice
         </span>
       </Link>
