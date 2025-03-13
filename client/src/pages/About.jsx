@@ -11,7 +11,7 @@ export default function AboutAndContact() {
     {
       name: 'Min Kang',
       role: 'Content Writer',
-      bio: `Min Kang is the creative voice behind much of the storytelling on Hans' Blog. With a natural talent for weaving words into captivating narratives, Min brings fresh insights and a thoughtful perspective to every article.
+      bio: `Min Kang is the creative voice behind much of the storytelling on Kangaroo On Ice. With a natural talent for weaving words into captivating narratives, Min brings fresh insights and a thoughtful perspective to every article.
     
     Min currently resides in Ottawa, where she continues to create stories that inform, inspire, and engage. Connect with her at min.kang@webdev.com or follow her journey on Instagram and LinkedIn.`,
       image: './pr.png',
@@ -19,7 +19,7 @@ export default function AboutAndContact() {
     {
       name: 'Hans Kang',
       role: 'Web Developer',
-      bio: `Hans Kang started Hans' Blog in 2025 as a passion project, blending his love for technology, sports, and storytelling. What began as a humble weekend endeavor has since evolved into a dynamic platform where web development meets engaging narratives.Hans lives in Ottawa with his laptop and an ever-growing collection of tech gadgets. Connect with him at hans.kang@webdev.com or follow his journey on GitHub and Instagram.`,
+      bio: `Hans Kang started Kangaroo On Ice in 2025 as a passion project, blending his love for technology, sports, and storytelling. What began as a humble weekend endeavor has since evolved into a dynamic platform where web development meets engaging narratives.Hans lives in Ottawa with his laptop and an ever-growing collection of tech gadgets. Connect with him at hans.kang@webdev.com or follow his journey on GitHub and Instagram.`,
       image: './pf1.png',
     },
   ];

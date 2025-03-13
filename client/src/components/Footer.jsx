@@ -23,20 +23,20 @@ export default function FooterCom() {
               <Footer.Title title="About" className="text-black dark:text-white" />
               <Footer.LinkGroup col>
                 <Footer.Link
-                  href="https://hanskang.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition"
-                >
-                  Hans Kang's Website
-                </Footer.Link>
-                <Footer.Link
                   href="/about"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition"
                 >
-                  Hans Personal Blog
+                  About Us
+                </Footer.Link>
+                <Footer.Link
+                  href="https://hanskang.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition"
+                >
+                  Hans Website
                 </Footer.Link>
               </Footer.LinkGroup>
             </div>
