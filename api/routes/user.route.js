@@ -16,6 +16,6 @@ router.put('/update/:userId', verifyToken, updateUser);
 router.delete('/delete/:userId', verifyToken, deleteUser);
 router.post('/signout', signout);
 router.get('/getusers', verifyToken, getUsers);
-router.get('/get/:userId', verifyToken, getUser); // ✅ Correct API route
+router.get('/get/:userId', verifyToken, getUser);
 
 export default router;

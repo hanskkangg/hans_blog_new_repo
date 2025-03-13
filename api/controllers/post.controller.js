@@ -1,22 +1,22 @@
 import Post from '../models/post.model.js';
 import { errorHandler } from '../utils/error.js';
-import mongoose from "mongoose"; // ✅ Add this line
-import Comment from '../models/comment.model.js'; // ✅ Import Comment model
+import mongoose from "mongoose";
+import Comment from '../models/comment.model.js'; 
 
 let sortOption = { createdAt: -1 }; // Default: Latest posts first
 // create controller in post.controller.js
 export const create = async (req, res, next) => {
   try {
-    console.log("🔥 Incoming Request Body:", req.body);
-    console.log("🔍 User from Request:", req.user); // ✅ Add this log
+    console.log("Incoming Request Body:", req.body);
+    console.log("User from Request:", req.user); 
 
     if (!req.body.title || !req.body.content) {
-      console.error("🚨 Missing required fields: title or content");
+      console.error("Missing required fields: title or content");
       return next(errorHandler(400, "Missing title or content"));
     }
 
     if (!req.user || !req.user.id) {
-      console.error("🚨 Unauthorized: No user ID found in request");
+      console.error("Unauthorized: No user ID found in request");
       return next(errorHandler(403, "Unauthorized! Please log in to create a post."));
     }
 
@@ -30,17 +30,17 @@ export const create = async (req, res, next) => {
     });
 
     const savedPost = await newPost.save();
-    console.log("✅ Post Created Successfully:", savedPost);
+    console.log("Post Created Successfully:", savedPost);
 
     res.status(201).json(savedPost);
   } catch (error) {
-    console.error("❌ Error in create controller:", error.message);
+    console.error("Error in create controller:", error.message);
     next(error);
   }
 };
 export const getposts = async (req, res, next) => {
   try {
-    console.log("🔹 Received Request:", req.query);
+    console.log("Received Request:", req.query);
 
     const startIndex = parseInt(req.query.startIndex) || 0;
     const limit = parseInt(req.query.limit) || 9;
@@ -81,18 +81,18 @@ export const getposts = async (req, res, next) => {
       sortOption = { views: -1 };
     }
 
-    // 🔥 Calculate Last Month Date
+    // Calculate Last Month Date
     const lastMonth = new Date();
     lastMonth.setMonth(lastMonth.getMonth() - 1);
 
-    // ✅ Calculate total posts and last month posts
+    // Calculate total posts and last month posts
     const totalPosts = await Post.countDocuments(query);
     const lastMonthPosts = await Post.countDocuments({
       ...query,
       createdAt: { $gte: lastMonth },
     });
 
-    console.log("📅 Last Month Posts Count:", lastMonthPosts);
+    console.log("Last Month Posts Count:", lastMonthPosts);
 
     const posts = await Post.aggregate([
       { $match: query },
@@ -126,10 +126,10 @@ export const getposts = async (req, res, next) => {
       { $limit: limit },
     ]);
 
-    console.log("✅ Found Posts:", posts.length, "Total Posts:", totalPosts);
+    console.log("Found Posts:", posts.length, "Total Posts:", totalPosts);
     res.status(200).json({ posts: posts || [], totalPosts, lastMonthPosts });
   } catch (error) {
-    console.error("🔥 Server Error in getposts:", error);
+    console.error("Server Error in getposts:", error);
     res.status(500).json({ error: "Internal Server Error", details: error.message });
   }
 };
@@ -138,21 +138,21 @@ export const getposts = async (req, res, next) => {
 export const likePost = async (req, res, next) => {
   try {
     const { postId } = req.params;
-    const userId = req.user.id; // ✅ Get user ID from token
+    const userId = req.user.id; // Get user ID from token
 
     if (!mongoose.Types.ObjectId.isValid(postId)) {
-      return next(errorHandler(400, "🚨 Invalid post ID!"));
+      return next(errorHandler(400, " Invalid post ID!"));
     }
 
     if (!userId) {
-      return next(errorHandler(401, "🚨 Unauthorized! Please log in."));
+      return next(errorHandler(401, " Unauthorized! Please log in."));
     }
 
-    console.log(`❤️ User ${userId} is trying to like Post ID: ${postId}`);
+    console.log(` User ${userId} is trying to like Post ID: ${postId}`);
 
     const post = await Post.findById(postId);
     if (!post) {
-      return next(errorHandler(404, "🚨 Post not found!"));
+      return next(errorHandler(404, "Post not found!"));
     }
 
     if (!post.likes) {
@@ -162,23 +162,23 @@ export const likePost = async (req, res, next) => {
     const hasLiked = post.likes.includes(userId);
 
     if (hasLiked) {
-      // ✅ Unlike the post if the user has already liked it
+      // Unlike the post if the user has already liked it
       post.likes = post.likes.filter((id) => id.toString() !== userId);
     } else {
-      // ✅ Add user ID to likes array if they haven't liked the post yet
+      // Add user ID to likes array if they haven't liked the post yet
       post.likes.push(userId);
     }
 
     await post.save();
 
-    console.log(`✅ Updated Likes: ${post.likes.length}`);
+    console.log(`Updated Likes: ${post.likes.length}`);
     res.status(200).json({
       success: true,
       likes: post.likes.length,
-      likedByUser: !hasLiked, // ✅ Return if user liked or unliked the post
+      likedByUser: !hasLiked, // Return if user liked or unliked the post
     });
   } catch (error) {
-    console.error("🔥 Like Error:", error);
+    console.error("Like Error:", error);
     next(error);
   }
 };
@@ -193,21 +193,21 @@ export const incrementViews = async (req, res, next) => {
 
     console.log(`👁️ Incrementing view count for Post ID: ${postId}`);
 
-    // ✅ Find the post and increment views **without updating `updatedAt`**
+    // Find the post and increment views **without updating `updatedAt`**
     const post = await Post.findByIdAndUpdate(
       postId,
-      { $inc: { views: 1 } }, // 🔥 Increment view count only
-      { new: true, timestamps: false } // ✅ Prevent `updatedAt` from updating
+      { $inc: { views: 1 } }, // Increment view count only
+      { new: true, timestamps: false } // Prevent `updatedAt` from updating
     );
 
     if (!post) {
-      return next(errorHandler(404, "🚨 Post not found!"));
+      return next(errorHandler(404, "Post not found!"));
     }
 
-    console.log(`✅ Updated views: ${post.views}`);
+    console.log(`Updated views: ${post.views}`);
     res.status(200).json({ success: true, views: post.views });
   } catch (error) {
-    console.error("🔥 View Count Error:", error);
+    console.error("View Count Error:", error);
     next(error);
   }
 };
@@ -230,22 +230,22 @@ export const deletepost = async (req, res, next) => {
 export const updatepost = async (req, res, next) => {
   try {
     const { postId, userId } = req.params;
-    console.log("🔹 Request Body:", req.body);
+    console.log("Request Body:", req.body);
 
     if (!mongoose.Types.ObjectId.isValid(postId)) {
-      console.log("🚨 Invalid Post ID:", postId);
-      return res.status(400).json({ error: "🚨 Invalid post ID!" });
+      console.log("Invalid Post ID:", postId);
+      return res.status(400).json({ error: "Invalid post ID!" });
     }
 
     const existingPost = await Post.findById(postId);
     if (!existingPost) {
-      console.log("🚨 Post not found:", postId);
-      return res.status(404).json({ error: "🚨 Post not found!" });
+      console.log("Post not found:", postId);
+      return res.status(404).json({ error: "Post not found!" });
     }
 
     if (!req.user || (!req.user.isAdmin && req.user.id !== userId)) {
-      console.log("🚨 Unauthorized attempt by User ID:", userId);
-      return res.status(403).json({ error: "🚨 You are not allowed to update this post!" });
+      console.log("Unauthorized attempt by User ID:", userId);
+      return res.status(403).json({ error: "You are not allowed to update this post!" });
     }
 
     let slug = existingPost.slug;
@@ -272,12 +272,12 @@ export const updatepost = async (req, res, next) => {
         },
       },
       { new: true }
-    ).populate("userId", "username email"); // ✅ Populate author information
+    ).populate("userId", "username email"); // Populate author information
 
-    console.log("✅ Successfully Updated Post:", updatedPost);
+    console.log("Successfully Updated Post:", updatedPost);
     return res.status(200).json(updatedPost);
   } catch (error) {
-    console.error("🔥 Server Error in updatepost:", error);
+    console.error("Server Error in updatepost:", error);
     return res.status(500).json({ error: "Internal Server Error", details: error.message });
   }
 };
@@ -288,22 +288,22 @@ export const getpost = async (req, res, next) => {
     const { postId } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(postId)) {
-      console.log("🚨 Invalid postId format:", postId);
-      return res.status(400).json({ error: "🚨 Invalid post ID format!" });
+      console.log(" Invalid postId format:", postId);
+      return res.status(400).json({ error: "Invalid post ID format!" });
     }
 
     const post = await Post.findById(postId);
     if (!post) {
-      console.log("🚨 No post found with ID:", postId);
-      return res.status(404).json({ error: "🚨 Post not found!" });
+      console.log("No post found with ID:", postId);
+      return res.status(404).json({ error: " Post not found!" });
     }
 
     const responseData = { success: true, post };
-    console.log("🔹 Sending Response:", JSON.stringify(responseData, null, 2));
+    console.log("Sending Response:", JSON.stringify(responseData, null, 2));
 
     return res.status(200).json(responseData);
   } catch (error) {
-    console.error("🔥 Server Error in `getpost`:", error);
+    console.error("Server Error in `getpost`:", error);
     return res.status(500).json({ error: "Internal Server Error", details: error.message });
   }
 };

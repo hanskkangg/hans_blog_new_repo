@@ -71,7 +71,7 @@ export const signin = async (req, res, next) => {
     const token = jwt.sign(
       { id: validUser._id, isAdmin: validUser.isAdmin },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" } // ✅ Set token expiry
+      { expiresIn: "7d" } 
     );
 
     const { password: pass, ...rest } = validUser._doc;
@@ -79,7 +79,7 @@ export const signin = async (req, res, next) => {
     res
       .status(200)
       .cookie('access_token', token, { httpOnly: true })
-      .json({ ...rest, token }); // ✅ Send token in JSON response
+      .json({ ...rest, token });
   } catch (error) {
     next(error);
   }
@@ -107,7 +107,7 @@ export const google = async (req, res, next) => {
     const token = jwt.sign(
       { id: user._id, isAdmin: user.isAdmin },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" } // ✅ Set token expiry
+      { expiresIn: "7d" } //  Set token expiry
     );
 
     const { password, ...rest } = user._doc;
@@ -115,7 +115,7 @@ export const google = async (req, res, next) => {
     res
       .status(200)
       .cookie('access_token', token, { httpOnly: true })
-      .json({ ...rest, token }); // ✅ Send token in JSON response
+      .json({ ...rest, token }); //  Send token in JSON response
   } catch (error) {
     next(error);
   }
@@ -126,21 +126,21 @@ export const verifyToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
-    console.error("🚨 No authorization header found.");
+    console.error("No authorization header found.");
     return next(errorHandler(401, "No token provided"));
   }
 
-  const token = authHeader.split(" ")[1]; // ✅ Parse Bearer token correctly
-  console.log("🔍 Extracted Token:", token);
+  const token = authHeader.split(" ")[1]; // Parse Bearer token correctly
+  console.log("Extracted Token:", token);
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) {
-      console.error("🚨 Invalid token:", err.message);
+      console.error("Invalid token:", err.message);
       return next(errorHandler(403, "Invalid token"));
     }
     
-    req.user = user; // ✅ Set req.user for access in route handlers
-    console.log("✅ User authenticated:", req.user);
+    req.user = user; // Set req.user for access in route handlers
+    console.log("User authenticated:", req.user);
     next();
   });
 };

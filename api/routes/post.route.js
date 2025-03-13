@@ -4,14 +4,13 @@ import { create, deletepost, getposts, updatepost, incrementViews,likePost,getpo
 
 const router = express.Router();
 
-router.post('/create', verifyToken, create); // ✅ Middleware applied here
+router.post('/create', verifyToken, create);
 router.get('/getposts', getposts)
 router.delete('/deletepost/:postId/:userId', verifyToken, deletepost)
 router.put('/updatepost/:postId/:userId', verifyToken, updatepost)
-router.put('/increment-views/:postId', incrementViews); // ✅ API to increase views
+router.put('/increment-views/:postId', incrementViews);
 router.put("/like/:postId", verifyToken, likePost);
-// ✅ Fetch a single post by ID
-router.get('/getpost/:postId', getpost); // Fetch a single post by ID (this is important)
+router.get('/getpost/:postId', getpost);
 
 
 

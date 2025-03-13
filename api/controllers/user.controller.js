@@ -69,14 +69,14 @@ export const signup = async (req, res, next) => {
 
 export const updateUser = async (req, res, next) => {
   try {
-    console.log("🛠 Incoming Update Request:", req.body); // ✅ Log request body
+    console.log("🛠 Incoming Update Request:", req.body); //Log request body
 
     if (req.user.id !== req.params.userId) {
       return res.status(403).json({ message: "You are not allowed to update this user" });
     }
 
     if (!req.body) {
-      return res.status(400).json({ message: "❌ Invalid request: No data provided" });
+      return res.status(400).json({ message: "Invalid request: No data provided" });
     }
 
     if (req.body.password) {
@@ -112,11 +112,11 @@ export const updateUser = async (req, res, next) => {
     );
 
     if (!updatedUser) {
-      console.log("❌ User not found!");
+      console.log("User not found!");
       return res.status(404).json({ message: "User not found!" });
     }
 
-    console.log("✅ User Updated Successfully:", updatedUser);
+    console.log("User Updated Successfully:", updatedUser);
 
     const token = jwt.sign(
       { id: updatedUser._id, isAdmin: updatedUser.isAdmin },
@@ -131,7 +131,7 @@ export const updateUser = async (req, res, next) => {
       .json({ ...rest, token });
 
   } catch (error) {
-    console.error("🔥 Server Error in updateUser:", error); // ✅ Log full error
+    console.error("Server Error in updateUser:", error); //Log full error
     res.status(500).json({ message: "The username is already in use. Please choose a different username.", error: error.message });
   }
 };
@@ -139,7 +139,7 @@ export const updateUser = async (req, res, next) => {
 
 
 export const deleteUser = async (req, res, next) => {
-  if (req.user.id !== req.params.userId && !req.user.isAdmin) { // ✅ Fixed condition
+  if (req.user.id !== req.params.userId && !req.user.isAdmin) { // Fixed condition
     return next(errorHandler(403, 'You are not allowed to delete this user'));
   }
 
@@ -216,7 +216,7 @@ export const getUser = async (req, res, next) => {
 
     res.status(200).json(user);
   } catch (error) {
-    console.error("🔥 Error fetching user:", error);
+    console.error("Error fetching user:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };

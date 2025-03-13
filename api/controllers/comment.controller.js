@@ -10,25 +10,25 @@ export const getcomments = async (req, res, next) => {
     const startIndex = parseInt(req.query.startIndex) || 0;
     const limit = parseInt(req.query.limit) || 9;
 
-    // ✅ Calculate last month's date rangess
+    // Calculate last month's date rangess
     const currentDate = new Date();
     const lastMonth = new Date();
     lastMonth.setMonth(lastMonth.getMonth() - 1);
 
-    // ✅ Count total comments
+    // Count total comments
     const totalComments = await Comment.countDocuments();
 
-    // ✅ Count comments created in the last month
+    // Count comments created in the last month
     const lastMonthComments = await Comment.countDocuments({
       createdAt: { $gte: lastMonth, $lt: currentDate },
     });
 
-    // ✅ Fetch latest comments
+    // Fetch latest comments
     const comments = await Comment.find()
-      .sort({ createdAt: -1 }) // 🔥 Newest comments first
+      .sort({ createdAt: -1 }) //Newest comments first
       .skip(startIndex)
       .limit(limit)
-      .populate("userId", "username email") // ✅ Populate user info
+      .populate("userId", "username email") //Populate user info
       .populate("postId", "title slug");
 
     res.status(200).json({ comments, totalComments, lastMonthComments });
@@ -105,7 +105,7 @@ export const getPostComments = async (req, res, next) => {
 
     res.status(200).json(combinedComments);
   } catch (error) {
-    console.error("🔥 Error fetching sorted comments:", error);
+    console.error("Error fetching sorted comments:", error);
     next(error);
   }
 };
@@ -133,19 +133,19 @@ export const likeComment = async (req, res, next) => {
 };
 export const editComment = async (req, res, next) => {
   try {
-    console.log("🔍 Editing comment: ", req.params.commentId);
-    console.log("📌 Received User ID: ", req.user.id);
+    console.log("Editing comment: ", req.params.commentId);
+    console.log("Received User ID: ", req.user.id);
     
     const comment = await Comment.findById(req.params.commentId);
     if (!comment) {
-      console.log("❌ Comment not found");
+      console.log("Comment not found");
       return next(errorHandler(404, 'Comment not found'));
     }
 
-    console.log("✅ Comment User ID: ", comment.userId.toString());
+    console.log("Comment User ID: ", comment.userId.toString());
 
     if (comment.userId.toString() !== req.user.id.toString() && !req.user.isAdmin) {
-      console.log("🚫 Unauthorized");
+      console.log("Unauthorized");
       return next(errorHandler(403, 'You are not allowed to edit this comment'));
     }
 
@@ -155,10 +155,10 @@ export const editComment = async (req, res, next) => {
       { new: true }
     );
 
-    console.log("✅ Successfully updated comment: ", editedComment);
+    console.log("Successfully updated comment: ", editedComment);
     res.status(200).json(editedComment);
   } catch (error) {
-    console.log("🔥 Error editing comment:", error);
+    console.log("Error editing comment:", error);
     next(error);
   }
 };
@@ -185,20 +185,20 @@ export const getUserComments = async (req, res, next) => {
     const userId = req.params.userId;
     if (!userId) return next(errorHandler(400, 'User ID is required'));
 
-    // ✅ Handle pagination parameters
+    // Handle pagination parameters
     const startIndex = parseInt(req.query.startIndex) || 0;
     const limit = parseInt(req.query.limit) || 9;
 
     console.log("📦 Pagination Params - Start Index:", startIndex, "Limit:", limit);
 
-    // ✅ Fetch comments with pagination and populate the related post data
+    // Fetch comments with pagination and populate the related post data
     const comments = await Comment.find({ userId })
       .sort({ createdAt: -1 })
       .skip(startIndex)
       .limit(limit)
       .populate("postId", "title slug");
 
-    // ✅ Count total comments by the user for pagination control
+    // Count total comments by the user for pagination control
     const totalComments = await Comment.countDocuments({ userId });
 
     res.status(200).json({ comments, totalComments });

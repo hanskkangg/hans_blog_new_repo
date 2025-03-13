@@ -38,7 +38,7 @@ const postSchema = new mongoose.Schema(
       },
     ],
     views: { type: Number, default: 0 },
-    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], // ✅ Store user IDs in an array
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], 
   },
   { timestamps: true }
 );

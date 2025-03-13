@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema(
     username: {
       type: String,
       required: true,
-      lowercase: true, // Ensure all usernames are stored in lowercase
+      lowercase: true, 
       trim: true
 
     },
