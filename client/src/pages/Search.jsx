@@ -8,8 +8,8 @@ import { useSelector } from 'react-redux';
 export default function Search() {
   const [sidebarData, setSidebarData] = useState({
     searchTerm: '',
-    sort: 'desc', // ✅ Default to "Latest"
-    category: 'all', // ✅ Show all categories by default
+    sort: 'desc', // Default to "Latest"
+    category: 'all', // Show all categories by default
   });
 
   const [posts, setPosts] = useState([]);
@@ -23,8 +23,9 @@ export default function Search() {
   const navigate = useNavigate();
 
   const categories = [
-    'all', 'javascript', 'reactjs', 'nextjs', 'nodejs', 'mongodb'
+    'all', 'NHL', 'PWHL', 'Kang you believe it?', 'Kangs trade hops', 'Hop to the Future: Rookies', 'Kang in the crease'
   ];
+
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -148,7 +149,7 @@ export default function Search() {
     <button
         key={category}
         onClick={() => handleCategoryClick(category)}
-        className={`relative px-2 py-1 sm:px-4 sm:py-2 text-base sm:text-lg font-semibold transition-all whitespace-nowrap
+        className={`relative px-2 py-1 text-xs sm:px-4 sm:py-2 xl:text-sm sm:text-xs font-semibold transition-all whitespace-nowrap
             ${
               sidebarData.category === category 
                 ? 'text-black dark:text-gray-200 underline underline-offset-4 decoration-4 decoration-black dark:decoration-gray-200' 

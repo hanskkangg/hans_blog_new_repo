@@ -188,10 +188,13 @@ export default function UpdatePost() {
         />
 
         <Select value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })}>
-          <option value="uncategorized">Select a category</option>
-          <option value="javascript">JavaScript</option>
-          <option value="reactjs">React.js</option>
-          <option value="nextjs">Next.js</option>
+          <option value='uncategorized'>Select a category</option>
+          <option value='NHL'>NHL</option>
+          <option value='PWHL'>PWHL</option>
+          <option value='Kang you believe it?'>Kang you believe it? </option>
+          <option value='Kangs trade hops'>Kang's trade hops</option>
+          <option value='Hop to the Future: Rookies'>Hop to the Future: Rookies</option>
+          <option value='Kang in the crease '>Kang in the crease</option>
         </Select>
 
         <FileInput type="file" accept="image/*" onChange={(e) => setFile(e.target.files[0])} />
