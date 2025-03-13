@@ -63,14 +63,14 @@ export default function AboutAndContact() {
        {/* Left Side - About Content */}
        <div className="w-full md:w-1/2 flex items-center justify-center bg-white dark:bg-gray-800 text-black dark:text-gray-200 p-10">
        <div className="max-w-lg text-center md:text-left">
-            <h1 className="text-5xl font-bold mb-8">About Hans' Blog</h1>
+            <h1 className="text-5xl font-bold mb-8">Kangaroo On Ice</h1>
 
             <div className="text-lg flex flex-col gap-6">
               <p>
-                Founded in 2025, Hans' Blog is a vibrant online destination for sports and gaming enthusiasts. We dive deep into the worlds of hockey, soccer, and online gaming, offering fresh insights, game analyses, player spotlights, and engaging content that keeps fans and gamers coming back for more.
+                Founded in 2025, Kangaroo On Ice is a vibrant online destination for sports and gaming enthusiasts. We dive deep into the worlds of hockey, soccer, and online gaming, offering fresh insights, game analyses, player spotlights, and engaging content that keeps fans and gamers coming back for more.
               </p>
               <p>
-                With a growing community of passionate readers, Hans' Blog is more than just a site—it's a hub where sports and gaming lovers connect, share their thoughts, and celebrate what they love most. Our mantra is simple: “Come for the stories, stay for the community.”
+                With a growing community of passionate readers, Kangaroo On Ice is more than just a site—it's a hub where sports and gaming lovers connect, share their thoughts, and celebrate what they love most. Our mantra is simple: “Come for the stories, stay for the community.”
               </p>
             </div>
           </div>
@@ -135,7 +135,7 @@ export default function AboutAndContact() {
     <section className="py-10">
       <h2 className="text-3xl font-semibold mb-6">We'd Love to Hear From You!</h2>
       <p>
-        We love getting emails from readers. Please feel free to write to Hans Kang at{' '}
+        We love getting emails from readers. Please feel free to write to Min Kang at{' '}
         <a href="mailto:hans.kkang@gmail.com" className="text-indigo-600 underline">
           hans.kkang@gmail.com
         </a>.
