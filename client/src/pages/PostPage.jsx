@@ -4,12 +4,12 @@ import { Link, useParams,useNavigate } from 'react-router-dom';
 import CallToAction from '../components/CallToAction';
 import CommentSection from '../components/CommentSection';
 import RecentPostCard from '../components/RecentPostCard';
-import { useSelector } from "react-redux"; // ✅ Import Redux Hook
+import { useSelector } from "react-redux"; 
 import { Modal } from 'flowbite-react';
 import { BsInstagram, BsFacebook, BsGithub } from 'react-icons/bs';
 
 
-import { HiOutlineExclamationCircle } from 'react-icons/hi'; //
+import { HiOutlineExclamationCircle } from 'react-icons/hi'; 
 
 export default function PostPage() {
   const { postSlug } = useParams();
@@ -36,7 +36,7 @@ export default function PostPage() {
         let res = await fetch(`/api/post/getposts?slug=${postSlug}`);
         let data = await res.json();
   
-        // ❌ If slug doesn't work, try fetching by ID
+        // If slug doesn't work, try fetching by ID
         if (!res.ok || !data.posts || data.posts.length === 0) {
           console.warn("❌ Slug failed, trying ID...");
           res = await fetch(`/api/post/getposts?id=${postSlug}`);
@@ -50,9 +50,9 @@ export default function PostPage() {
         }
   
         const postData = data.posts[0];
-        setPost(postData); // ✅ Set post
+        setPost(postData); 
   
-        // ✅ Fetch recent posts excluding the current one
+        // Fetch recent posts excluding the current one
         const recentRes = await fetch(`/api/post/getposts?limit=4&sort=desc`);
         const recentData = await recentRes.json();
   
@@ -61,7 +61,7 @@ export default function PostPage() {
           setRecentPosts(filteredRecentPosts);
         }
   
-        // ✅ Increment view count
+        // Increment view count
         if (postData._id) {
           const updateRes = await fetch(`/api/post/increment-views/${postData._id}`, {
             method: "PUT",
@@ -100,9 +100,9 @@ export default function PostPage() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${currentUser.token}`, // ✅ Send Token
+          Authorization: `Bearer ${currentUser.token}`, 
         },
-        credentials: "include", // ✅ Ensure cookies are sent
+        credentials: "include", 
       });
   
       const data = await res.json();
@@ -110,30 +110,30 @@ export default function PostPage() {
         setPost((prev) => ({
           ...prev,
           likes: data.likedByUser
-            ? [...(prev.likes || []), currentUser._id] // ✅ Add like
-            : (prev.likes || []).filter(id => id !== currentUser._id), // ✅ Remove like
-          likesCount: data.likes, // ✅ Update likes count immediately
+            ? [...(prev.likes || []), currentUser._id] 
+            : (prev.likes || []).filter(id => id !== currentUser._id), 
+          likesCount: data.likes,
         }));
       } else {
         alert(data.message);
       }
     } catch (error) {
-      console.error("🔥 Like Error:", error);
+      console.error("Like Error:", error);
     }
   };
   const handleDeletePost = async () => {
     if (!post?._id) {
-      console.error("🚨 postId is missing!");
+      console.error("postId is missing!");
       return;
     }
   
     try {
       const token = currentUser?.token;
       if (!token) {
-        throw new Error("🚨 Unauthorized! Token is missing.");
+        throw new Error("Unauthorized! Token is missing.");
       }
   
-      console.log(`🗑 Deleting Post ID: ${post._id}`);
+      console.log(` Deleting Post ID: ${post._id}`);
   
       const res = await fetch(
         `/api/post/deletepost/${post._id}/${currentUser._id}`,
@@ -148,24 +148,24 @@ export default function PostPage() {
   
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.message || "🚨 Unauthorized request!");
+        throw new Error(data.message || "Unauthorized request!");
       }
   
-      console.log("✅ Post deleted successfully!");
-      navigate("/home"); // ✅ Redirect after deletion
+      console.log("Post deleted successfully!");
+      navigate("/home");
     } catch (error) {
-      console.error("🔥 Error deleting post:", error.message);
+      console.error("Error deleting post:", error.message);
     }
   };
   
   if (loading) return <p>Loading...</p>;
-  if (error || !post) return <p>Error loading post or post not found.</p>; // ✅ Handle missing post
+  if (error || !post) return <p>Error loading post or post not found.</p>;
   
 
 
   return (<main className="p-3 flex flex-col max-w-6xl mx-auto min-h-screen overflow-x-hidden bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200">
   
-    {/* ✅ Top Section: Edit & Delete Buttons - Left */}
+    {/* Top Section: Edit & Delete Buttons - Left */}
     <div className="flex justify-between items-center p-3 w-full">
       {(currentUser && (isAuthor || isAdmin)) && (
         <div className="flex gap-3"><Button onClick={() => navigate(`/update-post/${post._id}`)}>
@@ -177,12 +177,12 @@ export default function PostPage() {
       )}
     </div>
   
-    {/* ✅ Title */}
+    {/* Title */}
     <h1 className="text-3xl mt-10 p-3 text-center font-serif max-w-2xl mx-auto lg:text-4xl break-words">
       {post && post.title}
     </h1>
   
-    {/* ✅ Author & Date */}
+    {/* Author & Date */}
     <div className="text-center text-gray-500 dark:text-gray-400 text-sm mt-2 flex flex-wrap justify-center items-center gap-4 max-w-full">
       
       <span>By <span className="font-medium">{post?.author || "Unknown Author"}</span></span>
@@ -191,19 +191,19 @@ export default function PostPage() {
 </div>
 
   
-    {/* ✅ Views, Comments, and Likes - Below Author & Date */}
+    {/* Views, Comments, and Likes - Below Author & Date */}
     <div className="text-center text-gray-500 dark:text-gray-400 text-sm mt-2 flex flex-wrap justify-center items-center gap-4 max-w-full">
       <span>👁️ {post.views || 0} Views</span>
       <span>💬 {post.commentsCount || 0} Comments</span>
       <span>❤️ {post.likesCount || 0} Likes</span>
     </div>
   
-    {/* ✅ Category Button */}
+    {/* Category Button */}
     <Link to={`/search?category=${post && post.category}`} className="self-center mt-3">
       <Button color="gray" pill size="xs">{post && post.category}</Button>
     </Link>
   
-    {/* ✅ Post Image with Proper Scaling & No Overflow */}
+    {/* Post Image with Proper Scaling & No Overflow */}
     <div className="w-full flex flex-col items-center mt-5">
       <img
         key={post?.headerImage}
@@ -213,22 +213,22 @@ export default function PostPage() {
       />
     </div>
   
-    {/* ✅ Post Content */}
+    {/* Post Content */}
     <div
       className="p-3 max-w-2xl mx-auto w-full post-content break-words"
       dangerouslySetInnerHTML={{ __html: post && post.content }}
     ></div>
   
-    {/* ✅ Centered Author Section with Dark Mode Support */}
+    {/* Centered Author Section with Dark Mode Support */}
     <div className="p-5 bg-white dark:bg-gray-800 rounded-lg shadow-md max-w-2xl mx-auto mt-10 flex flex-col items-center text-center">
-      {/* ✅ Profile Image - Centered */}
+      {/* Profile Image - Centered */}
       <img
         src="/pro.png"
         alt="Hans Kang"
         className="w-24 h-24 rounded-full"
       />
   
-      {/* ✅ Author Info - Centered */}
+      {/* Author Info - Centered */}
       <div className="mt-4">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
           Hans Kang <span className="text-gray-500 dark:text-gray-400">(he/him)</span>
@@ -237,7 +237,7 @@ export default function PostPage() {
           Web Developer | Tech Enthusiast | Coffee Lover ☕
         </p>
   
-        {/* ✅ Website Link with Dark Mode Support */}
+        {/* Website Link with Dark Mode Support */}
         <p className="text-sm mt-2">
           <a
             href="https://www.hanskang.com"
@@ -249,7 +249,7 @@ export default function PostPage() {
           </a>
         </p>
   
-        {/* ✅ Social Links (Centered & Responsive to Dark Mode) */}
+        {/* Social Links (Centered & Responsive to Dark Mode) */}
         <div className="flex gap-4 mt-2 justify-center">
           <a href="https://www.instagram.com/kkanghhanss/" target="_blank" rel="noopener noreferrer">
             <BsInstagram className="text-2xl text-pink-500 dark:text-pink-400" />
@@ -264,7 +264,7 @@ export default function PostPage() {
       </div>
     </div>
   
-   {/* ✅ Like Button with Round Styling & Number on the Left */}
+   {/*  Like Button with Round Styling & Number on the Left */}
 <div className="flex flex-col justify-center items-center mt-10 gap-3">
   <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">{post.likesCount || 0}</span>
   <Button
@@ -275,7 +275,7 @@ export default function PostPage() {
     {hasUserLiked ? "👎" : "❤️"}
   </Button>
 
-  {/* ✅ Show message if the user has already liked the post */}
+  {/* Show message if the user has already liked the post */}
   {hasUserLiked && (
     <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">
       ❤️ You've liked this post!
@@ -284,9 +284,9 @@ export default function PostPage() {
 </div>
 
   
-    {/* ✅ Comment Section */}
+    {/*  Comment Section */}
     <CommentSection postId={post?._id} />
-  {/* ✅ Recent Articles Section with Unique Design */}
+  {/* Recent Articles Section with Unique Design */}
 <div className="flex flex-col justify-center items-center mb-5 w-full">
   <h1 className="text-xl mt-5">Recent Articles</h1>
   
@@ -302,7 +302,7 @@ export default function PostPage() {
 </div>
 
   
-    {/* ✅ Delete Confirmation Modal */}
+    {/*  Delete Confirmation Modal */}
     <Modal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} popup size="md">
       <Modal.Header />
       <Modal.Body>

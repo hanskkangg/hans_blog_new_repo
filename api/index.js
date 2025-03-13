@@ -14,36 +14,36 @@ const app = express();
 const __dirname = path.resolve();
 const PORT = process.env.PORT || 3000;
 
-// ✅ Connect to MongoDB
+// Connect to MongoDB
 mongoose.connect(process.env.MONGO)
-  .then(() => console.log('✅ MongoDB Connected'))
-  .catch((err) => console.error('🔥 MongoDB Connection Error:', err));
+  .then(() => console.log('MongoDB Connected'))
+  .catch((err) => console.error('MongoDB Connection Error:', err));
 
-// ✅ Middleware
+// Middleware
 app.use(express.json());
 app.use(cookieParser());
 
-// ✅ API Logger
+// API Logger
 app.use((req, res, next) => {
-  console.log(`🟢 ${req.method} ${req.url}`);
+  console.log(` ${req.method} ${req.url}`);
   next();
 });
 
-// ✅ Register API Routes First
+// Register API Routes First
 app.use('/api/user', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/post', postRoutes);
 app.use('/api/comment', commentRoutes);
 
-// ✅ Handle API Route Not Found
+// Handle API Route Not Found
 app.use('/api/*', (req, res) => {
   res.status(404).json({ success: false, message: 'API Route Not Found' });
 });
 
-// ✅ Serve Static Files (React Frontend) Only If API Routes Fail
+// Serve Static Files (React Frontend) Only If API Routes Fail
 app.use(express.static(path.join(__dirname, '/client/dist')));
 
-// ✅ Ensure API Routes Are Not Overwritten by React Routes
+// Ensure API Routes Are Not Overwritten by React Routes
 app.get('*', (req, res) => {
   if (req.originalUrl.startsWith('/api')) {
     return res.status(404).json({ success: false, message: 'API Route Not Found' });
@@ -51,7 +51,7 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
 });
 
-// ✅ Global Error Handler
+// Global Error Handler
 app.use((err, req, res, next) => {
   console.error('🔥 Global Error:', err);
   res.status(err.statusCode || 500).json({
@@ -60,5 +60,5 @@ app.use((err, req, res, next) => {
   });
 });
 
-// ✅ Start Server
+// Start Server
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

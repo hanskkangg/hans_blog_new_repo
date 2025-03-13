@@ -14,7 +14,7 @@ export default function DashPosts() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        console.log("🔄 Fetching posts...");
+        console.log(" Fetching posts...");
         const res = await fetch(
           `/api/post/getposts${currentUser.isAdmin ? '' : `?userId=${currentUser._id}`}`,
           { cache: "no-store" }
@@ -25,13 +25,13 @@ export default function DashPosts() {
           setUserPosts(data.posts.map(post => ({
             ...post,
             views: post.views || 0,
-            commentsCount: post.commentsCount || 0, // ✅ Include comments count
+            commentsCount: post.commentsCount || 0,
           })));
         } else {
-          console.error("🚨 API Error:", data.message);
+          console.error(" API Error:", data.message);
         }
       } catch (error) {
-        console.error("🔥 Fetch Error:", error.message);
+        console.error("Fetch Error:", error.message);
       }
     };
 

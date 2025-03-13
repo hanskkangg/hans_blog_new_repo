@@ -18,9 +18,9 @@ export default function DashUsers() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${currentUser.token}`, // ✅ Include token
+            Authorization: `Bearer ${currentUser.token}`, 
           },
-          credentials: "include", // ✅ Ensure cookies are sent if needed
+          credentials: "include", 
         });
     
         const data = await res.json();
@@ -31,7 +31,7 @@ export default function DashUsers() {
           }
         }
       } catch (error) {
-        console.log("🔥 Fetch Error:", error.message);
+        console.log(" Fetch Error:", error.message);
       }
     };
     
@@ -62,9 +62,9 @@ export default function DashUsers() {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${currentUser.token}`, // ✅ Add Authorization header
+          Authorization: `Bearer ${currentUser.token}`, 
         },
-        credentials: "include", // ✅ Ensure cookies are sent if needed
+        credentials: "include", 
       });
   
       const data = await res.json();
@@ -75,7 +75,7 @@ export default function DashUsers() {
         console.log(data.message);
       }
     } catch (error) {
-      console.log("🔥 Fetch Error:", error.message);
+      console.log(" Fetch Error:", error.message);
     }
   };
   

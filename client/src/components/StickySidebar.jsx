@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import MiniPostCard from './MiniPostCard'; // Import MiniPostCard
+import MiniPostCard from './MiniPostCard'; 
 
 export default function StickySidebar() {
   const [trendingPosts, setTrendingPosts] = useState([]);
@@ -11,7 +11,7 @@ export default function StickySidebar() {
         const data = await res.json();
         setTrendingPosts(data.posts);
       } catch (error) {
-        console.error("🔥 Error fetching trending posts:", error);
+        console.error("Error fetching trending posts:", error);
       }
     };
 

@@ -9,7 +9,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Warang+Citi&family=Roboto:ital,wght@0,100..900;1,100..900&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
 
 body {
-  font-family: 'Ovo', serif; /* ✅ Apply Ovo font to all content */
+  font-family: 'Ovo', serif; 
   overflow-x: hidden;
   width: 100%;
 }

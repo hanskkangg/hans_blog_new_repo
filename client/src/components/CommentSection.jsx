@@ -29,7 +29,7 @@ export default function CommentSection({ postId }) {
       }
     };
     getComments();
-  }, [postId, sortOption]); // ✅ Refetch when sort option changes
+  }, [postId, sortOption]); // Refetch when sort option changes
 
 
   const handleSubmit = async (e) => {
@@ -43,7 +43,7 @@ export default function CommentSection({ postId }) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${currentUser?.token}` // ✅ Add Token Here
+          'Authorization': `Bearer ${currentUser?.token}`
         },
         body: JSON.stringify({
           content: comment,
@@ -90,7 +90,7 @@ export default function CommentSection({ postId }) {
       const res = await fetch(`/api/comment/likeComment/${commentId}`, {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${currentUser?.token}`, // ✅ Add Token
+          'Authorization': `Bearer ${currentUser?.token}`, 
           'Content-Type': 'application/json'
       }
       });
@@ -131,7 +131,7 @@ export default function CommentSection({ postId }) {
       const res = await fetch(`/api/comment/deleteComment/${commentId}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${currentUser?.token}`, // ✅ Add Token
+          'Authorization': `Bearer ${currentUser?.token}`, 
           'Content-Type': 'application/json'
       }
       });
@@ -204,7 +204,7 @@ export default function CommentSection({ postId }) {
     {200 - comment.length} characters remaining
   </p>
   
-  {/* ✅ Custom Submit Button */}
+  {/* Custom Submit Button */}
   <button
     type="submit"
     disabled={false} // Set loading state if needed
@@ -235,7 +235,7 @@ export default function CommentSection({ postId }) {
       </div>
     </div>
 
-    <div className="flex flex-col gap-3"> {/* ✅ Ensure all comments are nicely spaced */}
+    <div className="flex flex-col gap-3"> {/* Ensure all comments are nicely spaced */}
       {comments.map((comment) => (
         <div 
           key={comment._id}

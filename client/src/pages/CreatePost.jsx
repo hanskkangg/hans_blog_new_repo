@@ -13,7 +13,7 @@ import { useState, useRef, useMemo } from 'react';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux'; // ✅ Import Redux Hook
+import { useSelector } from 'react-redux';
 
 
 export default function CreatePost() {
@@ -33,26 +33,26 @@ export default function CreatePost() {
   const quillRef = useRef(null);
   const navigate = useNavigate();
 
-  // ✅ Get currentUser from Redux store
+  // Get currentUser from Redux store
   const { currentUser } = useSelector((state) => state.user);
   console.log("✅ Current User:", currentUser);
 
-  // ✅ Define Quill Modules with Custom YouTube Video Handler
+  // Define Quill Modules with Custom YouTube Video Handler
   const quillModules = useMemo(() => ({
     toolbar: {
       container: [
         ['bold', 'italic', 'underline'],
         [{ 'header': '1' }, { 'header': '2' }],
         [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-        ['link', 'image', 'video'], // ✅ Include Video Button
+        ['link', 'image', 'video'], 
       ],
       handlers: {
         image: () => imageHandler(),
-        video: () => videoHandler(), // ✅ Custom YouTube video handler
+        video: () => videoHandler(),
       },
     },
   }), []);
-// ✅ Custom Video Handler for YouTube
+//  Custom Video Handler for YouTube
 const videoHandler = () => {
   const quill = quillRef.current.getEditor();
   const url = prompt("Enter a YouTube video URL:");
@@ -63,7 +63,7 @@ const videoHandler = () => {
           const embedUrl = `https://www.youtube.com/embed/${videoId}`;
           const range = quill.getSelection();
 
-          // ✅ Insert video with custom styles for larger display
+          // Insert video with custom styles for larger display
           quill.clipboard.dangerouslyPasteHTML(
               range.index,
               `<iframe 
@@ -81,7 +81,7 @@ const videoHandler = () => {
 };
 
 
-  // ✅ Function to Extract YouTube Video ID
+  // Function to Extract YouTube Video ID
   const extractYouTubeVideoId = (url) => {
     const match = url.match(
       /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
@@ -116,19 +116,19 @@ const videoHandler = () => {
         setImageUploadProgress(null);
         setImageUploadError(null);
         
-        // ✅ Ensure header image state and formData are updated
+        // Ensure header image state and formData are updated
         setHeaderImage(downloadURL);
         setFormData((prevData) => ({
           ...prevData,
-          headerImage: downloadURL, // ✅ Save in form data
+          headerImage: downloadURL, // Save in form data
         }));
 
-        console.log("✅ Header Image Uploaded & Updated:", downloadURL);
+        console.log(" Header Image Uploaded & Updated:", downloadURL);
       }
     );
   };
 
-  // 🔥 Handle Image Upload in Quill Editor
+  //  Handle Image Upload in Quill Editor
   const imageHandler = () => {
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
@@ -150,7 +150,7 @@ const videoHandler = () => {
         // Store in content state
         setFormData((prevData) => ({ ...prevData, content: quill.root.innerHTML }));
       } catch (error) {
-        console.error("🔥 Image Upload Failed:", error);
+        console.error(" Image Upload Failed:", error);
       }
     };
   };
@@ -178,7 +178,7 @@ const videoHandler = () => {
     e.preventDefault();
 
     if (!currentUser || !currentUser.token) {
-        setPublishError("🚨 You must be logged in to create a post!");
+        setPublishError(" You must be logged in to create a post!");
         return;
     }
 
@@ -186,7 +186,7 @@ const videoHandler = () => {
         title: formData.title,
         content: content || "<p>Default content</p>",
         category: formData.category || "uncategorized",
-        headerImage: headerImage || "https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2021/09/how-to-write-a-blog-post.png", // ✅ Use a reliable placeholder URL
+        headerImage: headerImage || "https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2021/09/how-to-write-a-blog-post.png", 
         slug: formData.title.trim().toLowerCase().replace(/\s+/g, "-"),
     };
 
@@ -198,22 +198,22 @@ const videoHandler = () => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${currentUser.token}`, // ✅ Correctly send Bearer token
+                'Authorization': `Bearer ${currentUser.token}`,
             },
             body: JSON.stringify(finalData),
         });
 
         const responseData = await res.json();
-        console.log("✅ Server Response:", responseData);
+        console.log("Server Response:", responseData);
 
         if (!res.ok) {
-            console.error("🚨 Server responded with error:", responseData.message);
+            console.error(" Server responded with error:", responseData.message);
             throw new Error(responseData.message || "Failed to publish");
         }
 
         navigate(`/post/${responseData.slug}`);
     } catch (error) {
-        console.error("🔥 Publish Error:", error.message);
+        console.error(" Publish Error:", error.message);
         setPublishError(error.message);
     }
 };
@@ -224,7 +224,7 @@ const videoHandler = () => {
       <h1 className='text-center text-3xl my-7 font-semibold'>Create a post</h1>
 
       <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
-        {/* 🔥 Title Input */}
+        {/*  Title Input */}
         <TextInput
           type='text'
           placeholder='Title'
@@ -235,7 +235,7 @@ const videoHandler = () => {
           onChange={(e) => setFormData({ ...formData, title: e.target.value })}
         />
 
-        {/* 🔥 Category Selection */}
+        {/* Category Selection */}
         <Select
           value={formData.category}
           onChange={(e) => setFormData({ ...formData, category: e.target.value })}
@@ -246,7 +246,7 @@ const videoHandler = () => {
           <option value='nextjs'>Next.js</option>
         </Select>
 
-        {/* 🔥 Header Image Upload */}
+        {/* Header Image Upload */}
         <div className='border-4 border-teal-500 border-dotted p-3'>
           <FileInput
             type='file'
@@ -266,7 +266,7 @@ const videoHandler = () => {
     src={headerImage} 
     alt="Header" 
     className="w-full h-40 object-cover mt-2" 
-    onLoad={() => console.log("✅ Header Image Loaded:", headerImage)}
+    onLoad={() => console.log("Header Image Loaded:", headerImage)}
   />
 )}
 
@@ -274,7 +274,7 @@ const videoHandler = () => {
           {imageUploadError && <Alert color='failure'>{imageUploadError}</Alert>}
         </div>
 
-        {/* 🔥 Rich Text Editor with YouTube Video Support */}
+        {/* Rich Text Editor with YouTube Video Support */}
         <ReactQuill
           ref={quillRef}
           theme='snow'
@@ -285,7 +285,7 @@ const videoHandler = () => {
           modules={quillModules}
         />
 
-        {/* 🔥 Submit Button */}
+        {/* Submit Button */}
         <Button type='submit' gradientDuoTone='purpleToPink'>
           Publish
         </Button>

@@ -62,7 +62,7 @@ export default function CoverPage() {
             style={{
               fontFamily: 'Montserrat, sans-serif',
               fontWeight: '800',
-              fontSize: '4vw', // Responsive font size using viewport width
+              fontSize: '4vw', 
               minFontSize: '40px',
               maxFontSize: '80px',
               color: 'white',

@@ -26,19 +26,19 @@ export default function Home() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        // 🆕 Fetch Recent Posts
+        // Fetch Recent Posts
         const recentRes = await fetch("/api/post/getPosts?limit=5&sort=desc");
         if (!recentRes.ok) throw new Error("Failed to fetch recent posts");
         const recentData = await recentRes.json();
         setRecentPosts(recentData.posts || []);
 
-        // 🆕 Fetch Most Liked Posts (Fan Favorites)
+        // Fetch Most Liked Posts (Fan Favorites)
         const trendingRes = await fetch("/api/post/getPosts?limit=10&sort=most-liked");
         if (!trendingRes.ok) throw new Error("Failed to fetch most liked posts");
         const trendingData = await trendingRes.json();
         setTrendingPosts(trendingData.posts || []);
 
-        // 🆕 Fetch Most Viewed Posts (Popular Reads)
+        // Fetch Most Viewed Posts (Popular Reads)
         const mostViewedRes = await fetch("/api/post/getPosts?limit=10&sort=most-viewed");
         if (!mostViewedRes.ok) throw new Error("Failed to fetch most viewed posts");
         const mostViewedData = await mostViewedRes.json();
@@ -142,7 +142,7 @@ export default function Home() {
             )}
           </div>
         </div>
-        {/* 🔥 Trending Posts */}
+        {/*  Trending Posts */}
         <div className="p-5 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-300 dark:border-gray-600">
           <h2 className="text-xl font-semibold mb-4 border-b border-gray-300 pb-2 text-center">
           
@@ -159,7 +159,7 @@ Fan Favorites
           </div>
         </div>
 
-        {/* 👁️ Most Viewed Posts */}
+        {/* Most Viewed Posts */}
         <div className="p-5 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-300 dark:border-gray-600">
           <h2 className="text-xl font-semibold mb-4 border-b border-gray-300 pb-2 text-center">
           

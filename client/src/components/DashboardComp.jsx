@@ -75,14 +75,14 @@ export default function DashboardComp() {
               setTotalPosts(data.totalPosts); 
               
               // Check if lastMonthPosts is present in the response
-              console.log("📅 Last Month Posts:", data.lastMonthPosts);
+              console.log(" Last Month Posts:", data.lastMonthPosts);
               
               setLastMonthPosts(data.lastMonthPosts || 0);
           } else {
-              console.error("🚨 API Error:", data.message);
+              console.error(" API Error:", data.message);
           }
       } catch (error) {
-          console.log("🔥 Fetch Error:", error.message);
+          console.log(" Fetch Error:", error.message);
       }
   };
   

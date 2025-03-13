@@ -131,7 +131,7 @@ export default function Search() {
             <option value="most-liked">Most Liked</option>
         </select>
         
-    {/* ✅ Custom Button */}
+    {/*  Custom Button */}
     <button
       type="submit"
       className={`px-6 py-2 rounded-md text-sm font-medium border transition-colors duration-300 w-full sm:w-auto 
@@ -177,7 +177,7 @@ export default function Search() {
               <PostCardSearch key={post._id} post={post} />
             ))}
             
-           {/* ✅ Show More Button */}
+           {/*  Show More Button */}
         {showMore && (
           <button
             onClick={handleShowMore}

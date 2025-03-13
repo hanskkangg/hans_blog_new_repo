@@ -82,7 +82,7 @@ if (containsProhibitedWords(email)) {
 
     const validationError = validateForm();
     if (validationError) {
-        setLoading(false); // ⬅️ Ensure loading is set to false
+        setLoading(false); //  Ensure loading is set to false
         return setErrorMessage(validationError);
     }
 
@@ -96,7 +96,7 @@ if (containsProhibitedWords(email)) {
       });
       const data = await res.json();
       if (data.success === false) {
-            setLoading(false); // ⬅️ Reset loading state on error
+            setLoading(false); //  Reset loading state on error
         return setErrorMessage(data.message);
       }
       setLoading(false);
@@ -181,7 +181,7 @@ if (containsProhibitedWords(email)) {
             </div>
 
             
-  {/* ✅ Custom Black and White Button */}
+  {/* Custom Black and White Button */}
   <button
     type="submit"
     disabled={loading}

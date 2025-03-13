@@ -39,8 +39,8 @@ export default function UpdatePost() {
   });
   useEffect(() => {
     if (!postId) {
-        console.error("🚨 Post ID is missing in the URL!");
-        setPublishError("🚨 Post ID is missing!");
+        console.error("Post ID is missing in the URL!");
+        setPublishError("Post ID is missing!");
         return;
     }
 
@@ -50,18 +50,18 @@ export default function UpdatePost() {
             const res = await fetch(`/api/post/getpost/${postId}`);
             if (!res.ok) {
                 const errorText = await res.text();
-                console.error("🚨 API Error Response:", errorText);
-                throw new Error(`🚨 API Error: ${errorText}`);
+                console.error("API Error Response:", errorText);
+                throw new Error(` API Error: ${errorText}`);
             }
 
             const data = await res.json();
-            console.log("✅ Post Data Fetched:", data);
+            console.log("Post Data Fetched:", data);
 
             if (!data.post) {
-                throw new Error("🚨 Post not found!");
+                throw new Error("Post not found!");
             }
 
-            // ✅ Pre-fill the form with existing post data
+            // Pre-fill the form with existing post data
             setFormData({
                 title: data.post?.title || "",
                 category: data.post?.category || "uncategorized",
@@ -71,11 +71,11 @@ export default function UpdatePost() {
                 author: data.post?.userId?.username || "Unknown Author",
             });
 
-            // ✅ Ensure the header image is displayed
+            // Ensure the header image is displayed
             setHeaderImage(data.post?.headerImage || "");
 
         } catch (error) {
-            console.error("🔥 Fetch Error:", error.message);
+            console.error("Fetch Error:", error.message);
             setPublishError(error.message);
         }
     };
@@ -121,13 +121,13 @@ export default function UpdatePost() {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("🟢 Checking Form Data Before Submission:", formData);
+    console.log("Checking Form Data Before Submission:", formData);
   
     if (!formData._id || formData._id === "") {
-      console.error("🚨 Post ID is missing! Retrying update...");
+      console.error(" Post ID is missing! Retrying update...");
       setFormData((prev) => ({
         ...prev,
-        _id: postId,  // ✅ Force reassigning postId
+        _id: postId,  
       }));
       return;
     }
@@ -148,7 +148,7 @@ export default function UpdatePost() {
       console.log("🔹 Response Status:", res.status);
   
       const data = await res.json();
-      console.log("✅ Post Updated:", data);
+      console.log(" Post Updated:", data);
   
       if (data.error) {
         setPublishError(data.error);
@@ -157,7 +157,7 @@ export default function UpdatePost() {
   
       navigate(`/post/${data.slug}`);
     } catch (error) {
-      console.error("🔥 Submit Error:", error);
+      console.error("Submit Error:", error);
       setPublishError(error.message);
     }
   };

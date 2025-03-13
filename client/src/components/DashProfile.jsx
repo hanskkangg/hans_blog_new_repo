@@ -53,7 +53,7 @@ useEffect(() => {
 
     useEffect(() => {
       if (!currentUser || !currentUser._id) {
-        console.warn("🚨 No user ID found, skipping fetch.");
+        console.warn(" No user ID found, skipping fetch.");
         return;
       }
     
@@ -61,22 +61,22 @@ useEffect(() => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${currentUser.token}`, // ✅ Include the token
+          Authorization: `Bearer ${currentUser.token}`, // Include the token
         },
-        credentials: "include", // ✅ Ensure cookies are sent if needed
+        credentials: "include", // Ensure cookies are sent if needed
       })
         .then(async (res) => {
           if (!res.ok) {
-            const errorText = await res.text(); // ✅ Read response as text
-            throw new Error(`🚨 API Error ${res.status}: ${errorText}`);
+            const errorText = await res.text(); // Read response as text
+            throw new Error(`API Error ${res.status}: ${errorText}`);
           }
           return res.json();
         })
         .then((data) => {
-          console.log("✅ User Data Fetched:", data);
+          console.log("User Data Fetched:", data);
         })
         .catch((error) => {
-          console.error("🔥 Fetch Error:", error.message);
+          console.error("Fetch Error:", error.message);
         });
     }, [currentUser]);
     
@@ -95,7 +95,7 @@ useEffect(() => {
     }, [imageFile]);
 
     useEffect(() => {
-      dispatch(resetError()); // ✅ Clear errors when visiting profile page
+      dispatch(resetError()); // Clear errors when visiting profile page
     }, [dispatch]);
     const uploadImage = async () => {
       setImageFileUploading(true);
@@ -124,7 +124,7 @@ useEffect(() => {
           () => {
               getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
                   setImageFileUrl(downloadURL);
-                  // ✅ Always retain username and other formData fields
+                  // Always retain username and other formData fields
                   setFormData((prevData) => ({
                       ...prevData,
                       profilePicture: downloadURL,
@@ -167,7 +167,7 @@ useEffect(() => {
         const updatedData = { ...formData };
         
         if (!updatedData.password) {
-          delete updatedData.password; // ✅ Remove empty password
+          delete updatedData.password; // Remove empty password
         }
     
         const res = await fetch(`/api/user/update/${currentUser._id}`, {
@@ -199,7 +199,7 @@ useEffect(() => {
         setUpdateUserSuccess("User profile has been updated successfully.");
         setUpdateUserError(null);
       } catch (error) {
-        console.error("🔥 Fetch Error:", error);
+        console.error("Fetch Error:", error);
         dispatch(updateFailure(error.message));
       }
     };
@@ -285,26 +285,26 @@ useEffect(() => {
                     left: 0,
                   },
                   path: {
-                    stroke: `rgba(34, 197, 94, ${imageFileUploadProgress / 100})`, // ✅ Green Progress Bar
+                    stroke: `rgba(34, 197, 94, ${imageFileUploadProgress / 100})`, 
                     strokeLinecap: 'round',
                     transition: 'stroke-dashoffset 0.5s ease 0s',
                 },
                 text: {
-                    fill: '#22c55e', // ✅ Green Font Color
+                    fill: '#22c55e', 
                     fontSize: '12px',
                     fontWeight: 'bold',
                 },
                 trail: {
-                    stroke: '#d1fae5', // ✅ Light Green Background Trail
+                    stroke: '#d1fae5', 
                 },
                 }}
               />
             )}
     <img
     src={
-      imageFileUrl || // ✅ Show new uploaded image
-      currentUser?.profilePicture?.trim() || // ✅ Show stored profile picture
-      'https://cdn-icons-png.flaticon.com/512/3607/3607444.png' // ✅ Default avatar
+      imageFileUrl || // Show new uploaded image
+      currentUser?.profilePicture?.trim() || // Show stored profile picture
+      'https://cdn-icons-png.flaticon.com/512/3607/3607444.png' // Default avatar
     }
     alt="user"
     className={`rounded-full w-full h-full object-cover  ${

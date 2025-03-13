@@ -33,27 +33,27 @@ export default function Comment({ comment, onLike, onEdit, onDelete }) {
         const data = await res.json();
         setUser(data);
       } catch (error) {
-        console.log("🔥 Fetch Error:", error.message);
+        console.log("Fetch Error:", error.message);
       }
     };
 
     getUser();
   }, [comment]);
 
-  // ✅ Enable Editing Mode
+  // Enable Editing Mode
   const handleEditClick = () => {
     setIsEditing(true);
     setEditedContent(comment.content);
   };
 
-  // ✅ Save Edited Comment
+  // Save Edited Comment
   const handleSave = async () => {
     try {
       const res = await fetch(`/api/comment/editComment/${comment._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${currentUser?.token}` // ✅ Ensure Token is Sent
+          'Authorization': `Bearer ${currentUser?.token}` // Ensure Token is Sent
         },
         body: JSON.stringify({
           content: editedContent,
@@ -63,13 +63,13 @@ export default function Comment({ comment, onLike, onEdit, onDelete }) {
       if (res.ok) {
         const updatedComment = await res.json();
         setIsEditing(false);
-        onEdit(comment._id, updatedComment.content); // ✅ Notify parent to update state
+        onEdit(comment._id, updatedComment.content); // Notify parent to update state
       } else {
         const errorData = await res.json();
-        console.log("❌ Error updating comment:", errorData);
+        console.log("Error updating comment:", errorData);
       }
     } catch (error) {
-      console.log("🔥 Fetch Error:", error.message);
+      console.log("Fetch Error:", error.message);
     }
   };
   return (
@@ -102,7 +102,7 @@ export default function Comment({ comment, onLike, onEdit, onDelete }) {
 )}
 
 
-      {/* ✅ Show Textarea when Editing, Otherwise Show Comment Text */}
+      {/* Show Textarea when Editing, Otherwise Show Comment Text */}
       {isEditing ? (
         <>
           <Textarea
@@ -126,7 +126,7 @@ export default function Comment({ comment, onLike, onEdit, onDelete }) {
         </p>
       )}
 
-      {/* ✅ Actions: Like, Edit, Delete */}
+      {/* Actions: Like, Edit, Delete */}
       <div className="flex items-center pt-2 text-xs border-t dark:border-gray-700 mt-2 max-w-fit gap-2">
         <button
           type="button"
@@ -149,7 +149,7 @@ export default function Comment({ comment, onLike, onEdit, onDelete }) {
             <>
               <button
                 type="button"
-                onClick={handleEditClick} // ✅ Enable editing mode
+                onClick={handleEditClick} // Enable editing mode
                 className="text-gray-400 hover:text-blue-500"
               >
                 Edit

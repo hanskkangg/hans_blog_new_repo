@@ -7,17 +7,17 @@ export default function FooterCom() {
     <Footer container className="border-t-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 py-6">
       <div className="w-full max-w-7xl mx-auto px-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
-          {/* ✅ Blog Title */}
+          {/* Blog Title */}
           <Link to="/" className="flex items-center space-x-2 mb-4 md:mb-0">
             <span className="text-2xl font-bold text-black dark:text-white">
-              Hans
+             Kangaroo
             </span>
             <span className="text-xl font-light text-gray-600 dark:text-gray-300">
-              Blog
+            On Ice
             </span>
           </Link>
 
-          {/* ✅ Footer Links */}
+          {/* Footer Links */}
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
             <div>
               <Footer.Title title="About" className="text-black dark:text-white" />
@@ -83,7 +83,7 @@ export default function FooterCom() {
 
         <Footer.Divider className="my-6 border-gray-200 dark:border-gray-700" />
 
-        {/* ✅ Footer Bottom Section */}
+        {/* Footer Bottom Section */}
         <div className="flex flex-col sm:flex-row items-center justify-between">
           <Footer.Copyright
             href="#"
