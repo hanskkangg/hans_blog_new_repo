@@ -35,7 +35,7 @@ export default function CreatePost() {
 
   // Get currentUser from Redux store
   const { currentUser } = useSelector((state) => state.user);
-  console.log("Current User:", currentUsfer);
+  console.log("Current User:", currentUser);
 
   // Define Quill Modules with Custom YouTube Video Handler
   const quillModules = useMemo(() => ({
