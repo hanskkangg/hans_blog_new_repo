@@ -10,7 +10,7 @@ const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "hansblog-62d5a.firebaseapp.com",
   projectId: "hansblog-62d5a",
-  storageBucket: "hansblog-62d5a.appspot.com",
+  storageBucket: "hansblog-62d5a.firebasestorage.app",
   messagingSenderId: "548567066649",
   appId: "1:548567066649:web:44f3fc04cbcfdb64b2e288",
   measurementId: "G-EZDHS4D188"
