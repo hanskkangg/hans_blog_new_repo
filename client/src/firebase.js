@@ -8,12 +8,12 @@ import { getAnalytics } from "firebase/analytics";
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: "personalblog-ca39a.firebaseapp.com",
-  projectId: "personalblog-ca39a",
-  storageBucket: "personalblog-ca39a.appspot.com", // Fixed storage bucket URL
-  messagingSenderId: "568011967196",
-  appId: "1:568011967196:web:285aab875e7be8e0204219",
-  measurementId: "G-198440CGJ2",
+  authDomain: "hansblog-62d5a.firebaseapp.com",
+  projectId: "hansblog-62d5a",
+  storageBucket: "hansblog-62d5a.firebasestorage.app",
+  messagingSenderId: "548567066649",
+  appId: "1:548567066649:web:44f3fc04cbcfdb64b2e288",
+  measurementId: "G-EZDHS4D188",
   clientId: "86754690739-10m8d0imng6qkiblakl4gsh8rjq5gntl.apps.googleusercontent.com" // Added OAuth client ID
 };
 // Initialize Firebase
