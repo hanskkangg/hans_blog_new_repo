@@ -10,11 +10,10 @@ const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "hansblog-62d5a.firebaseapp.com",
   projectId: "hansblog-62d5a",
-  storageBucket: "hansblog-62d5a.firebasestorage.app",
+  storageBucket: "hansblog-62d5a.appspot.com",
   messagingSenderId: "548567066649",
   appId: "1:548567066649:web:44f3fc04cbcfdb64b2e288",
-  measurementId: "G-EZDHS4D188",
-  clientId: "86754690739-10m8d0imng6qkiblakl4gsh8rjq5gntl.apps.googleusercontent.com" // Added OAuth client ID
+  measurementId: "G-EZDHS4D188"
 };
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
