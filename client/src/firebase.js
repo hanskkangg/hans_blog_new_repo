@@ -8,7 +8,7 @@ import { getAnalytics } from "firebase/analytics";
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: "personalblog-ca39a.firebaseapp.com",
+  authDomain: "hans-blogs.onrender.com", // Updated to match your hosted domain
   projectId: "personalblog-ca39a",
   storageBucket: "personalblog-ca39a.appspot.com", // Fixed storage bucket URL
   messagingSenderId: "568011967196",
