@@ -10,10 +10,10 @@ export default function FooterCom() {
           {/* Blog Title */}
           <Link to="/" className="flex items-center space-x-2 mb-4 md:mb-0">
             <span className="text-2xl font-bold text-black dark:text-white">
-             Kangaroo
+             Hans
             </span>
             <span className="text-xl font-light text-gray-600 dark:text-gray-300">
-            On Ice
+            Blog
             </span>
           </Link>
 

@@ -13,8 +13,8 @@ export default function Home() {
 
    // Hardcoded Profile Data
    const authorProfile = {
-    username: "Min Kang",
-    profilePicture: "./min_logo.png",
+    username: "Hans Kang",
+    profilePicture: "./pro.png",
     bio: "Chasing Pucks | Stats, Stories & Analysis",
     pronouns: "he/him",
     instagram: "https://www.instagram.com/kkanghhanss/",

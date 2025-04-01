@@ -62,10 +62,10 @@ export default function Header() {
       
     <img src="./min_logo.png" alt="Logo" className="xl:h-10 xl:w-10 rounded-full h-8 w-8" />  
         <span className="font-outfit text-sm font-bold text-black dark:text-white xl:text-4xl">
-          Kangaroo
+          Hans
         </span>
         <span className="font-outfit xl:font-league-spartan text-xs font-light text-gray-600 dark:text-gray-300 xl:text-3xl">
-          On Ice
+          Blog
         </span>
       </Link>
 
