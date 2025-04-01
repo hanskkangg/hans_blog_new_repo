@@ -15,7 +15,8 @@ export default function Home() {
    const authorProfile = {
     username: "Hans Kang",
     profilePicture: "./pro.png",
-    bio: "Chasing Pucks | Stats, Stories & Analysis",
+    bio: `
+Web Developer | DevOps & SRE | Tech Enthusiast | Loves Coffee & Movies ❤️`,
     pronouns: "he/him",
     instagram: "https://www.instagram.com/kkanghhanss/",
     facebook: "https://www.facebook.com/hans.kkang/",
