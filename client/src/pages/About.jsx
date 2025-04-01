@@ -8,20 +8,27 @@ export default function AboutAndContact() {
   const isDarkMode = theme === 'dark';
 
   const teamMembers = [
-    {
-      name: 'Min Kang',
-      role: 'Content Writer',
-      bio: `Min Kang is the creative voice behind much of the storytelling on Kangaroo On Ice. With a natural talent for weaving words into captivating narratives, Min brings fresh insights and a thoughtful perspective to every article.
     
-    Min currently resides in Ottawa, where she continues to create stories that inform, inspire, and engage. Connect with her at min.kang@webdev.com or follow her journey on Instagram and LinkedIn.`,
-      image: './pr.png',
-    },
     {
       name: 'Hans Kang',
-      role: 'Web Developer',
-      bio: `Hans Kang started Kangaroo On Ice in 2025 as a passion project, blending his love for technology, sports, and storytelling. What began as a humble weekend endeavor has since evolved into a dynamic platform where web development meets engaging narratives.Hans lives in Ottawa with his laptop and an ever-growing collection of tech gadgets. Connect with him at hans.kang@webdev.com or follow his journey on GitHub and Instagram.`,
+      role: 'Web Developer / Content Writer ',
+      bio: (
+        <>
+          <p>
+            Hans Kang is a passionate and driven full-stack web developer from Canada, specializing in the MERN and WAMP/LAMP stacks. With over a year of hands-on experience in designing, developing, and integrating both front-end and back-end applications, Hans brings a diverse skill set that spans across web development, cloud deployment, and DevOps.
+          </p>
+          <br />
+          <p>
+            Hans is a graduate of Algonquin College's Computer Programming program and has worked on several successful freelance projects, including custom full-stack applications and AI-powered SaaS solutions. In addition, he has professional experience in full-stack web development at Ottawa Delivery Sushi, where he implemented and optimized a variety of web applications, including a CI/CD pipeline using AWS EC2 and Jenkins.
+          </p>
+          <br />
+          <p>
+            Aside from coding, Hans enjoys solving complex technical challenges, learning new technologies, and contributing to the open-source community. He's a keen problem solver with a focus on enhancing user experiences, optimizing web performance, and streamlining workflows through automation.
+          </p>
+        </>
+      ),
       image: './pf1.png',
-    },
+    }
   ];
 
   const [result, setResult] = useState('');
@@ -63,15 +70,16 @@ export default function AboutAndContact() {
        {/* Left Side - About Content */}
        <div className="w-full md:w-1/2 flex items-center justify-center bg-white dark:bg-gray-800 text-black dark:text-gray-200 p-10">
        <div className="max-w-lg text-center md:text-left">
-            <h1 className="text-5xl font-bold mb-8">Kangaroo On Ice</h1>
+            <h1 className="text-5xl font-bold mb-8">Hans Blog</h1>
 
             <div className="text-lg flex flex-col gap-6">
-              <p>
-                Founded in 2025, Kangaroo On Ice is a vibrant online destination for sports and gaming enthusiasts. We dive deep into the worlds of hockey, soccer, and online gaming, offering fresh insights, game analyses, player spotlights, and engaging content that keeps fans and gamers coming back for more.
-              </p>
-              <p>
-                With a growing community of passionate readers, Kangaroo On Ice is more than just a site—it's a hub where sports and gaming lovers connect, share their thoughts, and celebrate what they love most. Our mantra is simple: “Come for the stories, stay for the community.”
-              </p>
+            <p>
+  Founded in 2025, Hans Blog is a vibrant online destination for tech enthusiasts, focusing on web development, deployment strategies, and troubleshooting. From deep dives into JavaScript and React to practical guides on Jenkins automation and Azure deployment, we offer actionable insights and step-by-step tutorials that empower developers to solve real-world problems.
+</p>
+<p>
+  With a growing community of passionate learners and professionals, Hans Blog is more than just a site—it's a resource hub where tech lovers, developers, and problem-solvers come together. Whether you're learning the latest web technologies or tackling deployment challenges, our mantra is simple: “Learn, implement, and grow together.”
+</p>
+
             </div>
           </div>
         </div>
@@ -135,7 +143,7 @@ export default function AboutAndContact() {
     <section className="py-10">
       <h2 className="text-3xl font-semibold mb-6">We'd Love to Hear From You!</h2>
       <p>
-        We love getting emails from readers. Please feel free to write to Min Kang at{' '}
+        We love getting emails from readers. Please feel free to write to Hans Kang at{' '}
         <a href="mailto:hans.kkang@gmail.com" className="text-indigo-600 underline">
           hans.kkang@gmail.com
         </a>.
