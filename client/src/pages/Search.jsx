@@ -23,7 +23,7 @@ export default function Search() {
   const navigate = useNavigate();
 
   const categories = [
-    'all', 'NHL', 'PWHL', 'Kang you believe it?', 'Kangs trade hops', 'Hop to the Future: Rookies', 'Kang in the crease'
+    'all', 'Web Development', 'Deployment & Automation', 'Troubleshooting & Debugging', 'Personal Projects'
   ];
 
 

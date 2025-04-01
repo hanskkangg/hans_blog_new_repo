@@ -241,12 +241,10 @@ const videoHandler = () => {
           onChange={(e) => setFormData({ ...formData, category: e.target.value })}
         >
           <option value='uncategorized'>Select a category</option>
-          <option value='NHL'>NHL</option>
-          <option value='PWHL'>PWHL</option>
-          <option value='Kang you believe it?'>Kang you believe it? </option>
-          <option value='Kangs trade hops'>Kang's trade hops</option>
-          <option value='Hop to the Future: Rookies'>Hop to the Future: Rookies</option>
-          <option value='Kang in the crease '>Kang in the crease</option>
+          <option value='Web Development'>Web Development</option>
+          <option value='Deployment & Automation'>Deployment & Automation</option>
+          <option value='Troubleshooting & Debugging'>Troubleshooting & Debugging</option>
+          <option value='Personal Projects'>Personal Projects</option>
         </Select>
         {/* Header Image Upload */}
         <div className='border-4 border-teal-500 border-dotted p-3'>
