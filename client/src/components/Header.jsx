@@ -60,7 +60,6 @@ export default function Header() {
     >   {/* Blog Title */}
       <Link to="/" className="flex items-center space-x-2">
       
-    <img src="./min_logo.png" alt="Logo" className="xl:h-10 xl:w-10 rounded-full h-8 w-8" />  
         <span className="font-outfit text-sm font-bold text-black dark:text-white xl:text-4xl">
           Hans
         </span>
