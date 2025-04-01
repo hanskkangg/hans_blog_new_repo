@@ -147,7 +147,7 @@ Web Developer | DevOps & SRE | Tech Enthusiast | Loves Coffee & Movies ❤️`,
         <div className="p-5 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-300 dark:border-gray-600">
           <h2 className="text-xl font-semibold mb-4 border-b border-gray-300 pb-2 text-center">
           
-Fan Favorites
+          Top Liked Posts 
           </h2>
           <div className="space-y-4">
             {trendingPosts.length > 0 ? (
@@ -164,7 +164,7 @@ Fan Favorites
         <div className="p-5 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-300 dark:border-gray-600">
           <h2 className="text-xl font-semibold mb-4 border-b border-gray-300 pb-2 text-center">
           
-Popular Reads
+          Top Viewed Posts
           </h2>
           <div className="space-y-4">
             {mostViewedPosts.length > 0 ? (
