@@ -215,7 +215,7 @@ export default function PostPage() {
   
     {/* Post Content */}
     <div
-      className="p-3 max-w-2xl mx-auto w-full post-content break-words"
+      className="p-3 max-w-6xl mx-auto w-full post-content break-words"
       dangerouslySetInnerHTML={{ __html: post && post.content }}
     ></div>
   
