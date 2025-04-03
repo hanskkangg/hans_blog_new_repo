@@ -234,7 +234,7 @@ export default function PostPage() {
           Hans Kang <span className="text-gray-500 dark:text-gray-400">(he/him)</span>
         </h2>
         <p className="text-sm text-gray-600 dark:text-gray-300">
-          Web Developer | Tech Enthusiast | Coffee Lover ☕
+        Web Developer | DevOps & SRE | Tech Enthusiast | Loves Coffee & Movies ❤️
         </p>
   
         {/* Website Link with Dark Mode Support */}
