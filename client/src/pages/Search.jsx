@@ -23,7 +23,7 @@ export default function Search() {
   const navigate = useNavigate();
 
   const categories = [
-    'all', 'Web Development', 'Deployment & Automation', 'Troubleshooting & Debugging', 'Personal Projects'
+    'all', 'Web Development', 'Deployment & Automation', 'Troubleshooting & Debugging', 'Personal Projects' , 'Learning Hub'
   ];
 
 

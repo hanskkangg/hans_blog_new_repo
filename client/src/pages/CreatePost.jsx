@@ -245,6 +245,7 @@ const videoHandler = () => {
           <option value='Deployment & Automation'>Deployment & Automation</option>
           <option value='Troubleshooting & Debugging'>Troubleshooting & Debugging</option>
           <option value='Personal Projects'>Personal Projects</option>
+          <option value='Learning Hub'>Learning Hub</option>
         </Select>
         {/* Header Image Upload */}
         <div className='border-4 border-teal-500 border-dotted p-3'>

@@ -193,6 +193,7 @@ export default function UpdatePost() {
           <option value='Deployment & Automation'>Deployment & Automation</option>
           <option value='Troubleshooting & Debugging'>Troubleshooting & Debugging</option>
           <option value='Personal Projects'>Personal Projects</option>
+          <option value='Learning Hub'>Learning Hub</option>
         </Select>
 
         <FileInput type="file" accept="image/*" onChange={(e) => setFile(e.target.files[0])} />

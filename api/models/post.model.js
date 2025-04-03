@@ -24,7 +24,7 @@ const postSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      enum: ["uncategorized","all", 'Web Development', 'Deployment & Automation', 'Troubleshooting & Debugging', 'Personal Projects'],
+      enum: ["uncategorized","all", 'Web Development', 'Deployment & Automation', 'Troubleshooting & Debugging', 'Personal Projects', 'Learning Hub'],
       default: "uncategorized",
     },
     headerImage: {
