@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import PostCard from "../components/PostCard";
 import { Button } from "flowbite-react";
 import MiniPostCard from "../components/MiniPostCard";
-import { BsFacebook, BsInstagram, BsGithub } from "react-icons/bs";
+import { BsFacebook, BsInstagram, BsGithub, BsLinkedin } from "react-icons/bs";
 
 export default function Home() {
   const [recentPosts, setRecentPosts] = useState([]);
@@ -18,10 +18,12 @@ export default function Home() {
     bio: `
 Web Developer | DevOps & SRE | Tech Enthusiast | Loves Coffee & Movies ❤️`,
     pronouns: "he/him",
-    instagram: "https://www.instagram.com/kkanghhanss/",
-    facebook: "https://www.facebook.com/hans.kkang/",
+    
+    linkedin: "https://www.linkedin.com/in/hanskkang/",
     github: "https://github.com/hanskkangg",
     website: "https://www.hanskang.com",
+    instagram: "https://www.instagram.com/kkanghhanss/",
+    facebook: "https://www.facebook.com/hans.kkang/",
   };
 
   useEffect(() => {
@@ -139,6 +141,11 @@ Web Developer | DevOps & SRE | Tech Enthusiast | Loves Coffee & Movies ❤️`,
             {authorProfile.github && (
               <a href={authorProfile.github} target="_blank" rel="noopener noreferrer">
                 <BsGithub className="text-2xl text-gray-700 dark:text-white" />
+              </a>
+            )}
+              {authorProfile.linkedin && (
+              <a href={authorProfile.linkedin} target="_blank" rel="noopener noreferrer">
+                <BsLinkedin className="text-2xl text-blue-500 dark:text-blue-500" />
               </a>
             )}
           </div>
