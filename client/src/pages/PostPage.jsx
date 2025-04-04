@@ -6,7 +6,7 @@ import CommentSection from '../components/CommentSection';
 import RecentPostCard from '../components/RecentPostCard';
 import { useSelector } from "react-redux"; 
 import { Modal } from 'flowbite-react';
-import { BsInstagram, BsFacebook, BsGithub } from 'react-icons/bs';
+import { BsInstagram, BsFacebook, BsGithub, BsLinkedin } from 'react-icons/bs';
 
 
 import { HiOutlineExclamationCircle } from 'react-icons/hi'; 
@@ -249,7 +249,7 @@ export default function PostPage() {
           </a>
         </p>
   
-        {/* Social Links (Centered & Responsive to Dark Mode) */}
+        {/* Social Links */}
         <div className="flex gap-4 mt-2 justify-center">
           <a href="https://www.instagram.com/kkanghhanss/" target="_blank" rel="noopener noreferrer">
             <BsInstagram className="text-2xl text-pink-500 dark:text-pink-400" />
@@ -260,6 +260,12 @@ export default function PostPage() {
           <a href="https://github.com/hanskkangg" target="_blank" rel="noopener noreferrer">
             <BsGithub className="text-2xl text-gray-700 dark:text-gray-300" />
           </a>
+          <a href="https://www.linkedin.com/in/hanskkang" target="_blank" rel="noopener noreferrer">
+            <BsLinkedin className="text-2xl text-blue-500 dark:text-blue-500" />
+          </a>
+
+
+
         </div>
       </div>
     </div>
