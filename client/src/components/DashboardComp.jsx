@@ -27,7 +27,7 @@ export default function DashboardComp() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${currentUser.token}`, // ✅ Include token
+            Authorization: `Bearer ${currentUser.token}`,
           },
           credentials: "include",
         });
@@ -49,7 +49,7 @@ export default function DashboardComp() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${currentUser.token}`, // ✅ Include token
+            Authorization: `Bearer ${currentUser.token}`, 
           },
           credentials: "include",
         });

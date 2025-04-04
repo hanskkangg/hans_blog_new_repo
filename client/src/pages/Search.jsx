@@ -8,8 +8,10 @@ import { useSelector } from 'react-redux';
 export default function Search() {
   const [sidebarData, setSidebarData] = useState({
     searchTerm: '',
-    sort: 'desc', // Default to "Latest"
-    category: 'all', // Show all categories by default
+    // Default to "Latest"
+    sort: 'desc', 
+    // Show all categories by default
+    category: 'all', 
   });
 
   const [posts, setPosts] = useState([]);
@@ -17,7 +19,8 @@ export default function Search() {
   const [showMore, setShowMore] = useState(false);
   const [trendingPosts, setTrendingPosts] = useState([]);
   const [mostViewedPosts, setMostViewedPosts] = useState([]);
-  const { theme } = useSelector((state) => state.theme); // Get the theme from Redux or global state
+  // Get the theme from Redux or global state
+  const { theme } = useSelector((state) => state.theme); 
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -105,7 +108,7 @@ export default function Search() {
   };
 
   return (
-    <div className="flex flex-col w-full max-w-7xl mx-auto p-6"> {/* Increased max width */}
+    <div className="flex flex-col w-full max-w-7xl mx-auto p-6">
       
       {/* Search Bar & Sorting */}
       <form 

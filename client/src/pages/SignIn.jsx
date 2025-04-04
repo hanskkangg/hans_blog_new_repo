@@ -13,7 +13,8 @@ import OAuth from '../components/OAuth';
 export default function SignIn() {
   const [formData, setFormData] = useState({});
   const { loading, error: errorMessage } = useSelector((state) => state.user);
-  const { theme } = useSelector((state) => state.theme); // Get theme from redux or global state
+  // Get theme from redux or global state
+  const { theme } = useSelector((state) => state.theme); 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

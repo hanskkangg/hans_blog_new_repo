@@ -9,12 +9,12 @@ module.exports = {
       fontFamily: {
         ovo: ['Ovo', 'serif'], 
         
-        outfit: ['Outfit', 'sans-serif'],// ✅ Define Ovo font in Tailwind
+        outfit: ['Outfit', 'sans-serif'],
       },
     },
   },
   plugins: [
-    require('tailwind-scrollbar'), // Now compatible with Tailwind v4
+    require('tailwind-scrollbar'), 
     require('flowbite/plugin')
     
   ],

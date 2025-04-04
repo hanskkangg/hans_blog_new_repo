@@ -8,7 +8,8 @@ export default function SignUp() {
   const [formData, setFormData] = useState({});
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
-  const { theme } = useSelector((state) => state.theme); // Get theme from redux or global state
+  // Get theme from redux or global state
+  const { theme } = useSelector((state) => state.theme);
   const navigate = useNavigate();
 // Validation Rules
 const prohibitedWords = [
@@ -66,7 +67,7 @@ if (containsProhibitedWords(email)) {
       return 'Password must be between 8 and 64 characters.';
     }
 
-    return null; // No validation errors
+    return null; 
   };
 
   const handleChange = (e) => {
@@ -82,7 +83,8 @@ if (containsProhibitedWords(email)) {
 
     const validationError = validateForm();
     if (validationError) {
-        setLoading(false); //  Ensure loading is set to false
+       //  Ensure loading is set to false
+        setLoading(false);
         return setErrorMessage(validationError);
     }
 
@@ -96,7 +98,8 @@ if (containsProhibitedWords(email)) {
       });
       const data = await res.json();
       if (data.success === false) {
-            setLoading(false); //  Reset loading state on error
+         //  Reset loading state on error
+            setLoading(false);
         return setErrorMessage(data.message);
       }
       setLoading(false);

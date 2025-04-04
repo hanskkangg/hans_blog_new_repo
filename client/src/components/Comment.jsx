@@ -53,7 +53,8 @@ export default function Comment({ comment, onLike, onEdit, onDelete }) {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${currentUser?.token}` // Ensure Token is Sent
+          // Ensure Token is Sent
+          'Authorization': `Bearer ${currentUser?.token}` 
         },
         body: JSON.stringify({
           content: editedContent,
@@ -63,7 +64,8 @@ export default function Comment({ comment, onLike, onEdit, onDelete }) {
       if (res.ok) {
         const updatedComment = await res.json();
         setIsEditing(false);
-        onEdit(comment._id, updatedComment.content); // Notify parent to update state
+        // Notify parent to update state
+        onEdit(comment._id, updatedComment.content); 
       } else {
         const errorData = await res.json();
         console.log("Error updating comment:", errorData);
@@ -149,7 +151,8 @@ export default function Comment({ comment, onLike, onEdit, onDelete }) {
             <>
               <button
                 type="button"
-                onClick={handleEditClick} // Enable editing mode
+                 // Enable editing mode
+                onClick={handleEditClick}
                 className="text-gray-400 hover:text-blue-500"
               >
                 Edit

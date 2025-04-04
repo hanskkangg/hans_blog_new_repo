@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 export default function AboutAndContact() {
-  const { theme } = useSelector((state) => state.theme); // Get the theme from Redux or global state
+   // Get the theme from Redux or global state
+  const { theme } = useSelector((state) => state.theme); 
   const isDarkMode = theme === 'dark';
 
   const teamMembers = [

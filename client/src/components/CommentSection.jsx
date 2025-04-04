@@ -29,7 +29,8 @@ export default function CommentSection({ postId }) {
       }
     };
     getComments();
-  }, [postId, sortOption]); // Refetch when sort option changes
+    // Refetch when sort option changes
+  }, [postId, sortOption]); 
 
 
   const handleSubmit = async (e) => {
@@ -207,7 +208,8 @@ export default function CommentSection({ postId }) {
   {/* Custom Submit Button */}
   <button
     type="submit"
-    disabled={false} // Set loading state if needed
+    // Set loading state if needed
+    disabled={false} 
     className={`py-2 px-4 border rounded-lg transition-colors duration-300 
       bg-white text-black border-black hover:bg-black hover:text-white`}
   >
@@ -235,7 +237,7 @@ export default function CommentSection({ postId }) {
       </div>
     </div>
 
-    <div className="flex flex-col gap-3"> {/* Ensure all comments are nicely spaced */}
+    <div className="flex flex-col gap-3">
       {comments.map((comment) => (
         <div 
           key={comment._id}

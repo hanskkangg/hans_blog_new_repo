@@ -71,11 +71,11 @@ export default function DashSidebar() {
                 All Comments
               </Sidebar.Item>
 
-              {/* ✅ CREATE POST BUTTON FOR ADMIN ONLY */}
+              {/* CREATE POST BUTTON FOR ADMIN ONLY */}
               <Sidebar.Item
                 as={Link}
                 to="/create-post"
-                icon={HiPencilAlt} // ✏️ Pencil Icon
+                icon={HiPencilAlt}
                 className="text-green-600 font-semibold hover:bg-green-200 dark:text-green-300 dark:hover:bg-green-700"
               >
                 Create Post

@@ -16,8 +16,10 @@ export default function DashComments() {
     const fetchComments = async () => {
       try {
         const endpoint = currentUser.isAdmin
-          ? `/api/comment/getcomments` // Admin: Fetch all comments
-          : `/api/comment/getUserComments/${currentUser._id}`; // User: Fetch only their comments
+        // Admin: Fetch all comments
+          ? `/api/comment/getcomments`
+          // User: Fetch only their comments
+          : `/api/comment/getUserComments/${currentUser._id}`; 
 
         const res = await fetch(endpoint, {
           headers: { Authorization: `Bearer ${currentUser?.token}` },

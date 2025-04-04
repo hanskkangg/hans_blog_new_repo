@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 
 // Importing Poppins and Roboto fonts
-import "@fontsource/poppins"; // Default weight (400)
-import "@fontsource/roboto"; // Importing Roboto font
+import "@fontsource/poppins";
+import "@fontsource/roboto"; 
 
 export default function PostCard({ post }) {
   return (

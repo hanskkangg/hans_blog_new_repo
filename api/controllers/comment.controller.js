@@ -25,15 +25,16 @@ export const getcomments = async (req, res, next) => {
 
     // Fetch latest comments
     const comments = await Comment.find()
-      .sort({ createdAt: -1 }) //Newest comments first
+     //Newest comments first
+      .sort({ createdAt: -1 })
       .skip(startIndex)
       .limit(limit)
-      .populate("userId", "username email") //Populate user info
+      .populate("userId", "username email") 
       .populate("postId", "title slug");
 
     res.status(200).json({ comments, totalComments, lastMonthComments });
   } catch (error) {
-    console.error("🔥 Error fetching comments:", error);
+    console.error(" Error fetching comments:", error);
     next(error);
   }
 };
@@ -63,14 +64,15 @@ export const createComment = async (req, res, next) => {
 
 
 export const getPostComments = async (req, res, next) => {
-  try {
-    const sortOption = req.query.sort || "most-liked"; // Default to most liked
-    let sortQuery = { createdAt: 1 }; // Default to oldest first
-
+  try { // Default to most liked
+    const sortOption = req.query.sort || "most-liked";
+    let sortQuery = { createdAt: 1 };
+        // Sort by newest first
     if (sortOption === "newest") {
-        sortQuery = { createdAt: -1 }; // Sort by newest first
+        sortQuery = { createdAt: -1 }; 
+        // Sort by oldest first 
     } else if (sortOption === "oldest") {
-        sortQuery = { createdAt: 1 }; // Sort by oldest first
+        sortQuery = { createdAt: 1 }; 
     }
 
     const postId = req.params.postId;

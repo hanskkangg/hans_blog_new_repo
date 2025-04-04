@@ -61,13 +61,13 @@ useEffect(() => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${currentUser.token}`, // Include the token
+          Authorization: `Bearer ${currentUser.token}`, 
         },
-        credentials: "include", // Ensure cookies are sent if needed
+        credentials: "include", 
       })
         .then(async (res) => {
           if (!res.ok) {
-            const errorText = await res.text(); // Read response as text
+            const errorText = await res.text(); 
             throw new Error(`API Error ${res.status}: ${errorText}`);
           }
           return res.json();
@@ -95,7 +95,8 @@ useEffect(() => {
     }, [imageFile]);
 
     useEffect(() => {
-      dispatch(resetError()); // Clear errors when visiting profile page
+       // Clear errors when visiting profile page
+      dispatch(resetError());
     }, [dispatch]);
     const uploadImage = async () => {
       setImageFileUploading(true);
@@ -167,7 +168,7 @@ useEffect(() => {
         const updatedData = { ...formData };
         
         if (!updatedData.password) {
-          delete updatedData.password; // Remove empty password
+          delete updatedData.password;
         }
     
         const res = await fetch(`/api/user/update/${currentUser._id}`, {
@@ -302,9 +303,11 @@ useEffect(() => {
             )}
     <img
     src={
-      imageFileUrl || // Show new uploaded image
-      currentUser?.profilePicture?.trim() || // Show stored profile picture
-      'https://cdn-icons-png.flaticon.com/512/3607/3607444.png' // Default avatar
+      // Show new uploaded image
+      imageFileUrl || 
+      currentUser?.profilePicture?.trim() ||
+      // Default avatar
+      'https://cdn-icons-png.flaticon.com/512/3607/3607444.png' 
     }
     alt="user"
     className={`rounded-full w-full h-full object-cover  ${
@@ -323,7 +326,7 @@ useEffect(() => {
     type='text'
     id='username'
     placeholder='Username'
-    value={formData.username ?? ''} // Allow true empty state
+    value={formData.username ?? ''}
     onChange={handleChange}
 />
 

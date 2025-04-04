@@ -38,7 +38,7 @@ export default function CoverPage() {
         justifyContent: 'center',
       }}
     >
-      {/* Fullscreen Video with Left and Right Margins */}
+      {/* Fullscreen Video  */}
       <video
         ref={hoverVideoRef}
         src="./bg7.mp4"
@@ -55,7 +55,7 @@ export default function CoverPage() {
         }}
       ></video>
 
-      {/* Centered Responsive Button */}
+      {/* Responsive Button */}
       <div style={{ position: 'relative', zIndex: 30 }}>
         <Link to="/home">
           <button
@@ -86,7 +86,7 @@ export default function CoverPage() {
         </Link>
       </div>
 
-      {/* Invisible but Interactive Enter Button */}
+      {/*Interactive Enter Button */}
       <div
         style={{
           position: 'absolute',

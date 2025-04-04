@@ -41,7 +41,7 @@ app.use('/api/*', (req, res) => {
   res.status(404).json({ success: false, message: 'API Route Not Found' });
 });
 
-// Serve Static Files (React Frontend) Only If API Routes Fail
+// Serve Static Files Only If API Routes Fail
 app.use(express.static(path.join(__dirname, '/client/dist')));
 
 // Ensure API Routes Are Not Overwritten by React Routes

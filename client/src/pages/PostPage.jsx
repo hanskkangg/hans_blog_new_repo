@@ -38,7 +38,7 @@ export default function PostPage() {
   
         // If slug doesn't work, try fetching by ID
         if (!res.ok || !data.posts || data.posts.length === 0) {
-          console.warn("❌ Slug failed, trying ID...");
+          console.warn(" Slug failed, trying ID...");
           res = await fetch(`/api/post/getposts?id=${postSlug}`);
           data = await res.json();
         }

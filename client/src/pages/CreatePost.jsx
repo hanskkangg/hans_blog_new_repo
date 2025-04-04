@@ -120,7 +120,8 @@ const videoHandler = () => {
         setHeaderImage(downloadURL);
         setFormData((prevData) => ({
           ...prevData,
-          headerImage: downloadURL, // Save in form data
+          // Save in form data
+          headerImage: downloadURL,
         }));
 
         console.log(" Header Image Uploaded & Updated:", downloadURL);
@@ -190,8 +191,8 @@ const videoHandler = () => {
         slug: formData.title.trim().toLowerCase().replace(/\s+/g, "-"),
     };
 
-    console.log("📨 Sending payload:", finalData);
-    console.log("🔍 Current User Token:", currentUser.token);
+    console.log(" Sending payload:", finalData);
+    console.log("Current User Token:", currentUser.token);
 
     try {
         const res = await fetch('/api/post/create', {

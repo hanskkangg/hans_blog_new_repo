@@ -10,7 +10,7 @@ export default function OAuth() {
   const auth = getAuth(app);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { theme } = useSelector((state) => state.theme); // Get the theme from Redux or global state
+  const { theme } = useSelector((state) => state.theme);
 
   const handleGoogleClick = async () => {
     const provider = new GoogleAuthProvider();

@@ -107,7 +107,8 @@ export const google = async (req, res, next) => {
     const token = jwt.sign(
       { id: user._id, isAdmin: user.isAdmin },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" } //  Set token expiry
+      //  Set token expiry
+      { expiresIn: "7d" } 
     );
 
     const { password, ...rest } = user._doc;
@@ -115,7 +116,8 @@ export const google = async (req, res, next) => {
     res
       .status(200)
       .cookie('access_token', token, { httpOnly: true })
-      .json({ ...rest, token }); //  Send token in JSON response
+      //  Send token in JSON response
+      .json({ ...rest, token }); 
   } catch (error) {
     next(error);
   }
@@ -130,7 +132,7 @@ export const verifyToken = (req, res, next) => {
     return next(errorHandler(401, "No token provided"));
   }
 
-  const token = authHeader.split(" ")[1]; // Parse Bearer token correctly
+  const token = authHeader.split(" ")[1];
   console.log("Extracted Token:", token);
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
@@ -138,8 +140,8 @@ export const verifyToken = (req, res, next) => {
       console.error("Invalid token:", err.message);
       return next(errorHandler(403, "Invalid token"));
     }
-    
-    req.user = user; // Set req.user for access in route handlers
+    // Set req.user for access in route handlers
+    req.user = user; 
     console.log("User authenticated:", req.user);
     next();
   });

@@ -71,8 +71,8 @@ export const getposts = async (req, res, next) => {
     }
 
     console.log("🔹 Fetching Posts with Query:", query);
-
-    let sortOption = { createdAt: -1 }; // Default to latest
+    // Default to latest
+    let sortOption = { createdAt: -1 }; 
     if (req.query.sort === "asc") {
       sortOption = { createdAt: 1 };
     } else if (req.query.sort === "most-liked") {
@@ -138,7 +138,8 @@ export const getposts = async (req, res, next) => {
 export const likePost = async (req, res, next) => {
   try {
     const { postId } = req.params;
-    const userId = req.user.id; // Get user ID from token
+    // Get user ID from token
+    const userId = req.user.id; 
 
     if (!mongoose.Types.ObjectId.isValid(postId)) {
       return next(errorHandler(400, " Invalid post ID!"));
@@ -175,7 +176,7 @@ export const likePost = async (req, res, next) => {
     res.status(200).json({
       success: true,
       likes: post.likes.length,
-      likedByUser: !hasLiked, // Return if user liked or unliked the post
+      likedByUser: !hasLiked, 
     });
   } catch (error) {
     console.error("Like Error:", error);
@@ -196,8 +197,8 @@ export const incrementViews = async (req, res, next) => {
     // Find the post and increment views **without updating `updatedAt`**
     const post = await Post.findByIdAndUpdate(
       postId,
-      { $inc: { views: 1 } }, // Increment view count only
-      { new: true, timestamps: false } // Prevent `updatedAt` from updating
+      { $inc: { views: 1 } }, 
+      { new: true, timestamps: false }
     );
 
     if (!post) {
@@ -272,7 +273,8 @@ export const updatepost = async (req, res, next) => {
         },
       },
       { new: true }
-    ).populate("userId", "username email"); // Populate author information
+      // Populate author information
+    ).populate("userId", "username email"); 
 
     console.log("Successfully Updated Post:", updatedPost);
     return res.status(200).json(updatedPost);
