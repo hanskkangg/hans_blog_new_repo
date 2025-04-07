@@ -1,5 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+
+// Initial state of the user
 const initialState = {
   currentUser: null,
   error: null,
