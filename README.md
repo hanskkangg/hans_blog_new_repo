@@ -2,7 +2,6 @@
 
 Welcome! This is the source code for my full-stack **Personal Blog** platform built for a freelance client. It features a clean UI, rich blog post management, and secure user roles using modern web technologies.
 
-🔗 **Live Project**  
 🌐 [Visit Personal Blog - LIVE](https://personal-blog-lboi.onrender.com)  
 
 ---
