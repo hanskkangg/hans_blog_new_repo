@@ -9,6 +9,8 @@ export default function Home() {
   const [recentPosts, setRecentPosts] = useState([]);
   const [trendingPosts, setTrendingPosts] = useState([]);
   const [mostViewedPosts, setMostViewedPosts] = useState([]);
+  // loading state 
+  const [loading, setLoading] = useState(true); 
 
   // Hardcoded Profile Data
   const authorProfile = {
@@ -52,20 +54,32 @@ export default function Home() {
         const mostViewedData = await mostViewedRes.json();
         setMostViewedPosts(mostViewedData.posts || []);
 
-        console.log("Recent Posts:", recentData.posts);
-        console.log("Most Liked Posts:", trendingData.posts);
-        console.log("Most Viewed Posts:", mostViewedData.posts);
       } catch (error) {
-        console.error("Error fetching posts:", error.message);
         setRecentPosts([]);
         setTrendingPosts([]);
         setMostViewedPosts([]);
+      }   finally {
+        setLoading(false);
       }
     };
 
     fetchPosts();
   }, []);
 
+  
+  if (loading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center bg-white dark:bg-gray-900">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500 border-solid border-b-transparent mx-auto mb-4"></div>
+          <p className="text-lg text-gray-700 dark:text-white font-medium">
+            Loading posts...
+          </p>
+        </div>
+      </div>
+    );
+  }
+  
   return (
     <div className="p-5 w-full max-w-7xl mx-auto overflow-hidden flex flex-col md:flex-row gap-8">
       {/* <div className="p-5 w-full max-w-full overflow-hidden flex flex-col md:flex-row gap-8">  */}
