@@ -147,6 +147,8 @@ export default function Header() {
       <div className="flex items-center gap-2">
         <img
           alt="user"
+          
+  loading="lazy"
           src={currentUser?.profilePicture?.trim() || 'https://cdn-icons-png.flaticon.com/512/3607/3607444.png'}
           className="w-12 h-12 md:w-16 md:h-16 rounded-full "
         />

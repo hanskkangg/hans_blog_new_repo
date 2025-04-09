@@ -12,6 +12,8 @@ export default function MiniPostCard({ post }) {
         <div className="w-24 h-24 flex-shrink-0 rounded-md overflow-hidden">
           <img
             src={post.headerImage || "/default-placeholder.jpg"}
+            
+  loading="lazy"
             onError={(e) => (e.target.src = "/default-placeholder.jpg")}
             alt={post.title}
             className="w-full h-full object-cover"

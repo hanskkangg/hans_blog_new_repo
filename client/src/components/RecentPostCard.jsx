@@ -8,6 +8,8 @@ export default function RecentPostCard({ post }) {
       <Link to={`/post/${post.slug}`} className="block w-full h-[250px] overflow-hidden rounded-md mb-3">
         <img
           src={post.headerImage || "/default-placeholder.jpg"}
+          
+  loading="lazy"
           alt={post.title}
           className="w-full h-full object-cover"
         />

@@ -114,6 +114,8 @@ export default function DashPosts() {
                       <Link to={post.slug ? `/post/${post.slug}` : '#'}>
                         <img
                           src={post.headerImage || "/default-placeholder.jpg"}
+                          
+                           loading="lazy"
                           onError={(e) => (e.target.src = "/default-placeholder.jpg")}
                           alt={post.title}
                           className='w-20 h-10 object-cover bg-gray-500 rounded-md'

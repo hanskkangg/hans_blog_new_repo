@@ -112,6 +112,7 @@ export default function Home() {
           <img
             src={authorProfile.profilePicture}
             alt={authorProfile.username}
+            loading="lazy"
             className="w-28 h-28 mx-auto rounded-full"
           />
           <h2 className="text-xl font-semibold mt-3">

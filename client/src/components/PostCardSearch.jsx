@@ -16,6 +16,8 @@ export default function PostCardSearch({ post }) {
           <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-md overflow-hidden">
             <img
               src={post.headerImage || "/default-placeholder.jpg"}
+              
+  loading="lazy"
               onError={(e) => (e.target.src = "/default-placeholder.jpg")}
               alt={post.title}
               className="w-full h-full object-cover"

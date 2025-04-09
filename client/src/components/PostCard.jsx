@@ -15,6 +15,8 @@ export default function PostCard({ post }) {
       >
         <img
           src={post.headerImage || "/default-placeholder.jpg"}
+          
+  loading="lazy"
           onError={(e) => (e.target.src = "/default-placeholder.jpg")}
           alt={post.title}
           className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
