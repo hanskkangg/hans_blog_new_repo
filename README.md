@@ -12,6 +12,16 @@ This blog platform is designed for clients who want a personal or business blog 
 
 ---
 
+
+## 🧱INFRASTRUCTURE
+
+![Architecture review (1)](https://github.com/user-attachments/assets/f9b9280d-15d6-4298-935f-fcf123461b5e)
+
+
+---
+
+
+
 ## 🧱 Tech Stack
 
 ### Frontend
