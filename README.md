@@ -15,7 +15,9 @@ This blog platform is designed for clients who want a personal or business blog 
 
 ## 🧱INFRASTRUCTURE
 
-![Architecture review (1)](https://github.com/user-attachments/assets/f9b9280d-15d6-4298-935f-fcf123461b5e)
+
+![Architecture review (2)](https://github.com/user-attachments/assets/1a928b40-2cb2-4f27-b36b-9a0da649d90a)
+
 
 
 ---
